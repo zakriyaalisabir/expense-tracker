@@ -11,7 +11,7 @@ const TransactionRow = React.memo(({ t, accountName, categoryName, onEdit, onDel
   const typeColor = t.type === "income" ? "success" : t.type === "savings" ? "info" : "error";
   return (
   <TableRow hover>
-    <TableCell>{new Date(t.date).toLocaleDateString()}</TableCell>
+    <TableCell>{new Date(t.date).toLocaleString()}</TableCell>
     <TableCell><Chip label={t.type} color={typeColor} size="small" /></TableCell>
     <TableCell align="right"><strong>{t.amount.toFixed(2)}</strong></TableCell>
     <TableCell><Chip label={t.currency} size="small" variant="outlined" /></TableCell>
@@ -61,7 +61,7 @@ export default function TransactionsPage(){
   );
 
   const sortedTransactions = React.useMemo(() => 
-    [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [...transactions].sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf()),
     [transactions]
   );
 

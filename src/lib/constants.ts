@@ -21,7 +21,7 @@ export const DRAWER_WIDTH = 250;
 export const MOBILE_BREAKPOINT = "(max-width:900px)";
 
 export const ROUTES = {
-  SUMMARY: "/summary",
+  HOME: "/home",
   DASHBOARD: "/dashboard",
   TRANSACTIONS: "/transactions",
   CATEGORIES: "/categories",
@@ -33,7 +33,7 @@ export const ROUTES = {
 } as const;
 
 export const TABS = [
-  { label: "Summary", href: ROUTES.SUMMARY },
+  { label: "Home", href: ROUTES.HOME },
   { label: "Dashboard", href: ROUTES.DASHBOARD },
   { label: "Transactions", href: ROUTES.TRANSACTIONS },
   { label: "Categories", href: ROUTES.CATEGORIES },

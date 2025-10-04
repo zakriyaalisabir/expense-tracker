@@ -3,16 +3,14 @@ import * as React from "react";
 import dynamic from "next/dynamic";
 import { Grid, Card, CardContent, Typography, Divider, Skeleton, Fade, Stack } from "@mui/material";
 import { FADE_TIMEOUT } from "@lib/constants";
-import TransactionForm from "@components/TransactionForm";
-import CategoryForm from "@components/CategoryForm";
-import AccountForm from "@components/AccountForm";
-import BudgetForm from "@components/BudgetForm";
-import GoalForm from "@components/GoalForm";
 import { useAppStore } from "@lib/store";
 
 const IncomeExpenseSavingsChart = dynamic(() => import("@components/charts/IncomeExpenseSavingsChart"), { ssr: false });
 const MonthlyIncomeExpenseChart = dynamic(() => import("@components/charts/MonthlyIncomeExpenseChart"), { ssr: false });
 const CategoryBreakdownChart = dynamic(() => import("@components/charts/CategoryBreakdownChart"), { ssr: false });
+const CurrencyBreakdownChart = dynamic(() => import("@components/charts/CurrencyBreakdownChart"), { ssr: false });
+const MonthlyCurrencyChart = dynamic(() => import("@components/charts/MonthlyCurrencyChart"), { ssr: false });
+const CategoryByCurrencyChart = dynamic(() => import("@components/charts/CategoryByCurrencyChart"), { ssr: false });
 const SavingsRateChart = dynamic(() => import("@components/charts/SavingsRateChart"), { ssr: false });
 const AccountBalanceChart = dynamic(() => import("@components/charts/AccountBalanceChart"), { ssr: false });
 const TopExpensesChart = dynamic(() => import("@components/charts/TopExpensesChart"), { ssr: false });
@@ -48,18 +46,12 @@ export default function Dashboard(){
   return (
     <Fade in timeout={FADE_TIMEOUT}>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-            <TransactionForm/>
-            <CategoryForm/>
-            <AccountForm/>
-            <BudgetForm/>
-            <GoalForm/>
-          </Stack>
-        </Grid>
         <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly Income, Expenses & Savings</Typography><Divider sx={{my:1}}/><IncomeExpenseSavingsChart/></CardContent></Card></Grid>
         <Grid item xs={12} md={8}><Card><CardContent><Typography variant="h6">Monthly Income vs Expenses</Typography><Divider sx={{my:1}}/><MonthlyIncomeExpenseChart/></CardContent></Card></Grid>
         <Grid item xs={12} md={4}><Card><CardContent><Typography variant="h6">Category Breakdown</Typography><Divider sx={{my:1}}/><CategoryBreakdownChart/></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Currency Breakdown</Typography><Divider sx={{my:1}}/><CurrencyBreakdownChart/></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly by Currency</Typography><Divider sx={{my:1}}/><MonthlyCurrencyChart/></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Categories by Currency</Typography><Divider sx={{my:1}}/><CategoryByCurrencyChart/></CardContent></Card></Grid>
         <Grid item xs={12}><Card><CardContent><Typography variant="h6">Savings Rate Trend</Typography><Divider sx={{my:1}}/><SavingsRateChart/></CardContent></Card></Grid>
         <Grid item xs={12} md={6}><Card><CardContent><Typography variant="h6">Account Balances</Typography><Divider sx={{my:1}}/><AccountBalanceChart/></CardContent></Card></Grid>
         <Grid item xs={12} md={6}><Card><CardContent><Typography variant="h6">Top 10 Expenses</Typography><Divider sx={{my:1}}/><TopExpensesChart/></CardContent></Card></Grid>
