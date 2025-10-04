@@ -66,7 +66,7 @@ export default function SettingsPage(){
           <Typography variant="body2" color="text.secondary">Manage your preferences</Typography>
         </Box>
       </Box>
-
+      <Divider />
       <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>

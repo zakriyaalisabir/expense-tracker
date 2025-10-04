@@ -60,7 +60,7 @@ export default function CategoriesPage() {
           </Box>
           <CategoryForm />
         </Box>
-
+        <Divider />
         <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
         <Grid container spacing={3}>
           {CATEGORY_TYPES.map(type => {

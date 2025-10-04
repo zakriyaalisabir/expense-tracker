@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Button, Stack, TextField, Typography, Box, Avatar } from "@mui/material";
+import { Card, CardContent, Button, Stack, TextField, Typography, Box, Avatar, Divider } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import { useAppStore } from "@lib/store";
 
@@ -41,6 +41,7 @@ export default function ReportsPage(){
           <Typography variant="body2" color="text.secondary">Export and print reports</Typography>
         </Box>
       </Box>
+      <Divider />
     <Card><CardContent>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ my: 2 }}>
         <TextField type="date" label="From" value={from} onChange={e=>setFrom(e.target.value)} InputLabelProps={{ shrink: true }} />

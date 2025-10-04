@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box, TablePagination, IconButton, Tooltip, Avatar } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box, TablePagination, IconButton, Tooltip, Avatar, Divider } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReceiptIcon from "@mui/icons-material/Receipt";
@@ -94,6 +94,7 @@ export default function TransactionsPage(){
         </Box>
         <TransactionForm editTransaction={editTransaction} onClose={() => setEditTransaction(null)} />
       </Box>
+      <Divider />
       <Card><CardContent>
         <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
         <Table size="small" stickyHeader sx={{ minWidth: 800 }}>
