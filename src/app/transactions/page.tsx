@@ -1,11 +1,13 @@
 "use client";
 import * as React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box, TablePagination } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box, TablePagination, IconButton, Tooltip } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore } from "@lib/store";
 import { FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
 
-const TransactionRow = React.memo(({ t, accountName, categoryName }: any) => {
+const TransactionRow = React.memo(({ t, accountName, categoryName, onEdit, onDelete }: any) => {
   const typeColor = t.type === "income" ? "success" : t.type === "savings" ? "info" : "error";
   return (
   <TableRow hover>
@@ -17,6 +19,20 @@ const TransactionRow = React.memo(({ t, accountName, categoryName }: any) => {
     <TableCell>{categoryName}</TableCell>
     <TableCell>{t.tags.map((tag: string) => <Chip key={tag} label={tag} size="small" sx={{ mr: 0.5 }} />)}</TableCell>
     <TableCell>{t.description ?? ""}</TableCell>
+    <TableCell>
+      <Box display="flex" gap={0.5}>
+        <Tooltip title="Edit">
+          <IconButton size="small" onClick={() => onEdit(t)}>
+            <EditIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete">
+          <IconButton size="small" onClick={() => onDelete(t.id)} color="error">
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    </TableCell>
   </TableRow>
   );
 });
@@ -26,9 +42,11 @@ export default function TransactionsPage(){
   const transactions = useAppStore(s => s.transactions);
   const categories = useAppStore(s => s.categories);
   const accounts = useAppStore(s => s.accounts);
+  const deleteTransaction = useAppStore(s => s.deleteTransaction);
   const [loading, setLoading] = React.useState(true);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [editTransaction, setEditTransaction] = React.useState<any>(null);
   
   React.useEffect(() => {
     const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
@@ -63,7 +81,7 @@ export default function TransactionsPage(){
   return (
     <Fade in timeout={FADE_TIMEOUT}>
     <Stack spacing={2}>
-      <TransactionForm/>
+      <TransactionForm editTransaction={editTransaction} onClose={() => setEditTransaction(null)} />
       <Card><CardContent>
         <Typography variant="h6" sx={{ mb: 2 }}>Transactions ({transactions.length})</Typography>
         <TableContainer component={Paper} variant="outlined">
@@ -78,6 +96,7 @@ export default function TransactionsPage(){
               <TableCell><strong>Category</strong></TableCell>
               <TableCell><strong>Tags</strong></TableCell>
               <TableCell><strong>Description</strong></TableCell>
+              <TableCell><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -87,6 +106,8 @@ export default function TransactionsPage(){
                 t={t} 
                 accountName={accountMap[t.account_id] ?? t.account_id}
                 categoryName={categoryMap[t.category_id] ?? t.category_id}
+                onEdit={setEditTransaction}
+                onDelete={deleteTransaction}
               />
             ))}
           </TableBody>

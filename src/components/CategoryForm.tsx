@@ -1,7 +1,8 @@
 "use client";
 import * as React from "react";
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import { TransitionProps } from "@mui/material/transitions";
 
 const Transition = React.forwardRef(function Transition(
@@ -56,14 +57,15 @@ export default function CategoryForm({ editCategory }: Props) {
 
   return (
     <>
-      <Button 
-        variant={editCategory ? "text" : "contained"} 
-        size={editCategory ? "small" : "medium"} 
-        onClick={() => setOpen(true)}
-        startIcon={editCategory ? undefined : <AddIcon />}
-      >
-        {editCategory ? "Edit" : "Add Category"}
-      </Button>
+      {editCategory ? (
+        <IconButton size="small" onClick={() => setOpen(true)} color="primary">
+          <EditIcon fontSize="small" />
+        </IconButton>
+      ) : (
+        <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AddIcon />}>
+          Add Category
+        </Button>
+      )}
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>{editCategory ? "Edit" : "New"} Category</DialogTitle>
         <DialogContent>

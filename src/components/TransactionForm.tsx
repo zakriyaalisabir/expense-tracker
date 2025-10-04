@@ -15,8 +15,10 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function TransactionForm(){
-  const { accounts, categories, addTransaction, settings } = useAppStore();
+type Props = { editTransaction?: any; onClose?: () => void };
+
+export default function TransactionForm({ editTransaction, onClose }: Props = {}){
+  const { accounts, categories, addTransaction, updateTransaction, settings } = useAppStore();
   const [open,setOpen] = React.useState(false);
   const [type,setType] = React.useState<"income"|"expense"|"savings">("expense");
   const [form,setForm] = React.useState<any>({
@@ -29,11 +31,28 @@ export default function TransactionForm(){
     setForm((f:any)=>({...f, account_id: accounts[0].id, category_id: categories.find(c=>c.type==="expense")?.id}));
   },[accounts.length, categories.length]);
 
+  React.useEffect(() => {
+    if (editTransaction) {
+      setType(editTransaction.type);
+      setForm({
+        date: new Date(editTransaction.date).toISOString().slice(0,16),
+        amount: editTransaction.amount,
+        currency: editTransaction.currency,
+        account_id: editTransaction.account_id,
+        category_id: editTransaction.category_id,
+        subcategory_id: editTransaction.subcategory_id || "",
+        description: editTransaction.description || "",
+        tags: editTransaction.tags.join(", ")
+      });
+      setOpen(true);
+    }
+  }, [editTransaction]);
+
   function submit(){
     const fx_rate = FX[form.currency];
     const base_amount = toBase(Number(form.amount), form.currency, settings.baseCurrency);
     const t: Transaction = {
-      id: `t_${Math.random().toString(36).slice(2,10)}`,
+      id: editTransaction?.id || `t_${Math.random().toString(36).slice(2,10)}`,
       date: new Date(form.date).toISOString(),
       type, amount: Number(form.amount), currency: form.currency,
       account_id: form.account_id, category_id: form.category_id,
@@ -41,19 +60,22 @@ export default function TransactionForm(){
       tags: form.tags ? form.tags.split(",").map((s:string)=>s.trim()).filter(Boolean):[],
       description: form.description, fx_rate, base_amount
     };
-    addTransaction(t);
-    setForm({
-      date: new Date().toISOString().slice(0,16),
-      amount: 0, currency: settings.baseCurrency, account_id: accounts[0]?.id ?? "",
-      category_id: categories.find(c=>c.type===type)?.id ?? "", subcategory_id: "", description: "", tags: ""
-    });
+    editTransaction ? updateTransaction(t) : addTransaction(t);
+    if (!editTransaction) {
+      setForm({
+        date: new Date().toISOString().slice(0,16),
+        amount: 0, currency: settings.baseCurrency, account_id: accounts[0]?.id ?? "",
+        category_id: categories.find(c=>c.type===type)?.id ?? "", subcategory_id: "", description: "", tags: ""
+      });
+    }
     setOpen(false);
+    onClose?.();
   }
 
   return (<>
     <Button variant="contained" onClick={()=>setOpen(true)} startIcon={<AddIcon />}>Add Transaction</Button>
-    <Dialog open={open} onClose={()=>setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
-      <DialogTitle>New Transaction</DialogTitle>
+    <Dialog open={open} onClose={()=>{setOpen(false); onClose?.();}} fullWidth maxWidth="sm" TransitionComponent={Transition}>
+      <DialogTitle>{editTransaction ? "Edit" : "New"} Transaction</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <ToggleButtonGroup exclusive value={type} onChange={(_,v)=>v&&setType(v)}>
@@ -83,8 +105,8 @@ export default function TransactionForm(){
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={()=>setOpen(false)}>Cancel</Button>
-        <Button variant="contained" onClick={submit}>Save</Button>
+        <Button onClick={()=>{setOpen(false); onClose?.();}}>Cancel</Button>
+        <Button variant="contained" onClick={submit}>{editTransaction ? "Update" : "Save"}</Button>
       </DialogActions>
     </Dialog> 
   </>);
