@@ -40,7 +40,9 @@ export default function GoalForm() {
     addGoal(goal);
     setName("");
     setTargetAmount("0");
+    setTargetDate(new Date(new Date().getFullYear() + 1, 0, 1).toISOString().slice(0, 10));
     setMonthlyContribution("0");
+    setAccountId(accounts[0]?.id || "");
     setOpen(false);
   }
 

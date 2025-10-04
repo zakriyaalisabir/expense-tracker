@@ -33,6 +33,8 @@ export default function AccountForm() {
     };
     addAccount(account);
     setName("");
+    setType("bank");
+    setCurrency("THB");
     setBalance("0");
     setOpen(false);
   }

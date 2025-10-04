@@ -42,6 +42,11 @@ export default function TransactionForm(){
       description: form.description, fx_rate, base_amount
     };
     addTransaction(t);
+    setForm({
+      date: new Date().toISOString().slice(0,16),
+      amount: 0, currency: settings.baseCurrency, account_id: accounts[0]?.id ?? "",
+      category_id: categories.find(c=>c.type===type)?.id ?? "", subcategory_id: "", description: "", tags: ""
+    });
     setOpen(false);
   }
 

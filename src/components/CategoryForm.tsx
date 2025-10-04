@@ -45,9 +45,12 @@ export default function CategoryForm({ editCategory }: Props) {
       currency
     };
     editCategory ? updateCategory(category) : addCategory(category);
-    setName("");
-    setParentId("");
-    setCurrency("THB");
+    if (!editCategory) {
+      setName("");
+      setParentId("");
+      setCurrency("THB");
+      setType("expense");
+    }
     setOpen(false);
   }
 

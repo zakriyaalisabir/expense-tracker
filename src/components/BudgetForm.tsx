@@ -26,6 +26,7 @@ export default function BudgetForm() {
       total: Number(total)
     };
     addBudget(budget);
+    setMonth(new Date().toISOString().slice(0, 7));
     setTotal("0");
     setOpen(false);
   }
