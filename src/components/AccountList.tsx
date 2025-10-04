@@ -25,7 +25,7 @@ export default function AccountList(){
 
   return (
     <>
-      <AccountForm editAccount={editAccount} onClose={() => setEditAccount(null)} />
+      {editAccount && <AccountForm editAccount={editAccount} onClose={() => setEditAccount(null)} />}
       <Card>
         <CardContent>
           <Typography variant="h6" mb={1}>Accounts ({balances.length})</Typography>

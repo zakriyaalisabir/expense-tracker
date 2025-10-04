@@ -1,8 +1,9 @@
 "use client";
 import * as React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box, TablePagination, IconButton, Tooltip } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box, TablePagination, IconButton, Tooltip, Avatar } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore } from "@lib/store";
 import { FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
@@ -80,11 +81,19 @@ export default function TransactionsPage(){
 
   return (
     <Fade in timeout={FADE_TIMEOUT}>
-    <Stack spacing={2}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }} justifyContent="space-between" mb={2}>
-        <Typography variant="h6">Transactions ({transactions.length})</Typography>
+    <Stack spacing={3}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
+        <Box display="flex" alignItems="center" gap={2}>
+          <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+            <ReceiptIcon fontSize="large" />
+          </Avatar>
+          <Box>
+            <Typography variant="h4" fontWeight="bold">Transactions</Typography>
+            <Typography variant="body2" color="text.secondary">{transactions.length} total transactions</Typography>
+          </Box>
+        </Box>
         <TransactionForm editTransaction={editTransaction} onClose={() => setEditTransaction(null)} />
-      </Stack>
+      </Box>
       <Card><CardContent>
         <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
         <Table size="small" stickyHeader sx={{ minWidth: 800 }}>

@@ -1,7 +1,8 @@
 "use client";
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { Grid, Card, CardContent, Typography, Divider, Skeleton, Fade, Stack, ToggleButtonGroup, ToggleButton, TextField, Box } from "@mui/material";
+import { Grid, Card, CardContent, Typography, Divider, Skeleton, Fade, Stack, ToggleButtonGroup, ToggleButton, TextField, Box, Avatar } from "@mui/material";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import { FADE_TIMEOUT } from "@lib/constants";
 import { useAppStore } from "@lib/store";
 
@@ -59,6 +60,17 @@ export default function Dashboard(){
 
   return (
     <Fade in timeout={FADE_TIMEOUT}>
+      <Stack spacing={3}>
+        <Box display="flex" alignItems="center" gap={2}>
+          <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+            <DashboardIcon fontSize="large" />
+          </Avatar>
+          <Box>
+            <Typography variant="h4" fontWeight="bold">Dashboard</Typography>
+            <Typography variant="body2" color="text.secondary">Analytics and insights</Typography>
+          </Box>
+        </Box>
+        <Divider />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Card>
@@ -115,6 +127,7 @@ export default function Dashboard(){
         <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Spending by Weekday</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320},overflowX:{xs:'auto',sm:'visible'}}}><Box sx={{minWidth:{xs:500,sm:'auto'}}}><WeekdaySpendingChart/></Box></Box></CardContent></Card></Grid>
         <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Daily Trend</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320},overflowX:{xs:'auto',sm:'visible'}}}><Box sx={{minWidth:{xs:500,sm:'auto'}}}><TrendHeatmap/></Box></Box></CardContent></Card></Grid>
       </Grid>
+      </Stack>
     </Fade>
   );
 }

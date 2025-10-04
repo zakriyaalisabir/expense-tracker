@@ -33,15 +33,15 @@ export const ROUTES = {
 } as const;
 
 export const TABS = [
-  { label: "Home", href: ROUTES.HOME },
-  { label: "Dashboard", href: ROUTES.DASHBOARD },
-  { label: "Transactions", href: ROUTES.TRANSACTIONS },
-  { label: "Categories", href: ROUTES.CATEGORIES },
-  { label: "Accounts", href: ROUTES.ACCOUNTS },
-  { label: "Budgets", href: ROUTES.BUDGETS },
-  { label: "Goals", href: ROUTES.GOALS },
-  { label: "Reports", href: ROUTES.REPORTS },
-  { label: "Settings", href: ROUTES.SETTINGS },
+  { label: "Home", href: ROUTES.HOME, icon: "Home" },
+  { label: "Dashboard", href: ROUTES.DASHBOARD, icon: "Dashboard" },
+  { label: "Transactions", href: ROUTES.TRANSACTIONS, icon: "Receipt" },
+  { label: "Categories", href: ROUTES.CATEGORIES, icon: "Category" },
+  { label: "Accounts", href: ROUTES.ACCOUNTS, icon: "AccountBalance" },
+  { label: "Budgets", href: ROUTES.BUDGETS, icon: "AccountBalanceWallet" },
+  { label: "Goals", href: ROUTES.GOALS, icon: "EmojiEvents" },
+  { label: "Reports", href: ROUTES.REPORTS, icon: "Assessment" },
+  { label: "Settings", href: ROUTES.SETTINGS, icon: "Settings" },
 ] as const;
 
 export const CURRENCIES = ["THB", "USD", "EUR", "JPY"] as const;
