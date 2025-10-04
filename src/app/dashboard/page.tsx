@@ -103,7 +103,7 @@ export default function Dashboard(){
         </Grid>
         <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly Income, Expenses & Savings</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><IncomeExpenseSavingsChart/></Box></CardContent></Card></Grid>
         <Grid item xs={12} md={8}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Monthly Income vs Expenses</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><MonthlyIncomeExpenseChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12} md={4}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Category Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><CategoryBreakdownChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12} md={4}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Category Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:350,sm:320}}}><CategoryBreakdownChart/></Box></CardContent></Card></Grid>
         <Grid item xs={12}><Card><CardContent><Typography variant="h6">Currency Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><CurrencyBreakdownChart/></Box></CardContent></Card></Grid>
         <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly by Currency</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><MonthlyCurrencyChart/></Box></CardContent></Card></Grid>
         <Grid item xs={12}><Card><CardContent><Typography variant="h6">Categories by Currency</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><CategoryByCurrencyChart/></Box></CardContent></Card></Grid>
