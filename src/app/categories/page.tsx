@@ -50,7 +50,7 @@ export default function CategoriesPage() {
       subtitle={`${categories.length} total categories`}
       actions={<CategoryForm />}
     >
-      <Grid container spacing={3}>
+      <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
           {CATEGORY_TYPES.map(type => {
             const typeCategories = mainCategories.filter(c => c.type === type);
             return (

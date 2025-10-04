@@ -71,7 +71,7 @@ export default function SettingsPage(){
   return (
     <AuthGuard>
     <PageLayout icon={SettingsIcon} title="Settings" subtitle="Manage your preferences">
-      <Grid container spacing={3}>
+      <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
         <Grid item xs={12}>
           <Card elevation={3}>
             <CardContent>

@@ -37,7 +37,7 @@ export default function BudgetsPage(){
       subtitle={`${budgets.length} active budgets`}
       actions={<BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />}
     >
-      <Grid container spacing={3}>
+      <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
         {budgets.map(budget => {
           const monthTx = transactions.filter(t => t.type === "expense" && t.date.slice(0,7) === budget.month);
           const spent = monthTx.reduce((a,b) => a + b.base_amount, 0);

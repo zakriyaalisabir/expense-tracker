@@ -44,7 +44,7 @@ export default function Dashboard(){
     return (
       <Stack spacing={2}>
         <Skeleton variant="rectangular" height={100} />
-        <Grid container spacing={2}>
+        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
           {[1,2,3,4].map(i => (
             <Grid item xs={12} md={6} key={i}>
               <Skeleton variant="rectangular" height={320} />
@@ -57,7 +57,7 @@ export default function Dashboard(){
 
   return (
     <PageLayout icon={DashboardIcon} title="Dashboard" subtitle="Analytics and insights">
-        <Grid container spacing={2}>
+        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
           <Grid item xs={12}>
           <Card>
             <CardContent>

@@ -29,7 +29,7 @@ export default function Home(){
     return (
       <Stack spacing={2}>
         <Skeleton variant="rectangular" height={100} />
-        <Grid container spacing={2}>
+        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
           {[1,2,3,4].map(i => (
             <Grid item xs={12} sm={6} md={3} key={i}>
               <Skeleton variant="rectangular" height={80} />
@@ -43,7 +43,7 @@ export default function Home(){
   return (
     <AuthGuard>
     <PageLayout icon={HomeIcon} title="Home" subtitle="Quick overview and actions">
-        <Grid container spacing={2}>
+        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
           <Grid item xs={12}>
             <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
               <TransactionForm/>

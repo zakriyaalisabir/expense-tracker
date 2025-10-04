@@ -32,7 +32,7 @@ export default function GoalsPage(){
       subtitle={`${goals.length} active goals`}
       actions={<GoalForm />}
     >
-      <Grid container spacing={3}>
+      <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
         {goals.map(g => (
           <Grid item xs={12} md={6} key={g.id}>
             <GoalCard goal={g} />

@@ -100,7 +100,14 @@ export default function LayoutContent({ children, mode, setMode }: any) {
           </List>
         </Box>
       </Drawer>
-      <Container maxWidth="lg" sx={{ py: 4, px: 3, mx: 'auto' }}>
+      <Container
+        maxWidth="lg"
+        sx={{
+          py: 4,
+          px: { xs: 2, md: 3 },
+          mx: 'auto'
+        }}
+      >
         {children}
       </Container>
     </>
