@@ -6,12 +6,15 @@ import { useAppStore } from "@lib/store";
 export default function CategoryBreakdownChart(){
   const { transactions, categories } = useAppStore();
   const ref = React.useRef<SVGSVGElement | null>(null);
+  const tooltipRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     if (!ref.current) return;
     const svg = d3.select(ref.current);
     svg.selectAll("*").remove();
     const width = 360, height = 360, radius = Math.min(width, height) / 2;
+
+    const tooltip = d3.select(tooltipRef.current);
 
     const sums = d3.rollups(
       transactions.filter(t => t.type==="expense"),
@@ -22,6 +25,8 @@ export default function CategoryBreakdownChart(){
       label: categories.find(c => c.id===catId)?.name ?? catId,
       value: total
     })).filter(d => d.value > 0);
+
+    const total = d3.sum(data, d => d.value);
 
     const g = svg.append("g").attr("transform", `translate(${width/2},${height/2})`);
     const pie = d3.pie<any>().value(d => d.value);
@@ -35,12 +40,20 @@ export default function CategoryBreakdownChart(){
       .style("cursor", "pointer")
       .on("mouseover", function(event, d) {
         d3.select(this).attr("opacity", 0.8).attr("stroke-width", 3);
+        const pct = ((d.data.value / total) * 100).toFixed(1);
+        tooltip
+          .style("opacity", 1)
+          .html(`<strong>${d.data.label}</strong><br/>Amount: ${d.data.value.toFixed(2)}<br/>Percentage: ${pct}%`);
+      })
+      .on("mousemove", function(event) {
+        tooltip
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 10) + "px");
       })
       .on("mouseout", function() {
         d3.select(this).attr("opacity", 1).attr("stroke-width", 2);
-      })
-      .append("title")
-      .text(d => `${d.data.label}: ${d3.format("$,.2f")(d.data.value)} (${((d.endAngle - d.startAngle) / (2 * Math.PI) * 100).toFixed(1)}%)`);
+        tooltip.style("opacity", 0);
+      });
 
     const legend = svg.append("g").attr("transform", `translate(10, 10)`);
     data.forEach((d, i) => {
@@ -50,5 +63,23 @@ export default function CategoryBreakdownChart(){
     });
   }, [transactions, categories]);
 
-  return <svg ref={ref} width={360} height={360} role="img" aria-label="Category breakdown pie chart" />;
+  return (
+    <>
+      <svg ref={ref} width={360} height={360} role="img" aria-label="Category breakdown pie chart" />
+      <div ref={tooltipRef} style={{
+        position: 'fixed',
+        opacity: 0,
+        pointerEvents: 'none',
+        background: 'rgba(0, 0, 0, 0.85)',
+        color: '#fff',
+        padding: '8px 12px',
+        borderRadius: '6px',
+        fontSize: '13px',
+        zIndex: 9999,
+        backdropFilter: 'blur(8px)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        transition: 'opacity 0.2s'
+      }} />
+    </>
+  );
 }

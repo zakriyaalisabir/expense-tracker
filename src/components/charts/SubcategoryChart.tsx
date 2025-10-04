@@ -6,6 +6,7 @@ import { useAppStore } from "@lib/store";
 export default function SubcategoryChart() {
   const { transactions, categories } = useAppStore();
   const ref = React.useRef<SVGSVGElement | null>(null);
+  const tooltipRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     if (!ref.current) return;
@@ -14,6 +15,8 @@ export default function SubcategoryChart() {
     const width = 720, height = 320, margin = { top: 20, right: 20, bottom: 80, left: 50 };
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
+
+    const tooltip = d3.select(tooltipRef.current);
 
     const subcatTxs = transactions.filter(t => t.subcategory_id && t.type === "expense");
     const sums = d3.rollups(subcatTxs, v => d3.sum(v, d => d.base_amount), d => d.subcategory_id);
@@ -45,8 +48,22 @@ export default function SubcategoryChart() {
       .attr("width", x.bandwidth())
       .attr("height", d => innerH - y(d.value))
       .attr("fill", d => color(d.parent))
-      .append("title")
-      .text(d => `${d.parent} > ${d.label}: ${d3.format("$.2f")(d.value)}`);
+      .style("cursor", "pointer")
+      .on("mouseover", function(event, d) {
+        d3.select(this).attr("opacity", 0.8);
+        tooltip
+          .style("opacity", 1)
+          .html(`<strong>${d.parent} → ${d.label}</strong><br/>Amount: ${d.value.toFixed(2)}`);
+      })
+      .on("mousemove", function(event) {
+        tooltip
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 10) + "px");
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("opacity", 1);
+        tooltip.style("opacity", 0);
+      });
 
     g.append("g")
       .attr("transform", `translate(0,${innerH})`)
@@ -58,5 +75,23 @@ export default function SubcategoryChart() {
     g.append("g").call(d3.axisLeft(y));
   }, [transactions, categories]);
 
-  return <svg ref={ref} width={720} height={320} role="img" aria-label="Subcategory expenses" />;
+  return (
+    <>
+      <svg ref={ref} width={720} height={320} role="img" aria-label="Subcategory expenses" />
+      <div ref={tooltipRef} style={{
+        position: 'fixed',
+        opacity: 0,
+        pointerEvents: 'none',
+        background: 'rgba(0, 0, 0, 0.85)',
+        color: '#fff',
+        padding: '8px 12px',
+        borderRadius: '6px',
+        fontSize: '13px',
+        zIndex: 9999,
+        backdropFilter: 'blur(8px)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        transition: 'opacity 0.2s'
+      }} />
+    </>
+  );
 }
