@@ -1,8 +1,12 @@
 "use client";
 import { useAuth } from "@components/AuthProvider";
-import { Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import PhoneIcon from "@mui/icons-material/Phone";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@lib/supabase/client";
 
 export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -11,6 +15,7 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const { signIn, signUp } = useAuth();
   const router = useRouter();
+  const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +31,14 @@ export default function AuthPage() {
     } catch (err: any) {
       setError(err.message);
     }
+  };
+
+  const handleOAuthSignIn = async (provider: 'google' | 'github') => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}/` }
+    });
+    if (error) setError(error.message);
   };
 
   return (
@@ -56,6 +69,25 @@ export default function AuthPage() {
           {error && <Typography color="error" sx={{ mt: 1 }}>{error}</Typography>}
           <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
             {isSignUp ? "Sign Up" : "Sign In"}
+          </Button>
+          <Divider sx={{ my: 2 }}>OR</Divider>
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={<GoogleIcon />}
+            onClick={() => handleOAuthSignIn('google')}
+            sx={{ mb: 1 }}
+          >
+            Continue with Google
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={<GitHubIcon />}
+            onClick={() => handleOAuthSignIn('github')}
+            sx={{ mb: 1 }}
+          >
+            Continue with GitHub
           </Button>
           <Button
             fullWidth

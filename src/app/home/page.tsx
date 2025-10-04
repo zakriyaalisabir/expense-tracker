@@ -22,7 +22,11 @@ export default function Home(){
   const { income, expense, saved, savings } = totals;
 
   React.useEffect(() => {
-    seed();
+    const isNewUser = localStorage.getItem('new-user') === 'true';
+    if (isNewUser) {
+      localStorage.removeItem('new-user');
+      seed();
+    }
     setHydrated(true);
   }, [seed]);
 
