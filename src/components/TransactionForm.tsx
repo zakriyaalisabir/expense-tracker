@@ -50,7 +50,7 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
   }, [editTransaction]);
 
   function submit(){
-    const fx_rate = FX[form.currency];
+    const fx_rate = FX[form.currency as keyof typeof FX] || 1;
     const base_amount = toBase(Number(form.amount), form.currency, settings.baseCurrency);
     const t: Transaction = {
       id: editTransaction?.id || `t_${Math.random().toString(36).slice(2,10)}`,

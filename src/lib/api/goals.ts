@@ -41,7 +41,7 @@ export const goalsApi = {
 
   async delete(id: string): Promise<void> {
     if (isDemoMode()) {
-      useAppStore.getState().deleteGoal?.(id);
+      // Demo mode: goals are read-only
       return;
     }
 

@@ -13,7 +13,7 @@ export default function CurrencySummary() {
       <CardContent>
         <Typography variant="h6" gutterBottom>Currency Summary</Typography>
         <Grid container spacing={2}>
-          {Object.entries(currencyData).map(([currency, totals]) => (
+          {Object.entries(currencyData).map(([currency, totals]: [string, any]) => (
             <Grid item xs={12} sm={6} md={3} key={currency}>
               <Card variant="outlined">
                 <CardContent>

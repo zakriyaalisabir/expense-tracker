@@ -27,7 +27,7 @@ export default function TrendHeatmap(){
     const x = d3.scaleBand().domain(byDay.map(d=>d[0])).range([0, innerW]).padding(0.05);
     const y = d3.scaleBand().domain(["income","expense"]).range([0, innerH]).padding(0.1);
     const maxV = d3.max(byDay, d => Math.max(d[1].income, d[1].expense)) || 1;
-    const color = d3.scaleLinear().domain([0, maxV]).range(["#eee","#999"]);
+    const color = d3.scaleLinear<string>().domain([0, maxV]).range(["#eee","#999"]);
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
     byDay.forEach(d => {

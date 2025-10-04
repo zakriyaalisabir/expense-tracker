@@ -30,6 +30,7 @@ export default function GoalForm() {
     if (!name.trim()) return;
     const goal: Goal = {
       id: uid("goal"),
+      user_id: "local-user",
       name: name.trim(),
       target_amount: Number(targetAmount),
       target_date: new Date(targetDate).toISOString(),
