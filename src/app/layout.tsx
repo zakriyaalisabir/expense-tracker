@@ -11,9 +11,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [mounted, setMounted] = React.useState(false);
   
   React.useEffect(() => {
-    setMounted(true);
     const m = window.localStorage.getItem(THEME_MODE_KEY) as "light" | "dark" | null;
     if (m) setMode(m);
+    setMounted(true);
   }, []);
 
   const theme = React.useMemo(() => createTheme({
@@ -150,9 +150,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   }), [mode]);
 
+  if (!mounted) {
+    return (
+      <html lang="en">
+        <body style={{ margin: 0, minHeight: '100vh' }}>
+          <div style={{ display: 'none' }} />
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="en">
       <body style={{
+        margin: 0,
         background: mode === 'dark'
           ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)'
           : 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%)',
