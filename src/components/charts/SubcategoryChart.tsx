@@ -35,7 +35,7 @@ export default function SubcategoryChart() {
 
     const x = d3.scaleBand().domain(data.map(d => d.label)).range([0, innerW]).padding(0.2);
     const y = d3.scaleLinear().domain([0, d3.max(data, d => d.value) || 1]).nice().range([innerH, 0]);
-    const color = d3.scaleOrdinal<string>().domain(data.map(d => d.parent)).range(d3.schemeTableau10);
+    const color = d3.scaleOrdinal<string>().domain(data.map(d => d.parent).filter((p): p is string => p !== undefined)).range(d3.schemeTableau10);
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 

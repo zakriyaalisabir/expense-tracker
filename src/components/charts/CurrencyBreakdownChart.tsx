@@ -17,7 +17,7 @@ export default function CurrencyBreakdownChart() {
     const innerH = height - margin.top - margin.bottom;
 
     const currencyData = groupByCurrency(transactions);
-    const data = Object.entries(currencyData).map(([currency, totals]) => ({
+    const data = Object.entries(currencyData).map(([currency, totals]: [string, any]) => ({
       currency,
       income: totals.income,
       expense: totals.expense,
@@ -42,7 +42,7 @@ export default function CurrencyBreakdownChart() {
       const currencyG = g.append("g").attr("transform", `translate(${x0(d.currency)},0)`);
       
       currencyG.append("rect")
-        .attr("x", x1("income"))
+        .attr("x", x1("income") || 0)
         .attr("y", y(d.income))
         .attr("width", x1.bandwidth())
         .attr("height", innerH - y(d.income))
@@ -51,7 +51,7 @@ export default function CurrencyBreakdownChart() {
         .text(`${d.currency} Income: ${d.income.toFixed(2)}`);
 
       currencyG.append("rect")
-        .attr("x", x1("expense"))
+        .attr("x", x1("expense") || 0)
         .attr("y", y(d.expense))
         .attr("width", x1.bandwidth())
         .attr("height", innerH - y(d.expense))
@@ -60,7 +60,7 @@ export default function CurrencyBreakdownChart() {
         .text(`${d.currency} Expense: ${d.expense.toFixed(2)}`);
 
       currencyG.append("rect")
-        .attr("x", x1("saved"))
+        .attr("x", x1("saved") || 0)
         .attr("y", y(d.saved))
         .attr("width", x1.bandwidth())
         .attr("height", innerH - y(d.saved))

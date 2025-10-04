@@ -41,6 +41,7 @@ export default function CategoryForm({ editCategory }: Props) {
     if (!name.trim()) return;
     const category: Category = {
       id: editCategory?.id || uid("cat"),
+      user_id: editCategory?.user_id || "local-user",
       name: name.trim(),
       type,
       parent_id: parentId || undefined,

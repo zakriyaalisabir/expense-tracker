@@ -3,7 +3,6 @@ import { useAuth } from "@components/AuthProvider";
 import { Box, Button, Container, Paper, TextField, Typography, Divider } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import PhoneIcon from "@mui/icons-material/Phone";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@lib/supabase/client";

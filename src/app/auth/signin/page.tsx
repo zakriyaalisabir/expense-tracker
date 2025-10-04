@@ -3,11 +3,11 @@ import * as React from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, TextField, Button, Stack, Typography, Tabs, Tab, Box, Alert, InputAdornment, IconButton, Fade, Avatar } from "@mui/material";
-import EmailIcon from "@mui/icons-material/Email";
-import LockIcon from "@mui/icons-material/Lock";
-import PersonIcon from "@mui/icons-material/Person";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import Email from "@mui/icons-material/Email";
+import Lock from "@mui/icons-material/Lock";
+import Person from "@mui/icons-material/Person";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 export default function SignIn() {
@@ -109,7 +109,7 @@ export default function SignIn() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <PersonIcon color="action" />
+                      <Person color="action" />
                     </InputAdornment>
                   )
                 }}
@@ -126,7 +126,7 @@ export default function SignIn() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <EmailIcon color="action" />
+                    <Email color="action" />
                   </InputAdornment>
                 )
               }}
@@ -142,13 +142,13 @@ export default function SignIn() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <LockIcon color="action" />
+                    <Lock color="action" />
                   </InputAdornment>
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 )
