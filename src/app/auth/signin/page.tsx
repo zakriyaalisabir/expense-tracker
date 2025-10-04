@@ -88,8 +88,8 @@ export default function SignIn() {
       <Card sx={{ maxWidth: 450, width: "100%", m: 2, borderRadius: 4 }} elevation={8}>
         <CardContent sx={{ p: 4 }}>
           <Box display="flex" flexDirection="column" alignItems="center" mb={3}>
-            <Avatar sx={{ width: 80, height: 80, mb: 2, bgcolor: "primary.main" }}>
-              <AccountBalanceWalletIcon sx={{ fontSize: 48 }} />
+            <Avatar sx={{ width: 80, height: 80, mb: 2, bgcolor: "primary.main", color: "#fff" }}>
+              <AccountBalanceWalletIcon sx={{ fontSize: 48, color: "inherit" }} />
             </Avatar>
             <Typography variant="h4" fontWeight="bold" gutterBottom>Expense Tracker</Typography>
             <Typography variant="body2" color="text.secondary">Manage your finances with ease</Typography>

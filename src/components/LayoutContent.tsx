@@ -41,8 +41,8 @@ export default function LayoutContent({ children, mode, setMode }: any) {
               <MenuIcon />
             </IconButton>
           )}
-          <Avatar sx={{ bgcolor: "primary.main", mr: 1.5, width: 36, height: 36 }}>
-            <AccountBalanceWalletIcon sx={{ fontSize: 20 }} />
+          <Avatar sx={{ bgcolor: "primary.main", mr: 1.5, width: 36, height: 36, color: "#fff" }}>
+            <AccountBalanceWalletIcon sx={{ fontSize: 20, color: "inherit" }} />
           </Avatar>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>Expense Tracker</Typography>
           {session && (
@@ -78,8 +78,8 @@ export default function LayoutContent({ children, mode, setMode }: any) {
       <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <Box sx={{ width: DRAWER_WIDTH }} role="presentation">
           <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1.5 }}>
-            <Avatar sx={{ bgcolor: "primary.main" }}>
-              <AccountBalanceWalletIcon />
+            <Avatar sx={{ bgcolor: "primary.main", color: "#fff" }}>
+              <AccountBalanceWalletIcon sx={{ color: "inherit" }} />
             </Avatar>
             <Typography variant="h6" fontWeight="bold">Expense Tracker</Typography>
           </Box>

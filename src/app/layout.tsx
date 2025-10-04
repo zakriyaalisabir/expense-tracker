@@ -14,18 +14,72 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   const theme = React.useMemo(() => createTheme({
-    palette: { mode, success: { main: COLORS.SUCCESS }, error: { main: COLORS.ERROR } },
+    palette: { 
+      mode, 
+      success: { main: COLORS.SUCCESS }, 
+      error: { main: COLORS.ERROR },
+      background: {
+        default: 'transparent',
+        paper: mode === 'dark' ? 'rgba(30, 30, 30, 0.4)' : 'rgba(255, 255, 255, 0.3)'
+      }
+    },
     shape: { borderRadius: BORDER_RADIUS },
     components: {
-      MuiCard: { defaultProps: { elevation: ELEVATION } },
+      MuiCard: { 
+        defaultProps: { elevation: 0 },
+        styleOverrides: {
+          root: {
+            backgroundColor: mode === 'dark' ? 'rgba(30, 30, 30, 0.4)' : 'rgba(255, 255, 255, 0.3)',
+            backdropFilter: 'blur(20px)',
+            border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(255, 255, 255, 0.4)',
+            boxShadow: mode === 'dark' 
+              ? '0 8px 32px 0 rgba(0, 0, 0, 0.3)'
+              : '0 8px 32px 0 rgba(31, 38, 135, 0.1)'
+          }
+        }
+      },
       MuiButton: { defaultProps: { disableElevation: true } },
-      MuiTab: { styleOverrides: { root: { textTransform: 'none', fontWeight: 500 } } }
+      MuiTab: { styleOverrides: { root: { textTransform: 'none', fontWeight: 500 } } },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: mode === 'dark' ? 'rgba(30, 30, 30, 0.4)' : 'rgba(255, 255, 255, 0.3)',
+            backdropFilter: 'blur(20px)',
+            backgroundImage: 'none'
+          }
+        }
+      },
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backdropFilter: 'blur(20px)',
+            backgroundColor: mode === 'dark' ? 'rgba(30, 30, 30, 0.5)' : 'rgba(255, 255, 255, 0.4)',
+            boxShadow: 'none',
+            borderBottom: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(255, 255, 255, 0.4)'
+          }
+        }
+      },
+      MuiDrawer: {
+        styleOverrides: {
+          paper: {
+            backdropFilter: 'blur(20px)',
+            backgroundColor: mode === 'dark' ? 'rgba(30, 30, 30, 0.5)' : 'rgba(255, 255, 255, 0.4)',
+            borderRight: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(255, 255, 255, 0.4)'
+          }
+        }
+      }
     }
   }), [mode]);
 
   return (
     <html lang="en">
-      <body>
+      <body style={{
+        background: mode === 'dark'
+          ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+          : 'linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #80deea 100%)',
+        minHeight: '100vh',
+        backgroundAttachment: 'fixed'
+      }}>
         <SessionProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
