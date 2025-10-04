@@ -15,7 +15,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function BudgetForm({ editBudget }: { editBudget?: Budget }) {
+export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budget; onClose?: () => void }) {
   const { addBudget, updateBudget, categories } = useAppStore();
   const [open, setOpen] = React.useState(false);
   const [month, setMonth] = React.useState(new Date().toISOString().slice(0, 7));
@@ -30,6 +30,11 @@ export default function BudgetForm({ editBudget }: { editBudget?: Budget }) {
       setOpen(true);
     }
   }, [editBudget]);
+
+  const handleClose = () => {
+    setOpen(false);
+    if (onClose) onClose();
+  };
 
   function submit() {
     const budget: Budget = {
@@ -47,7 +52,7 @@ export default function BudgetForm({ editBudget }: { editBudget?: Budget }) {
       setTotal("0");
       setByCategory({});
     }
-    setOpen(false);
+    handleClose();
   }
 
   const expenseCategories = categories.filter(c => c.type === "expense" && !c.parent_id);
@@ -62,7 +67,7 @@ export default function BudgetForm({ editBudget }: { editBudget?: Budget }) {
       <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
         <AccountBalanceIcon fontSize="small" />
       </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>{editBudget ? "Edit Budget" : "New Budget"}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
@@ -119,7 +124,7 @@ export default function BudgetForm({ editBudget }: { editBudget?: Budget }) {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleClose}>Cancel</Button>
           <Button variant="contained" onClick={submit}>{editBudget ? "Update" : "Add"}</Button>
         </DialogActions>
       </Dialog>

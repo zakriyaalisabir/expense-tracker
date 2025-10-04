@@ -32,6 +32,7 @@ export default function BudgetsPage(){
 
   return (
     <Fade in timeout={FADE_TIMEOUT}>
+    <Box>
     <Stack spacing={3}>
       <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
         <Box display="flex" alignItems="center" gap={2}>
@@ -45,7 +46,7 @@ export default function BudgetsPage(){
             </Typography>
           </Box>
         </Box>
-        <BudgetForm editBudget={editBudget} />
+        <BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />
       </Box>
       <Divider />
       <Grid container spacing={3}>
@@ -135,6 +136,7 @@ export default function BudgetsPage(){
         })}
       </Grid>
     </Stack>
+    </Box>
     </Fade>
   );
 }
