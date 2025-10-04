@@ -16,7 +16,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
 
   useEffect(() => {
     const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
@@ -25,6 +24,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       return;
     }
+
+    const supabase = createClient();
 
     const initAuth = async () => {
       try {
@@ -47,14 +48,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  }, []);
 
   const signIn = async (email: string, password: string) => {
+    const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   };
 
   const signUp = async (email: string, password: string) => {
+    const supabase = createClient();
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
     if (data.user && typeof window !== 'undefined') {
@@ -68,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       return;
     }
+    const supabase = createClient();
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };
