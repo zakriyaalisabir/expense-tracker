@@ -19,7 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
 
   useEffect(() => {
-    const demoMode = localStorage.getItem('demo-mode') === 'true';
+    const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
     if (demoMode) {
       setUser({ id: 'demo', email: 'demo@example.com' } as User);
       setLoading(false);
@@ -57,13 +57,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
-    if (data.user) {
+    if (data.user && typeof window !== 'undefined') {
       localStorage.setItem('new-user', 'true');
     }
   };
 
   const signOut = async () => {
-    if (localStorage.getItem('demo-mode') === 'true') {
+    if (typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true') {
       localStorage.removeItem('demo-mode');
       setUser(null);
       return;
