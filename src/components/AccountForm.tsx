@@ -81,7 +81,7 @@ export default function AccountForm({ editAccount, onClose }: Props = {}) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => { setOpen(false); onClose?.(); }}>Cancel</Button>
-          <Button variant="contained" onClick={submit} disabled={!name.trim()}>{editAccount ? "Update" : "Add"}</Button>
+          <Button variant="contained" onClick={submit} disabled={!name.trim()}>{editAccount ? "Update" : "Save"}</Button>
         </DialogActions>
       </Dialog>
     </>

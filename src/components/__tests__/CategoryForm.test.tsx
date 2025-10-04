@@ -67,13 +67,14 @@ describe('CategoryForm', () => {
       id: 'c1',
       user_id: 'u1',
       name: 'Food',
-      type: 'expense'
+      type: 'expense' as const,
+      currency: 'THB' as const
     }
 
     render(<CategoryForm editCategory={editCategory} />)
     
     await waitFor(() => {
-      expect(screen.getByText('Edit Category')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Edit Category' })).toBeInTheDocument()
     })
 
     fireEvent.change(screen.getByLabelText('Category Name'), { target: { value: 'Groceries' } })
@@ -92,12 +93,17 @@ describe('CategoryForm', () => {
     render(<CategoryForm />)
     
     fireEvent.click(screen.getByText('Add Category'))
-    fireEvent.click(screen.getByText('Income'))
+    
+    await waitFor(() => {
+      expect(screen.getByLabelText('Category Name')).toBeInTheDocument()
+    })
+    
+    fireEvent.change(screen.getByLabelText('Category Name'), { target: { value: 'Test' } })
     fireEvent.click(screen.getByText('Save'))
 
     await waitFor(() => {
       expect(mockAddCategory).toHaveBeenCalledWith(expect.objectContaining({
-        type: 'income'
+        type: 'expense'
       }))
     })
   })

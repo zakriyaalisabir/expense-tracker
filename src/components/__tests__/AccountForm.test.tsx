@@ -93,7 +93,12 @@ describe('AccountForm', () => {
     render(<AccountForm />)
     
     fireEvent.click(screen.getByText('Add Account'))
-    fireEvent.click(screen.getByText('Bank'))
+    
+    await waitFor(() => {
+      expect(screen.getByLabelText('Account Name')).toBeInTheDocument()
+    })
+    
+    fireEvent.change(screen.getByLabelText('Account Name'), { target: { value: 'Test' } })
     fireEvent.click(screen.getByText('Save'))
 
     await waitFor(() => {

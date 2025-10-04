@@ -98,6 +98,12 @@ describe('GoalForm', () => {
     render(<GoalForm />)
     
     fireEvent.click(screen.getByText('Add Goal'))
+    
+    await waitFor(() => {
+      expect(screen.getByLabelText('Goal Name')).toBeInTheDocument()
+    })
+    
+    fireEvent.change(screen.getByLabelText('Goal Name'), { target: { value: 'Test' } })
     fireEvent.change(screen.getByLabelText('Target Date'), { target: { value: '2024-12-31' } })
     fireEvent.click(screen.getByText('Save'))
 

@@ -16,9 +16,9 @@ import { useAppStore, uid } from "@lib/store";
 import { Category, CategoryType, CurrencyCode } from "@lib/types";
 import { CURRENCIES, CATEGORY_TYPES } from "@lib/constants";
 
-type Props = { editCategory?: Category };
+type Props = { editCategory?: Category; onClose?: () => void };
 
-export default function CategoryForm({ editCategory }: Props) {
+export default function CategoryForm({ editCategory, onClose }: Props) {
   const { categories, addCategory, updateCategory } = useAppStore();
   const [open, setOpen] = React.useState(false);
   const [type, setType] = React.useState<CategoryType>(editCategory?.type || "expense");
@@ -34,6 +34,7 @@ export default function CategoryForm({ editCategory }: Props) {
       setName(editCategory.name);
       setParentId(editCategory.parent_id || "");
       setCurrency(editCategory.currency || "THB");
+      setOpen(true);
     }
   }, [editCategory]);
 
@@ -55,6 +56,7 @@ export default function CategoryForm({ editCategory }: Props) {
       setType("expense");
     }
     setOpen(false);
+    onClose?.();
   }
 
   return (
@@ -73,7 +75,7 @@ export default function CategoryForm({ editCategory }: Props) {
           </Button>
         </>
       )}
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
+      <Dialog open={open} onClose={() => { setOpen(false); onClose?.(); }} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>{editCategory ? "Edit" : "New"} Category</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
@@ -99,8 +101,8 @@ export default function CategoryForm({ editCategory }: Props) {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={submit} disabled={!name.trim()}>{editCategory ? "Save" : "Add"}</Button>
+          <Button onClick={() => { setOpen(false); onClose?.(); }}>Cancel</Button>
+          <Button variant="contained" onClick={submit} disabled={!name.trim()}>{editCategory ? "Update" : "Save"}</Button>
         </DialogActions>
       </Dialog>
     </>

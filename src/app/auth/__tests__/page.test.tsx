@@ -35,30 +35,36 @@ describe('AuthPage', () => {
     } as any)
   })
 
-  it('renders sign in form', () => {
+  it('renders sign in form', async () => {
     render(<AuthPage />)
-    expect(screen.getByText('Sign In')).toBeInTheDocument()
-    expect(screen.getByLabelText('Email')).toBeInTheDocument()
-    expect(screen.getByLabelText('Password')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument()
+    })
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
   })
 
   it('toggles between sign in and sign up', () => {
     render(<AuthPage />)
-    expect(screen.getByText('Sign In')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument()
     
     fireEvent.click(screen.getByText('Need an account? Sign Up'))
-    expect(screen.getByText('Sign Up')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Sign Up' })).toBeInTheDocument()
     
     fireEvent.click(screen.getByText('Already have an account? Sign In'))
-    expect(screen.getByText('Sign In')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument()
   })
 
   it('handles sign in submission', async () => {
     mockSignIn.mockResolvedValue(undefined)
     render(<AuthPage />)
     
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@example.com' } })
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } })
+    await waitFor(() => {
+      expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    })
+    
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } })
     fireEvent.click(screen.getByRole('button', { name: 'Sign In' }))
 
     await waitFor(() => {
@@ -72,10 +78,19 @@ describe('AuthPage', () => {
     const alertMock = jest.spyOn(window, 'alert').mockImplementation()
     
     render(<AuthPage />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Need an account? Sign Up')).toBeInTheDocument()
+    })
+    
     fireEvent.click(screen.getByText('Need an account? Sign Up'))
     
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'new@example.com' } })
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } })
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Sign Up' })).toBeInTheDocument()
+    })
+    
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'new@example.com' } })
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } })
     fireEvent.click(screen.getByRole('button', { name: 'Sign Up' }))
 
     await waitFor(() => {
@@ -90,8 +105,12 @@ describe('AuthPage', () => {
     mockSignIn.mockRejectedValue(new Error('Invalid credentials'))
     render(<AuthPage />)
     
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@example.com' } })
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'wrong' } })
+    await waitFor(() => {
+      expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    })
+    
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'wrong' } })
     fireEvent.click(screen.getByRole('button', { name: 'Sign In' }))
 
     await waitFor(() => {
@@ -165,6 +184,6 @@ describe('AuthPage', () => {
 
     render(<AuthPage />)
     expect(mockReplace).not.toHaveBeenCalled()
-    expect(screen.getByText('Sign In')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument()
   })
 })

@@ -13,8 +13,8 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function GoalForm() {
-  const { accounts, addGoal } = useAppStore();
+export default function GoalForm({ editGoal, onClose }: { editGoal?: Goal; onClose?: () => void } = {}) {
+  const { accounts, addGoal, updateGoal } = useAppStore();
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState("");
   const [targetAmount, setTargetAmount] = React.useState("0");
@@ -26,22 +26,39 @@ export default function GoalForm() {
     if (accounts.length && !accountId) setAccountId(accounts[0].id);
   }, [accounts, accountId]);
 
+  React.useEffect(() => {
+    if (editGoal) {
+      setName(editGoal.name);
+      setTargetAmount(editGoal.target_amount.toString());
+      setTargetDate(new Date(editGoal.target_date).toISOString().slice(0, 10));
+      setMonthlyContribution(editGoal.monthly_contribution.toString());
+      setAccountId(editGoal.source_account_id);
+      setOpen(true);
+    }
+  }, [editGoal]);
+
   async function submit() {
     if (!name.trim()) return;
-    await addGoal({
+    const data = {
       name: name.trim(),
       target_amount: Number(targetAmount),
       target_date: new Date(targetDate).toISOString(),
       monthly_contribution: Number(monthlyContribution),
       source_account_id: accountId,
-      progress_cached: 0
-    });
-    setName("");
-    setTargetAmount("0");
-    setTargetDate(new Date(new Date().getFullYear() + 1, 0, 1).toISOString().slice(0, 10));
-    setMonthlyContribution("0");
-    setAccountId(accounts[0]?.id || "");
+      progress_cached: editGoal?.progress_cached ?? 0
+    };
+    if (editGoal) {
+      await updateGoal({ ...data, id: editGoal.id, user_id: editGoal.user_id });
+    } else {
+      await addGoal(data);
+      setName("");
+      setTargetAmount("0");
+      setTargetDate(new Date(new Date().getFullYear() + 1, 0, 1).toISOString().slice(0, 10));
+      setMonthlyContribution("0");
+      setAccountId(accounts[0]?.id || "");
+    }
     setOpen(false);
+    onClose?.();
   }
 
   return (
@@ -50,8 +67,8 @@ export default function GoalForm() {
       <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
         <FlagIcon fontSize="small" />
       </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
-        <DialogTitle>New Goal</DialogTitle>
+      <Dialog open={open} onClose={() => { setOpen(false); onClose?.(); }} fullWidth maxWidth="sm" TransitionComponent={Transition}>
+        <DialogTitle>{editGoal ? "Edit Goal" : "New Goal"}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField label="Goal Name" value={name} onChange={e => setName(e.target.value)} />
@@ -66,8 +83,8 @@ export default function GoalForm() {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={submit} disabled={!name.trim()}>Add</Button>
+          <Button onClick={() => { setOpen(false); onClose?.(); }}>Cancel</Button>
+          <Button variant="contained" onClick={submit} disabled={!name.trim()}>{editGoal ? "Update" : "Save"}</Button>
         </DialogActions>
       </Dialog>
     </>

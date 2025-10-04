@@ -1,4 +1,3 @@
-import { totalsForRange, totalsForRangeByCurrency, goalProgress, uid } from '../store'
 import { Goal } from '../types'
 import { parseISO, addMonths } from 'date-fns'
 
@@ -32,24 +31,28 @@ const mockTransactions = [
   { id: '4', user_id: 'u1', date: '2024-02-15T10:00:00Z', type: 'savings', amount: 200, currency: 'USD', account_id: 'a1', category_id: 'c3', tags: [], fx_rate: 36, base_amount: 7200 },
 ]
 
-jest.mock('../store', () => {
-  const actual = jest.requireActual('../store')
-  return {
-    ...actual,
-    useAppStore: {
-      getState: jest.fn(() => ({
-        transactions: mockTransactions
-      }))
-    }
-  }
-})
+import * as storeModule from '../store'
+
+const mockGetState = jest.fn(() => ({
+  transactions: mockTransactions,
+  settings: { baseCurrency: 'THB', exchangeRates: { THB: 1, USD: 36 } },
+  accounts: [],
+  categories: [],
+  goals: [],
+  budgets: [],
+  isLoading: false,
+  userId: null
+}))
+
+jest.spyOn(storeModule.useAppStore, 'getState').mockImplementation(mockGetState)
+
+const { totalsForRange, totalsForRangeByCurrency, goalProgress, uid } = storeModule
 
 describe('store utilities', () => {
   beforeEach(() => {
-    const { useAppStore } = require('../store')
-    useAppStore.getState = jest.fn(() => ({
+    mockGetState.mockReturnValue({
       transactions: mockTransactions
-    }))
+    })
   })
   describe('uid', () => {
     it('generates unique id with prefix', () => {

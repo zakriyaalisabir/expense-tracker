@@ -123,7 +123,7 @@ export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budge
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" onClick={submit}>{editBudget ? "Update" : "Add"}</Button>
+          <Button variant="contained" onClick={submit}>{editBudget ? "Update" : "Save"}</Button>
         </DialogActions>
       </Dialog>
     </>
