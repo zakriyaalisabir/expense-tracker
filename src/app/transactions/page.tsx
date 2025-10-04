@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box, TablePagination } from "@mui/material";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore } from "@lib/store";
 import { FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
@@ -27,6 +27,8 @@ export default function TransactionsPage(){
   const categories = useAppStore(s => s.categories);
   const accounts = useAppStore(s => s.accounts);
   const [loading, setLoading] = React.useState(true);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   
   React.useEffect(() => {
     const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
@@ -38,6 +40,16 @@ export default function TransactionsPage(){
   );
   const categoryMap = React.useMemo(() => 
     Object.fromEntries(categories.map(c => [c.id, c.name])), [categories]
+  );
+
+  const sortedTransactions = React.useMemo(() => 
+    [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [transactions]
+  );
+
+  const paginatedTransactions = React.useMemo(() =>
+    sortedTransactions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [sortedTransactions, page, rowsPerPage]
   );
 
   if (loading) {
@@ -69,7 +81,7 @@ export default function TransactionsPage(){
             </TableRow>
           </TableHead>
           <TableBody>
-            {transactions.map(t => (
+            {paginatedTransactions.map(t => (
               <TransactionRow 
                 key={t.id} 
                 t={t} 
@@ -80,6 +92,18 @@ export default function TransactionsPage(){
           </TableBody>
         </Table>
         </TableContainer>
+        <TablePagination
+          component="div"
+          count={transactions.length}
+          page={page}
+          onPageChange={(_, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+        />
       </CardContent></Card>
     </Stack>
     </Fade>
