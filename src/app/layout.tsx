@@ -25,7 +25,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, []);
   const theme = React.useMemo(() => createTheme({
     palette: { mode, success: { main: "#2e7d32" }, error: { main: "#c62828" } },
-    shape: { borderRadius: 16 }
+    shape: { borderRadius: 16 },
+    components: {
+      MuiCard: { defaultProps: { elevation: 2 } },
+      MuiButton: { defaultProps: { disableElevation: true } }
+    }
   }), [mode]);
 
   const pathname = usePathname();
@@ -40,8 +44,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Typography variant="h6" sx={{ flexGrow: 1 }}>Expense Tracker</Typography>
               <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
                 <Tabs value={current !== -1 ? current : false}>
-                  {tabs.map((t, i) => (
-                    <Tab key={i} label={t.label} component={Link} href={t.href} />
+                  {tabs.map((t) => (
+                    <Tab key={t.href} label={t.label} component={Link} href={t.href} />
                   ))}
                 </Tabs>
               </Box>

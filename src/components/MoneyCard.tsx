@@ -1,19 +1,16 @@
-"use client";
 import * as React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 
-export default function MoneyCard({ title, value, variant="h5", color }:{
-  title: string; value: number; variant?: any; color?: "success"|"error"|"primary";
-}){
-  const formatted = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value);
-  return (
-    <Card elevation={1}>
-      <CardContent>
-        <Typography variant="overline" color="text.secondary">{title}</Typography>
-        <Typography variant={variant} color={color ? `${color}.main` : undefined}>
-          {formatted}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
-}
+type Props = { title: string; value: number; color?: "success" | "error" | "info" };
+
+const MoneyCard = React.memo(({ title, value, color }: Props) => (
+  <Card>
+    <CardContent>
+      <Typography variant="body2" color="text.secondary">{title}</Typography>
+      <Typography variant="h5" color={color}>{value.toFixed(2)}</Typography>
+    </CardContent>
+  </Card>
+));
+
+MoneyCard.displayName = "MoneyCard";
+export default MoneyCard;

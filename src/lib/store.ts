@@ -98,53 +98,64 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
 
 export function totalsForRange(startISO?: string, endISO?: string) {
   const tx = useAppStore.getState().transactions;
-  const inRange = tx.filter(t => {
+  const startTime = startISO ? new Date(startISO).getTime() : 0;
+  const endTime = endISO ? new Date(endISO).getTime() : Infinity;
+  
+  let income = 0, expense = 0, saved = 0;
+  
+  for (let i = 0; i < tx.length; i++) {
+    const t = tx[i];
     const d = new Date(t.date).getTime();
-    const okStart = startISO ? d >= new Date(startISO).getTime() : true;
-    const okEnd = endISO ? d <= new Date(endISO).getTime() : true;
-    return okStart && okEnd;
-  });
-  const income = inRange.filter(t => t.type === "income").reduce((a,b)=>a+b.base_amount,0);
-  const expense = inRange.filter(t => t.type === "expense").reduce((a,b)=>a+b.base_amount,0);
-  const saved = inRange.filter(t => t.type === "savings").reduce((a,b)=>a+b.base_amount,0);
+    if (d < startTime || d > endTime) continue;
+    
+    if (t.type === "income") income += t.base_amount;
+    else if (t.type === "expense") expense += t.base_amount;
+    else if (t.type === "savings") saved += t.base_amount;
+  }
+  
   const netSavings = income - expense - saved;
   return { income, expense, saved, savings: netSavings, savingsPct: income ? ((netSavings)/income)*100 : 0 };
 }
 
 export function totalsForRangeByCurrency(startISO?: string, endISO?: string, currency?: CurrencyCode) {
   const tx = useAppStore.getState().transactions;
-  const inRange = tx.filter(t => {
-    const d = new Date(t.date).getTime();
-    const okStart = startISO ? d >= new Date(startISO).getTime() : true;
-    const okEnd = endISO ? d <= new Date(endISO).getTime() : true;
-    const okCurrency = currency ? t.currency === currency : true;
-    return okStart && okEnd && okCurrency;
-  });
+  const startTime = startISO ? new Date(startISO).getTime() : 0;
+  const endTime = endISO ? new Date(endISO).getTime() : Infinity;
   
   if (currency) {
-    const income = inRange.filter(t => t.type === "income").reduce((a,b)=>a+b.amount,0);
-    const expense = inRange.filter(t => t.type === "expense").reduce((a,b)=>a+b.amount,0);
+    let income = 0, expense = 0;
+    for (let i = 0; i < tx.length; i++) {
+      const t = tx[i];
+      if (t.currency !== currency) continue;
+      const d = new Date(t.date).getTime();
+      if (d < startTime || d > endTime) continue;
+      if (t.type === "income") income += t.amount;
+      else if (t.type === "expense") expense += t.amount;
+    }
     return { income, expense, savings: income - expense, savingsPct: income ? ((income - expense)/income)*100 : 0, currency };
   }
   
   const byCurrency: Record<CurrencyCode, { income: number; expense: number; savings: number; savingsPct: number }> = {} as any;
-  inRange.forEach(t => {
+  
+  for (let i = 0; i < tx.length; i++) {
+    const t = tx[i];
+    const d = new Date(t.date).getTime();
+    if (d < startTime || d > endTime) continue;
+    
     if (!byCurrency[t.currency]) {
       byCurrency[t.currency] = { income: 0, expense: 0, savings: 0, savingsPct: 0 };
     }
-    if (t.type === "income") {
-      byCurrency[t.currency].income += t.amount;
-    } else {
-      byCurrency[t.currency].expense += t.amount;
-    }
-  });
+    if (t.type === "income") byCurrency[t.currency].income += t.amount;
+    else if (t.type === "expense") byCurrency[t.currency].expense += t.amount;
+  }
   
-  Object.keys(byCurrency).forEach(curr => {
-    const currency = curr as CurrencyCode;
-    const { income, expense } = byCurrency[currency];
-    byCurrency[currency].savings = income - expense;
-    byCurrency[currency].savingsPct = income ? ((income - expense)/income)*100 : 0;
-  });
+  const currencies = Object.keys(byCurrency);
+  for (let i = 0; i < currencies.length; i++) {
+    const curr = currencies[i] as CurrencyCode;
+    const { income, expense } = byCurrency[curr];
+    byCurrency[curr].savings = income - expense;
+    byCurrency[curr].savingsPct = income ? ((income - expense)/income)*100 : 0;
+  }
   
   return byCurrency;
 }

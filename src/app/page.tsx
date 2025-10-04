@@ -1,29 +1,32 @@
 "use client";
 import * as React from "react";
-import { Grid, Card, CardContent, Typography, Stack, Divider } from "@mui/material";
+import dynamic from "next/dynamic";
+import { Grid, Card, CardContent, Typography, Stack, Divider, Skeleton } from "@mui/material";
 import MoneyCard from "@components/MoneyCard";
-import MonthlyIncomeExpenseChart from "@components/charts/MonthlyIncomeExpenseChart";
-import IncomeExpenseSavingsChart from "@components/charts/IncomeExpenseSavingsChart";
-import CategoryBreakdownChart from "@components/charts/CategoryBreakdownChart";
-import TrendHeatmap from "@components/charts/TrendHeatmap";
-import CurrencyBreakdownChart from "@components/charts/CurrencyBreakdownChart";
-import MonthlyCurrencyChart from "@components/charts/MonthlyCurrencyChart";
-import CategoryByCurrencyChart from "@components/charts/CategoryByCurrencyChart";
-import SavingsRateChart from "@components/charts/SavingsRateChart";
-import AccountBalanceChart from "@components/charts/AccountBalanceChart";
-import SubcategoryChart from "@components/charts/SubcategoryChart";
-import TopExpensesChart from "@components/charts/TopExpensesChart";
-import CashFlowChart from "@components/charts/CashFlowChart";
-import WeekdaySpendingChart from "@components/charts/WeekdaySpendingChart";
-import CurrencySummary from "@components/CurrencySummary";
-import AccountList from "@components/AccountList";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore, totalsForRange } from "@lib/store";
 
+const IncomeExpenseSavingsChart = dynamic(() => import("@components/charts/IncomeExpenseSavingsChart"), { ssr: false });
+const MonthlyIncomeExpenseChart = dynamic(() => import("@components/charts/MonthlyIncomeExpenseChart"), { ssr: false });
+const CategoryBreakdownChart = dynamic(() => import("@components/charts/CategoryBreakdownChart"), { ssr: false });
+const CurrencySummary = dynamic(() => import("@components/CurrencySummary"), { ssr: false });
+const CurrencyBreakdownChart = dynamic(() => import("@components/charts/CurrencyBreakdownChart"), { ssr: false });
+const MonthlyCurrencyChart = dynamic(() => import("@components/charts/MonthlyCurrencyChart"), { ssr: false });
+const CategoryByCurrencyChart = dynamic(() => import("@components/charts/CategoryByCurrencyChart"), { ssr: false });
+const SavingsRateChart = dynamic(() => import("@components/charts/SavingsRateChart"), { ssr: false });
+const AccountBalanceChart = dynamic(() => import("@components/charts/AccountBalanceChart"), { ssr: false });
+const TopExpensesChart = dynamic(() => import("@components/charts/TopExpensesChart"), { ssr: false });
+const SubcategoryChart = dynamic(() => import("@components/charts/SubcategoryChart"), { ssr: false });
+const CashFlowChart = dynamic(() => import("@components/charts/CashFlowChart"), { ssr: false });
+const WeekdaySpendingChart = dynamic(() => import("@components/charts/WeekdaySpendingChart"), { ssr: false });
+const TrendHeatmap = dynamic(() => import("@components/charts/TrendHeatmap"), { ssr: false });
+const AccountList = dynamic(() => import("@components/AccountList"), { ssr: false });
+
 export default function Dashboard(){
   const seed = useAppStore(s => s.seed);
-  const { income, expense, saved, savings, savingsPct } = totalsForRange();
   const [hydrated, setHydrated] = React.useState(false);
+  const totals = React.useMemo(() => totalsForRange(), []);
+  const { income, expense, saved, savings } = totals;
 
   React.useEffect(() => {
     seed();
@@ -31,7 +34,7 @@ export default function Dashboard(){
   }, [seed]);
 
   if (!hydrated) {
-    return <Typography color="text.secondary">Loading dashboard...</Typography>;
+    return <Typography color="text.secondary">Loading...</Typography>;
   }
   return (
     <Grid container spacing={2}>
