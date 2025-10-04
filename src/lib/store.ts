@@ -26,6 +26,8 @@ type Actions = {
   updateCategory: (c: Category) => void;
   deleteCategory: (id: string) => void;
   addBudget: (b: Budget) => void;
+  updateBudget: (b: Budget) => void;
+  deleteBudget: (id: string) => void;
   addGoal: (g: Goal) => void;
   updateGoal: (g: Goal) => void;
   setBaseCurrency: (c: CurrencyCode) => void;
@@ -109,6 +111,8 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
   updateCategory: (c) => set({ categories: get().categories.map(x => x.id === c.id ? c : x) }),
   deleteCategory: (id) => set({ categories: get().categories.filter(x => x.id !== id) }),
   addBudget: (b) => set({ budgets: [...get().budgets, b] }),
+  updateBudget: (b) => set({ budgets: get().budgets.map(x => x.id === b.id ? b : x) }),
+  deleteBudget: (id) => set({ budgets: get().budgets.filter(x => x.id !== id) }),
   addGoal: (g) => set({ goals: [...get().goals, g] }),
   updateGoal: (g) => set({ goals: get().goals.map(x => x.id === g.id ? g : x) }),
   setBaseCurrency: (c) => set({ settings: { ...get().settings, baseCurrency: c } }),

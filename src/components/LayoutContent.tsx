@@ -41,10 +41,10 @@ export default function LayoutContent({ children, mode, setMode }: any) {
               <MenuIcon />
             </IconButton>
           )}
-          <Avatar sx={{ bgcolor: "primary.main", mr: 1.5, width: 36, height: 36, color: "#fff" }}>
-            <AccountBalanceWalletIcon sx={{ fontSize: 20, color: "inherit" }} />
+          <Avatar sx={{ bgcolor: "primary.main", mr: 1.5, width: 40, height: 40, color: "#fff" }}>
+            <AccountBalanceWalletIcon sx={{ fontSize: 22, color: "inherit" }} />
           </Avatar>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>Expense Tracker</Typography>
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: '-0.02em' }}>Expense Tracker</Typography>
           {session && (
             <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
               <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
@@ -102,7 +102,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
           </List>
         </Box>
       </Drawer>
-      <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         {children}
       </Container>
     </>
