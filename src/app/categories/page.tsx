@@ -6,13 +6,14 @@ import AddIcon from "@mui/icons-material/Add";
 import CategoryForm from "@components/CategoryForm";
 import { useAppStore } from "@lib/store";
 import { Category } from "@lib/types";
+import { CATEGORY_TYPES, FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
 
 export default function CategoriesPage() {
   const { categories, deleteCategory } = useAppStore();
   const [loading, setLoading] = React.useState(true);
   
   React.useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 300);
+    const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
     return () => clearTimeout(timer);
   }, []);
 
@@ -28,14 +29,14 @@ export default function CategoriesPage() {
   }
 
   return (
-    <Fade in timeout={500}>
+    <Fade in timeout={FADE_TIMEOUT}>
     <Stack spacing={3}>
       <Box>
         <CategoryForm />
       </Box>
       <Divider />
       <Grid container spacing={2}>
-        {["income", "expense", "savings"].map(type => (
+        {CATEGORY_TYPES.map(type => (
           <Grid item xs={12} md={4} key={type}>
             <Card>
               <CardContent>

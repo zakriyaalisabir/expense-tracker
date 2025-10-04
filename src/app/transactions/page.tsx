@@ -3,6 +3,7 @@ import * as React from "react";
 import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box } from "@mui/material";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore } from "@lib/store";
+import { FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
 
 const TransactionRow = React.memo(({ t, accountName, categoryName }: any) => {
   const typeColor = t.type === "income" ? "success" : t.type === "savings" ? "info" : "error";
@@ -28,7 +29,7 @@ export default function TransactionsPage(){
   const [loading, setLoading] = React.useState(true);
   
   React.useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 300);
+    const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
     return () => clearTimeout(timer);
   }, []);
 
@@ -48,7 +49,7 @@ export default function TransactionsPage(){
   }
 
   return (
-    <Fade in timeout={500}>
+    <Fade in timeout={FADE_TIMEOUT}>
     <Stack spacing={2}>
       <TransactionForm/>
       <Card><CardContent>

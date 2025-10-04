@@ -2,6 +2,7 @@
 import * as React from "react";
 import dynamic from "next/dynamic";
 import { Grid, Card, CardContent, Typography, Stack, Divider, Skeleton, Fade } from "@mui/material";
+import { FADE_TIMEOUT } from "@lib/constants";
 import MoneyCard from "@components/MoneyCard";
 import TransactionForm from "@components/TransactionForm";
 import CategoryForm from "@components/CategoryForm";
@@ -53,7 +54,7 @@ export default function Dashboard(){
     );
   }
   return (
-    <Fade in timeout={500}>
+    <Fade in timeout={FADE_TIMEOUT}>
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>

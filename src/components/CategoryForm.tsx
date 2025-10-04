@@ -12,6 +12,7 @@ const Transition = React.forwardRef(function Transition(
 });
 import { useAppStore, uid } from "@lib/store";
 import { Category, CategoryType, CurrencyCode } from "@lib/types";
+import { CURRENCIES, CATEGORY_TYPES } from "@lib/constants";
 
 type Props = { editCategory?: Category };
 
@@ -65,13 +66,13 @@ export default function CategoryForm({ editCategory }: Props) {
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <ToggleButtonGroup exclusive value={type} onChange={(_, v) => v && setType(v)} disabled={!!editCategory}>
-              <ToggleButton value="income">Income</ToggleButton>
-              <ToggleButton value="expense">Expense</ToggleButton>
-              <ToggleButton value="savings">Savings</ToggleButton>
+              {CATEGORY_TYPES.map(t => (
+                <ToggleButton key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</ToggleButton>
+              ))}
             </ToggleButtonGroup>
             <TextField label="Category Name" value={name} onChange={e => setName(e.target.value)} />
             <TextField select label="Currency" value={currency} onChange={e => setCurrency(e.target.value as CurrencyCode)}>
-              {["THB", "USD", "EUR", "JPY"].map(c => (
+              {CURRENCIES.map(c => (
                 <MenuItem key={c} value={c}>{c}</MenuItem>
               ))}
             </TextField>

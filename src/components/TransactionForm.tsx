@@ -6,6 +6,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore } from "@lib/store";
 import { toBase, FX } from "@lib/currency";
 import { Transaction } from "@lib/types";
+import { CURRENCIES, TRANSACTION_TYPES } from "@lib/constants";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement<any, any> },
@@ -51,14 +52,14 @@ export default function TransactionForm(){
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <ToggleButtonGroup exclusive value={type} onChange={(_,v)=>v&&setType(v)}>
-            <ToggleButton value="income">Income</ToggleButton>
-            <ToggleButton value="expense">Expense</ToggleButton>
-            <ToggleButton value="savings">Savings</ToggleButton>
+            {TRANSACTION_TYPES.map(t => (
+              <ToggleButton key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</ToggleButton>
+            ))}
           </ToggleButtonGroup>
           <TextField label="Date & Time" type="datetime-local" value={form.date} onChange={e=>setForm({...form, date:e.target.value})}/>
           <TextField label="Amount" type="number" value={form.amount} onChange={e=>setForm({...form, amount:e.target.value})}/>
           <TextField select label="Currency" value={form.currency} onChange={e=>setForm({...form, currency:e.target.value})}>
-            {["THB","USD","EUR","JPY"].map(c=>(<MenuItem key={c} value={c}>{c}</MenuItem>))}
+            {CURRENCIES.map(c=>(<MenuItem key={c} value={c}>{c}</MenuItem>))}
           </TextField>
           <TextField select label="Account" value={form.account_id} onChange={e=>setForm({...form, account_id:e.target.value})}>
             {useAppStore.getState().accounts.map(a=>(<MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>))}

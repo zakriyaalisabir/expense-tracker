@@ -5,6 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore, uid } from "@lib/store";
 import { Account, AccountType, CurrencyCode } from "@lib/types";
+import { CURRENCIES, ACCOUNT_TYPES } from "@lib/constants";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement<any, any> },
@@ -45,12 +46,12 @@ export default function AccountForm() {
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField label="Account Name" value={name} onChange={e => setName(e.target.value)} />
             <TextField select label="Type" value={type} onChange={e => setType(e.target.value as AccountType)}>
-              {["cash", "bank", "credit", "ewallet", "savings"].map(t => (
+              {ACCOUNT_TYPES.map(t => (
                 <MenuItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</MenuItem>
               ))}
             </TextField>
             <TextField select label="Currency" value={currency} onChange={e => setCurrency(e.target.value as CurrencyCode)}>
-              {["THB", "USD", "EUR", "JPY"].map(c => (
+              {CURRENCIES.map(c => (
                 <MenuItem key={c} value={c}>{c}</MenuItem>
               ))}
             </TextField>

@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Account, Category, Transaction, Goal, Budget, BaseSettings, CurrencyCode } from "./types";
 import { differenceInMonths, parseISO } from "date-fns";
+import { STORAGE_KEY } from "./constants";
 
 type State = {
   settings: BaseSettings;
@@ -106,7 +107,7 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
   addGoal: (g) => set({ goals: [...get().goals, g] }),
   updateGoal: (g) => set({ goals: get().goals.map(x => x.id === g.id ? g : x) }),
   setBaseCurrency: (c) => set({ settings: { ...get().settings, baseCurrency: c } })
-}), { name: "expense-tracker-v1" }));
+}), { name: STORAGE_KEY }));
 
 export function totalsForRange(startISO?: string, endISO?: string) {
   const tx = useAppStore.getState().transactions;

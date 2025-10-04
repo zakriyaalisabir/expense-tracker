@@ -7,48 +7,38 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-
-const tabs = [
-  { label: "Dashboard", href: "/" },
-  { label: "Transactions", href: "/transactions" },
-  { label: "Categories", href: "/categories" },
-  { label: "Accounts", href: "/accounts" },
-  { label: "Budgets", href: "/budgets" },
-  { label: "Goals", href: "/goals" },
-  { label: "Reports", href: "/reports" },
-  { label: "Settings", href: "/settings" }
-];
+import { TABS, THEME_MODE, THEME_MODE_KEY, COLORS, BORDER_RADIUS, ELEVATION, LOADING_DELAY, DRAWER_WIDTH, MOBILE_BREAKPOINT } from "@lib/constants";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = React.useState<"light" | "dark">("light");
+  const [mode, setMode] = React.useState<"light" | "dark">(THEME_MODE.LIGHT);
   const [loading, setLoading] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const isMobile = useMediaQuery('(max-width:900px)');
+  const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
   
   React.useEffect(() => {
-    const m = window.localStorage.getItem("theme-mode") as "light" | "dark" | null;
+    const m = window.localStorage.getItem(THEME_MODE_KEY) as "light" | "dark" | null;
     if (m) setMode(m);
   }, []);
 
   React.useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 300);
+    const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
     return () => clearTimeout(timer);
   }, [pathname]);
 
   const theme = React.useMemo(() => createTheme({
-    palette: { mode, success: { main: "#2e7d32" }, error: { main: "#c62828" } },
-    shape: { borderRadius: 16 },
+    palette: { mode, success: { main: COLORS.SUCCESS }, error: { main: COLORS.ERROR } },
+    shape: { borderRadius: BORDER_RADIUS },
     components: {
-      MuiCard: { defaultProps: { elevation: 2 } },
+      MuiCard: { defaultProps: { elevation: ELEVATION } },
       MuiButton: { defaultProps: { disableElevation: true } },
       MuiTab: { styleOverrides: { root: { textTransform: 'none', fontWeight: 500 } } }
     }
   }), [mode]);
 
-  const current = tabs.findIndex(t => t.href === pathname);
+  const current = TABS.findIndex(t => t.href === pathname);
 
   const handleNavigation = (href: string) => {
     setDrawerOpen(false);
@@ -69,25 +59,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Typography variant="h6" sx={{ flexGrow: 1 }}>💰 Expense Tracker</Typography>
               <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
                 <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
-                  {tabs.map((t) => (
+                  {TABS.map((t) => (
                     <Tab key={t.href} label={t.label} component={Link} href={t.href} />
                   ))}
                 </Tabs>
               </Box>
               <IconButton onClick={() => {
-                const next = mode === "light" ? "dark" : "light";
+                const next = mode === THEME_MODE.LIGHT ? THEME_MODE.DARK : THEME_MODE.LIGHT;
                 setMode(next);
-                window.localStorage.setItem("theme-mode", next);
+                window.localStorage.setItem(THEME_MODE_KEY, next);
               }}>
-                {mode === "light" ? <Brightness4Icon /> : <Brightness7Icon />}
+                {mode === THEME_MODE.LIGHT ? <Brightness4Icon /> : <Brightness7Icon />}
               </IconButton>
             </Toolbar>
             {loading && <LinearProgress />}
           </AppBar>
           <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-            <Box sx={{ width: 250 }} role="presentation">
+            <Box sx={{ width: DRAWER_WIDTH }} role="presentation">
               <List>
-                {tabs.map((t) => (
+                {TABS.map((t) => (
                   <ListItem key={t.href} disablePadding>
                     <ListItemButton selected={pathname === t.href} onClick={() => handleNavigation(t.href)}>
                       <ListItemText primary={t.label} />
