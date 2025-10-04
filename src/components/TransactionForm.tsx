@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { useAppStore } from "@lib/store";
-import { toBase } from "@lib/currency";
+import { toBase, FX } from "@lib/currency";
 import { Transaction } from "@lib/types";
 
 export default function TransactionForm(){
@@ -20,7 +20,7 @@ export default function TransactionForm(){
   },[accounts.length, categories.length]);
 
   function submit(){
-    const fx_rate = 1;
+    const fx_rate = FX[form.currency];
     const base_amount = toBase(Number(form.amount), form.currency, settings.baseCurrency);
     const t: Transaction = {
       id: `t_${Math.random().toString(36).slice(2,10)}`,

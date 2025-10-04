@@ -5,6 +5,10 @@ import MoneyCard from "@components/MoneyCard";
 import MonthlyIncomeExpenseChart from "@components/charts/MonthlyIncomeExpenseChart";
 import CategoryBreakdownChart from "@components/charts/CategoryBreakdownChart";
 import TrendHeatmap from "@components/charts/TrendHeatmap";
+import CurrencyBreakdownChart from "@components/charts/CurrencyBreakdownChart";
+import MonthlyCurrencyChart from "@components/charts/MonthlyCurrencyChart";
+import CategoryByCurrencyChart from "@components/charts/CategoryByCurrencyChart";
+import CurrencySummary from "@components/CurrencySummary";
 import AccountList from "@components/AccountList";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore, totalsForRange } from "@lib/store";
@@ -31,6 +35,10 @@ export default function Dashboard(){
       <Grid item xs={12} sm={6} md={3}><MoneyCard title="Savings %" value={savingsPct} /></Grid>
       <Grid item xs={12} md={8}><Card><CardContent><Typography variant="h6">Monthly Income vs Expenses</Typography><Divider sx={{my:1}}/><MonthlyIncomeExpenseChart/></CardContent></Card></Grid>
       <Grid item xs={12} md={4}><Card><CardContent><Typography variant="h6">Category Breakdown</Typography><Divider sx={{my:1}}/><CategoryBreakdownChart/></CardContent></Card></Grid>
+      <Grid item xs={12}><CurrencySummary/></Grid>
+      <Grid item xs={12}><Card><CardContent><Typography variant="h6">Currency Breakdown</Typography><Divider sx={{my:1}}/><CurrencyBreakdownChart/></CardContent></Card></Grid>
+      <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly by Currency</Typography><Divider sx={{my:1}}/><MonthlyCurrencyChart/></CardContent></Card></Grid>
+      <Grid item xs={12}><Card><CardContent><Typography variant="h6">Categories by Currency</Typography><Divider sx={{my:1}}/><CategoryByCurrencyChart/></CardContent></Card></Grid>
       <Grid item xs={12}><Card><CardContent><Typography variant="h6">Daily Trend</Typography><Divider sx={{my:1}}/><TrendHeatmap/></CardContent></Card></Grid>
       <Grid item xs={12}><AccountList/></Grid>
     </Grid>
