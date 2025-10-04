@@ -1,12 +1,13 @@
 "use client";
 import * as React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, Stack, Typography, TableContainer, Paper, Chip, Fade, CircularProgress, Box, TablePagination, IconButton, Tooltip, Avatar, Divider } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, TableContainer, Paper, Chip, CircularProgress, Box, TablePagination, IconButton, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore } from "@lib/store";
-import { FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
+import { LOADING_DELAY } from "@lib/constants";
+import PageLayout from "@components/PageLayout";
 
 const TransactionRow = React.memo(({ t, accountName, categoryName, onEdit, onDelete }: any) => {
   const typeColor = t.type === "income" ? "success" : t.type === "savings" ? "info" : "error";
@@ -80,21 +81,12 @@ export default function TransactionsPage(){
   }
 
   return (
-    <Fade in timeout={FADE_TIMEOUT}>
-    <Stack spacing={3}>
-      <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-            <ReceiptIcon fontSize="large" sx={{ color: 'white' }} />
-          </Avatar>
-          <Box>
-            <Typography variant="h4" fontWeight="bold">Transactions</Typography>
-            <Typography variant="body2" color="text.secondary">{transactions.length} total transactions</Typography>
-          </Box>
-        </Box>
-        <TransactionForm editTransaction={editTransaction} onClose={() => setEditTransaction(null)} />
-      </Box>
-      <Divider />
+    <PageLayout
+      icon={ReceiptIcon}
+      title="Transactions"
+      subtitle={`${transactions.length} total transactions`}
+      actions={<TransactionForm editTransaction={editTransaction} onClose={() => setEditTransaction(null)} />}
+    >
       <Card><CardContent>
         <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
         <Table size="small" stickyHeader sx={{ minWidth: 800 }}>
@@ -138,7 +130,6 @@ export default function TransactionsPage(){
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
         />
       </CardContent></Card>
-    </Stack>
-    </Fade>
+    </PageLayout>
   );
 }

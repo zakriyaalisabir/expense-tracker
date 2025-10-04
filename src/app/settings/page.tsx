@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, TextField, MenuItem, Typography, Stack, Box, Fade, CircularProgress, Avatar, List, ListItem, ListItemAvatar, ListItemText, Switch, Divider, Paper, Grid, Button, Alert } from "@mui/material";
+import { Card, CardContent, TextField, MenuItem, Typography, Stack, Box, CircularProgress, List, ListItem, ListItemAvatar, ListItemText, Switch, Divider, Paper, Grid, Button, Alert, Avatar } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import PaletteIcon from "@mui/icons-material/Palette";
@@ -9,7 +9,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useAuth } from "@components/AuthProvider";
 import AuthGuard from "@components/AuthGuard";
 import { useAppStore } from "@lib/store";
-import { CURRENCIES, FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
+import { CURRENCIES, LOADING_DELAY } from "@lib/constants";
+import PageLayout from "@components/PageLayout";
 
 export default function SettingsPage(){
   const { user } = useAuth();
@@ -69,20 +70,7 @@ export default function SettingsPage(){
 
   return (
     <AuthGuard>
-    <Fade in timeout={FADE_TIMEOUT}>
-    <Stack spacing={3}>
-      <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-            <SettingsIcon fontSize="large" sx={{ color: 'white' }} />
-          </Avatar>
-          <Box>
-            <Typography variant="h4" fontWeight="bold">Settings</Typography>
-            <Typography variant="body2" color="text.secondary">Manage your preferences</Typography>
-          </Box>
-        </Box>
-      </Box>
-      <Divider />
+    <PageLayout icon={SettingsIcon} title="Settings" subtitle="Manage your preferences">
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Card elevation={3}>
@@ -276,8 +264,7 @@ export default function SettingsPage(){
           </Paper>
         </Grid>
       </Grid>
-    </Stack>
-    </Fade>
+    </PageLayout>
     </AuthGuard>
   );
 }

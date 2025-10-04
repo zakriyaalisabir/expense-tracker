@@ -1,8 +1,9 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Button, Stack, TextField, Typography, Box, Avatar, Divider } from "@mui/material";
+import { Card, CardContent, Button, Stack, TextField, Typography } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import { useAppStore } from "@lib/store";
+import PageLayout from "@components/PageLayout";
 
 function exportCSV(filename: string, rows: any[]) {
   const headers = Object.keys(rows[0] ?? {});
@@ -31,26 +32,16 @@ export default function ReportsPage(){
     if (filtered.length) exportCSV(`report_${from}_to_${to}.csv`, filtered);
   }
   return (
-    <Stack spacing={3}>
-      <Box display="flex" alignItems="center" gap={2}>
-        <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-          <AssessmentIcon fontSize="large" sx={{ color: 'white' }} />
-        </Avatar>
-        <Box>
-          <Typography variant="h4" fontWeight="bold">Reports</Typography>
-          <Typography variant="body2" color="text.secondary">Export and print reports</Typography>
-        </Box>
-      </Box>
-      <Divider />
-    <Card><CardContent>
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ my: 2 }}>
-        <TextField type="date" label="From" value={from} onChange={e=>setFrom(e.target.value)} InputLabelProps={{ shrink: true }} />
-        <TextField type="date" label="To" value={to} onChange={e=>setTo(e.target.value)} InputLabelProps={{ shrink: true }} />
-        <Button variant="contained" onClick={doExport}>Export CSV</Button>
-        <Button variant="outlined" onClick={()=>window.print()}>Print</Button>
-      </Stack>
-      <Typography variant="body2" color="text.secondary">Exports current transactions in range as CSV. Use print for a clean printable summary.</Typography>
-    </CardContent></Card>
-    </Stack>
+    <PageLayout icon={AssessmentIcon} title="Reports" subtitle="Export and print reports">
+      <Card><CardContent>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ my: 2 }}>
+          <TextField type="date" label="From" value={from} onChange={e=>setFrom(e.target.value)} InputLabelProps={{ shrink: true }} />
+          <TextField type="date" label="To" value={to} onChange={e=>setTo(e.target.value)} InputLabelProps={{ shrink: true }} />
+          <Button variant="contained" onClick={doExport}>Export CSV</Button>
+          <Button variant="outlined" onClick={()=>window.print()}>Print</Button>
+        </Stack>
+        <Typography variant="body2" color="text.secondary">Exports current transactions in range as CSV. Use print for a clean printable summary.</Typography>
+      </CardContent></Card>
+    </PageLayout>
   );
 }

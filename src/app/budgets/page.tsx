@@ -1,16 +1,16 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Grid, Stack, Typography, Fade, CircularProgress, Box, Avatar, Divider, LinearProgress, Chip, IconButton, Tooltip } from "@mui/material";
+import { Card, CardContent, Grid, Stack, Typography, CircularProgress, Box, LinearProgress, Chip, IconButton, Tooltip } from "@mui/material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BudgetForm from "@components/BudgetForm";
-import BudgetBar from "@components/BudgetBar";
 import { useAppStore } from "@lib/store";
 import { Budget } from "@lib/types";
-import { FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
+import { LOADING_DELAY } from "@lib/constants";
+import PageLayout from "@components/PageLayout";
 
 export default function BudgetsPage(){
   const { budgets, transactions, deleteBudget } = useAppStore();
@@ -31,23 +31,12 @@ export default function BudgetsPage(){
   }
 
   return (
-    <Fade in timeout={FADE_TIMEOUT}>
-    <Stack spacing={3}>
-      <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-            <AccountBalanceWalletIcon fontSize="large" sx={{ color: 'white' }} />
-          </Avatar>
-          <Box>
-            <Typography variant="h4" fontWeight="bold">Budgets</Typography>
-            <Typography variant="body2" color="text.secondary">
-              {budgets.length} active budgets
-            </Typography>
-          </Box>
-        </Box>
-        <BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />
-      </Box>
-      <Divider />
+    <PageLayout
+      icon={AccountBalanceWalletIcon}
+      title="Budgets"
+      subtitle={`${budgets.length} active budgets`}
+      actions={<BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />}
+    >
       <Grid container spacing={3}>
         {budgets.map(budget => {
           const monthTx = transactions.filter(t => t.type === "expense" && t.date.slice(0,7) === budget.month);
@@ -134,7 +123,6 @@ export default function BudgetsPage(){
           );
         })}
       </Grid>
-    </Stack>
-    </Fade>
+    </PageLayout>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Stack, Typography, Chip, Grid, Box, IconButton, Fade, CircularProgress, Divider, Avatar, Badge, Tooltip, Paper } from "@mui/material";
+import { Card, CardContent, Stack, Typography, Chip, Grid, Box, IconButton, CircularProgress, Divider, Badge, Tooltip, Paper, Avatar } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -8,7 +8,8 @@ import SavingsIcon from "@mui/icons-material/Savings";
 import CategoryIcon from "@mui/icons-material/Category";
 import CategoryForm from "@components/CategoryForm";
 import { useAppStore } from "@lib/store";
-import { CATEGORY_TYPES, FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
+import { CATEGORY_TYPES, LOADING_DELAY } from "@lib/constants";
+import PageLayout from "@components/PageLayout";
 
 export default function CategoriesPage() {
   const { categories, deleteCategory } = useAppStore();
@@ -43,24 +44,13 @@ export default function CategoriesPage() {
   };
 
   return (
-    <Fade in timeout={FADE_TIMEOUT}>
-      <Stack spacing={3}>
-        <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
-          <Box display="flex" alignItems="center" gap={2}>
-            <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-              <CategoryIcon fontSize="large" sx={{ color: 'white' }} />
-            </Avatar>
-            <Box>
-              <Typography variant="h4" fontWeight="bold">Categories</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {categories.length} total categories
-              </Typography>
-            </Box>
-          </Box>
-          <CategoryForm />
-        </Box>
-        <Divider />
-        <Grid container spacing={3}>
+    <PageLayout
+      icon={CategoryIcon}
+      title="Categories"
+      subtitle={`${categories.length} total categories`}
+      actions={<CategoryForm />}
+    >
+      <Grid container spacing={3}>
           {CATEGORY_TYPES.map(type => {
             const typeCategories = mainCategories.filter(c => c.type === type);
             return (
@@ -142,7 +132,6 @@ export default function CategoriesPage() {
             );
           })}
         </Grid>
-      </Stack>
-    </Fade>
+    </PageLayout>
   );
 }
