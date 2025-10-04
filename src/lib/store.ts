@@ -29,7 +29,8 @@ type Actions = {
   addGoal: (g: Goal) => void;
   updateGoal: (g: Goal) => void;
   setBaseCurrency: (c: CurrencyCode) => void;
-  setExchangeRate: (currency: CurrencyCode, rate: number) => void;
+  setExchangeRate: (currency: string, rate: number) => void;
+  addCustomCurrency: (code: string, rate: number) => void;
 };
 
 const initial: State = {
@@ -111,7 +112,14 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
   addGoal: (g) => set({ goals: [...get().goals, g] }),
   updateGoal: (g) => set({ goals: get().goals.map(x => x.id === g.id ? g : x) }),
   setBaseCurrency: (c) => set({ settings: { ...get().settings, baseCurrency: c } }),
-  setExchangeRate: (currency, rate) => set({ settings: { ...get().settings, exchangeRates: { ...get().settings.exchangeRates, [currency]: rate } } })
+  setExchangeRate: (currency, rate) => set({ settings: { ...get().settings, exchangeRates: { ...get().settings.exchangeRates, [currency]: rate } } }),
+  addCustomCurrency: (code, rate) => set({ 
+    settings: { 
+      ...get().settings, 
+      customCurrencies: [...(get().settings.customCurrencies || []), code],
+      exchangeRates: { ...get().settings.exchangeRates, [code]: rate }
+    } 
+  })
 }), { name: STORAGE_KEY }));
 
 export function totalsForRange(startISO?: string, endISO?: string) {

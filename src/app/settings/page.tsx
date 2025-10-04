@@ -13,12 +13,23 @@ import { CURRENCIES, FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
 
 export default function SettingsPage(){
   const { data: session, update } = useSession();
-  const { settings, setBaseCurrency } = useAppStore();
+  const { settings, setBaseCurrency, addCustomCurrency } = useAppStore();
   const [loading, setLoading] = React.useState(true);
   const [notifications, setNotifications] = React.useState(true);
   const [autoBackup, setAutoBackup] = React.useState(false);
   const [name, setName] = React.useState("");
   const [success, setSuccess] = React.useState("");
+  const [currencySuccess, setCurrencySuccess] = React.useState("");
+  const [newCurrency, setNewCurrency] = React.useState("");
+  const [newRate, setNewRate] = React.useState("1");
+
+  const allCurrencies = [...CURRENCIES, ...(settings.customCurrencies || [])];
+
+  function handleRateChange(currency: string, rate: number) {
+    useAppStore.getState().setExchangeRate(currency, rate);
+    setCurrencySuccess("Exchange rates saved!");
+    setTimeout(() => setCurrencySuccess(""), 2000);
+  }
 
   React.useEffect(() => {
     if (session?.user?.name) setName(session.user.name);
@@ -115,17 +126,54 @@ export default function SettingsPage(){
                   ))}
                 </TextField>
                 <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 2 }}>Exchange Rates (vs {settings.baseCurrency})</Typography>
-                {CURRENCIES.filter(c => c !== settings.baseCurrency).map(c => (
+                {allCurrencies.filter(c => c !== settings.baseCurrency).map(c => (
                   <TextField
                     key={c}
                     fullWidth
                     type="number"
                     label={`1 ${c} = ? ${settings.baseCurrency}`}
                     value={settings.exchangeRates?.[c] || 1}
-                    onChange={(e) => useAppStore.getState().setExchangeRate(c, Number(e.target.value))}
+                    onChange={(e) => handleRateChange(c, Number(e.target.value))}
                     inputProps={{ step: 0.01, min: 0 }}
                   />
                 ))}
+                {currencySuccess && <Alert severity="success">{currencySuccess}</Alert>}
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="subtitle2" fontWeight="bold">Add New Currency</Typography>
+                <Stack direction="row" spacing={1}>
+                  <TextField
+                    label="Currency Code"
+                    value={newCurrency}
+                    onChange={(e) => setNewCurrency(e.target.value.toUpperCase())}
+                    placeholder="GBP"
+                    inputProps={{ maxLength: 5 }}
+                    sx={{ flex: 1 }}
+                  />
+                  <TextField
+                    label="Rate"
+                    type="number"
+                    value={newRate}
+                    onChange={(e) => setNewRate(e.target.value)}
+                    inputProps={{ step: 0.01, min: 0 }}
+                    sx={{ flex: 1 }}
+                  />
+                </Stack>
+                <Button 
+                  variant="outlined" 
+                  fullWidth
+                  onClick={() => {
+                    if (newCurrency && !allCurrencies.includes(newCurrency)) {
+                      addCustomCurrency(newCurrency, Number(newRate));
+                      setNewCurrency("");
+                      setNewRate("1");
+                      setCurrencySuccess(`${newCurrency} added successfully!`);
+                      setTimeout(() => setCurrencySuccess(""), 2000);
+                    }
+                  }}
+                  disabled={!newCurrency || allCurrencies.includes(newCurrency)}
+                >
+                  Add Currency
+                </Button>
               </Stack>
             </CardContent>
           </Card>
