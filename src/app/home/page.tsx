@@ -16,20 +16,14 @@ import { useAppStore, totalsForRange } from "@lib/store";
 const CurrencySummary = dynamic(() => import("@components/CurrencySummary"), { ssr: false });
 
 export default function Home(){
-  const seed = useAppStore(s => s.seed);
   const transactions = useAppStore(s => s.transactions);
   const [hydrated, setHydrated] = React.useState(false);
   const totals = React.useMemo(() => totalsForRange(), [transactions]);
   const { income, expense, saved, savings } = totals;
 
   React.useEffect(() => {
-    const isNewUser = localStorage.getItem('new-user') === 'true';
-    if (isNewUser) {
-      localStorage.removeItem('new-user');
-      seed();
-    }
     setHydrated(true);
-  }, [seed]);
+  }, []);
 
   if (!hydrated) {
     return (

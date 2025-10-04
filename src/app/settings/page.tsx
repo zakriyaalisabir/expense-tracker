@@ -32,11 +32,25 @@ export default function SettingsPage(){
   }
 
   React.useEffect(() => {
-    if (user?.email) setName(user.email.split('@')[0]);
+    if (user?.user_metadata?.display_name) {
+      setName(user.user_metadata.display_name);
+    } else if (user?.email) {
+      setName(user.email.split('@')[0]);
+    }
   }, [user]);
 
   async function updateProfile() {
-    setSuccess("Profile updated successfully!");
+    if (!name.trim()) return;
+    const { createClient } = await import('@lib/supabase/client');
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({
+      data: { display_name: name.trim() }
+    });
+    if (error) {
+      setSuccess("Error updating profile");
+    } else {
+      setSuccess("Profile updated successfully!");
+    }
     setTimeout(() => setSuccess(""), 3000);
   }
 

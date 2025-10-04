@@ -21,7 +21,6 @@ const WeekdaySpendingChart = dynamic(() => import("@components/charts/WeekdaySpe
 const TrendHeatmap = dynamic(() => import("@components/charts/TrendHeatmap"), { ssr: false });
 
 export default function Dashboard(){
-  const seed = useAppStore(s => s.seed);
   const [hydrated, setHydrated] = React.useState(false);
   const [period, setPeriod] = React.useState<"month" | "year" | "custom">("month");
   const [startDate, setStartDate] = React.useState("");
@@ -39,9 +38,8 @@ export default function Dashboard(){
   }, [period]);
 
   React.useEffect(() => {
-    seed();
     setHydrated(true);
-  }, [seed]);
+  }, []);
 
   if (!hydrated) {
     return (
