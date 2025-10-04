@@ -10,7 +10,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
-    if (!loading && !user && !demoMode) router.push("/auth");
+    if (!loading && !user && !demoMode) {
+      console.log('AuthGuard: Redirecting to /auth, user:', user, 'loading:', loading);
+      const timer = setTimeout(() => router.push("/auth"), 100);
+      return () => clearTimeout(timer);
+    }
   }, [loading, user, router]);
 
   if (loading) {

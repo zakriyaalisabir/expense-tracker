@@ -13,9 +13,15 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { signIn, signUp } = useAuth();
+  const { user, signIn, signUp } = useAuth();
   const router = useRouter();
   const supabase = createClient();
+
+  // Redirect if already logged in
+  if (user && user.id !== 'demo') {
+    router.replace('/');
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +42,7 @@ export default function AuthPage() {
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/` }
+      options: { redirectTo: `${window.location.origin}/auth/callback` }
     });
     if (error) setError(error.message);
   };
