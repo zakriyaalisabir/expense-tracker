@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, Slide } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import FlagIcon from "@mui/icons-material/Flag";
 import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore, uid } from "@lib/store";
 import { Goal } from "@lib/types";
@@ -48,7 +48,10 @@ export default function GoalForm() {
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AddIcon />}>Add Goal</Button>
+      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<FlagIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Goal</Button>
+      <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
+        <FlagIcon fontSize="small" />
+      </Button>
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>New Goal</DialogTitle>
         <DialogContent>

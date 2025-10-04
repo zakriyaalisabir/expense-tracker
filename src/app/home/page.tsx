@@ -46,7 +46,7 @@ export default function Home(){
     <Fade in timeout={FADE_TIMEOUT}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} gap={1}>
+          <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
             <TransactionForm/>
             <CategoryForm/>
             <AccountForm/>

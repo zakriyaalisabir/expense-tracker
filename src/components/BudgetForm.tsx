@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, Slide } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore, uid } from "@lib/store";
 import { Budget } from "@lib/types";
@@ -33,7 +33,10 @@ export default function BudgetForm() {
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AddIcon />}>Add Budget</Button>
+      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AccountBalanceIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Budget</Button>
+      <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
+        <AccountBalanceIcon fontSize="small" />
+      </Button>
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>New Budget</DialogTitle>
         <DialogContent>

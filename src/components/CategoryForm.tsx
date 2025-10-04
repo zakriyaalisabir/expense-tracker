@@ -3,6 +3,7 @@ import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import CategoryIcon from "@mui/icons-material/Category";
 import { TransitionProps } from "@mui/material/transitions";
 
 const Transition = React.forwardRef(function Transition(
@@ -62,9 +63,14 @@ export default function CategoryForm({ editCategory }: Props) {
           <EditIcon fontSize="small" />
         </IconButton>
       ) : (
-        <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AddIcon />}>
-          Add Category
-        </Button>
+        <>
+          <Button variant="contained" onClick={() => setOpen(true)} startIcon={<CategoryIcon />} size="small" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+            Add Category
+          </Button>
+          <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
+            <CategoryIcon fontSize="small" />
+          </Button>
+        </>
       )}
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>{editCategory ? "Edit" : "New"} Category</DialogTitle>
