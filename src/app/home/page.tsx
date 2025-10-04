@@ -13,7 +13,6 @@ import AuthGuard from "@components/AuthGuard";
 import { useAppStore, totalsForRange } from "@lib/store";
 
 const CurrencySummary = dynamic(() => import("@components/CurrencySummary"), { ssr: false });
-const AccountList = dynamic(() => import("@components/AccountList"), { ssr: false });
 
 export default function Home(){
   const seed = useAppStore(s => s.seed);
@@ -60,7 +59,6 @@ export default function Home(){
         <Grid item xs={12} sm={6} md={3}><MoneyCard title="Saved" value={saved} color="info" /></Grid>
         <Grid item xs={12} sm={6} md={3}><MoneyCard title="Net Savings" value={savings} /></Grid>
         <Grid item xs={12}><CurrencySummary/></Grid>
-        <Grid item xs={12}><AccountList/></Grid>
       </Grid>
     </Fade>
     </AuthGuard>
