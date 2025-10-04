@@ -17,8 +17,9 @@ const AccountList = dynamic(() => import("@components/AccountList"), { ssr: fals
 
 export default function Home(){
   const seed = useAppStore(s => s.seed);
+  const transactions = useAppStore(s => s.transactions);
   const [hydrated, setHydrated] = React.useState(false);
-  const totals = React.useMemo(() => totalsForRange(), []);
+  const totals = React.useMemo(() => totalsForRange(), [transactions]);
   const { income, expense, saved, savings } = totals;
 
   React.useEffect(() => {

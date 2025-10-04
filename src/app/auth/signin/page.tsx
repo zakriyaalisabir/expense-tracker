@@ -17,8 +17,25 @@ export default function SignIn() {
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [errors, setErrors] = React.useState({ email: "", password: "", name: "" });
+
+  function validateEmail(email: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function validate() {
+    const newErrors = { email: "", password: "", name: "" };
+    if (!form.email) newErrors.email = "Email is required";
+    else if (!validateEmail(form.email)) newErrors.email = "Invalid email format";
+    if (!form.password) newErrors.password = "Password is required";
+    else if (form.password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    if (tab === 1 && !form.name) newErrors.name = "Name is required";
+    setErrors(newErrors);
+    return !newErrors.email && !newErrors.password && !newErrors.name;
+  }
 
   async function handleSignIn() {
+    if (!validate()) return;
     setError("");
     setLoading(true);
     const res = await signIn("credentials", { redirect: false, email: form.email, password: form.password });
@@ -28,6 +45,7 @@ export default function SignIn() {
   }
 
   async function handleRegister() {
+    if (!validate()) return;
     setError("");
     setLoading(true);
     const res = await fetch("/api/register", {
@@ -56,7 +74,7 @@ export default function SignIn() {
             <Typography variant="h4" fontWeight="bold" gutterBottom>Expense Tracker</Typography>
             <Typography variant="body2" color="text.secondary">Manage your finances with ease</Typography>
           </Box>
-          <Tabs value={tab} onChange={(_, v) => { setTab(v); setError(""); }} variant="fullWidth" sx={{ mb: 3 }}>
+          <Tabs value={tab} onChange={(_, v) => { setTab(v); setError(""); setErrors({ email: "", password: "", name: "" }); }} variant="fullWidth" sx={{ mb: 3 }}>
             <Tab label="Sign In" />
             <Tab label="Register" />
           </Tabs>
@@ -66,6 +84,8 @@ export default function SignIn() {
                 label="Full Name" 
                 value={form.name} 
                 onChange={e => setForm({ ...form, name: e.target.value })}
+                error={!!errors.name}
+                helperText={errors.name}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -81,6 +101,8 @@ export default function SignIn() {
               type="email" 
               value={form.email} 
               onChange={e => setForm({ ...form, email: e.target.value })}
+              error={!!errors.email}
+              helperText={errors.email}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -95,6 +117,8 @@ export default function SignIn() {
               type={showPassword ? "text" : "password"} 
               value={form.password} 
               onChange={e => setForm({ ...form, password: e.target.value })}
+              error={!!errors.password}
+              helperText={errors.password || "Minimum 6 characters"}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

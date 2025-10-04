@@ -1,4 +1,5 @@
 import { CurrencyCode, Transaction } from "./types";
+import { useAppStore } from "./store";
 
 export const FX: Record<CurrencyCode, number> = {
   THB: 1,
@@ -8,14 +9,16 @@ export const FX: Record<CurrencyCode, number> = {
 };
 
 export function toBase(amount: number, currency: CurrencyCode, base: CurrencyCode) {
-  const thbVal = amount * FX[currency];
-  return base === "THB" ? thbVal : thbVal / FX[base];
+  const rates = useAppStore.getState().settings.exchangeRates || FX;
+  const thbVal = amount * (rates[currency] || FX[currency]);
+  return base === "THB" ? thbVal : thbVal / (rates[base] || FX[base]);
 }
 
-let cachedGroups: { data: any; txLength: number } | null = null;
+let cachedGroups: { data: any; txLength: number; txHash: string } | null = null;
 
 export function groupByCurrency(transactions: Transaction[]) {
-  if (cachedGroups && cachedGroups.txLength === transactions.length) {
+  const txHash = transactions.map(t => t.id).join(',');
+  if (cachedGroups && cachedGroups.txHash === txHash) {
     return cachedGroups.data;
   }
   
@@ -41,7 +44,7 @@ export function groupByCurrency(transactions: Transaction[]) {
     groups[curr].savings = groups[curr].income - groups[curr].expense - groups[curr].saved;
   }
   
-  cachedGroups = { data: groups, txLength: transactions.length };
+  cachedGroups = { data: groups, txLength: transactions.length, txHash };
   return groups;
 }
 

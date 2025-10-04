@@ -5,8 +5,8 @@ import { useAppStore } from "@lib/store";
 import { groupByCurrency } from "@lib/currency";
 
 export default function CurrencySummary() {
-  const { transactions } = useAppStore();
-  const currencyData = groupByCurrency(transactions);
+  const transactions = useAppStore(s => s.transactions);
+  const currencyData = React.useMemo(() => groupByCurrency(transactions), [transactions]);
 
   return (
     <Card>

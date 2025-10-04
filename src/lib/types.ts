@@ -57,4 +57,5 @@ export type Budget = {
 
 export type BaseSettings = {
   baseCurrency: CurrencyCode;
+  exchangeRates?: Record<CurrencyCode, number>;
 };

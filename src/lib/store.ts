@@ -21,6 +21,7 @@ type Actions = {
   deleteTransaction: (id: string) => void;
   addAccount: (a: Account) => void;
   updateAccount: (a: Account) => void;
+  deleteAccount: (id: string) => void;
   addCategory: (c: Category) => void;
   updateCategory: (c: Category) => void;
   deleteCategory: (id: string) => void;
@@ -28,10 +29,11 @@ type Actions = {
   addGoal: (g: Goal) => void;
   updateGoal: (g: Goal) => void;
   setBaseCurrency: (c: CurrencyCode) => void;
+  setExchangeRate: (currency: CurrencyCode, rate: number) => void;
 };
 
 const initial: State = {
-  settings: { baseCurrency: "THB" },
+  settings: { baseCurrency: "THB", exchangeRates: { THB: 1, USD: 36, EUR: 39, JPY: 0.25 } },
   accounts: [], categories: [], transactions: [], goals: [], budgets: []
 };
 
@@ -101,13 +103,15 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
   deleteTransaction: (id) => set({ transactions: get().transactions.filter(x => x.id !== id) }),
   addAccount: (a) => set({ accounts: [...get().accounts, a] }),
   updateAccount: (a) => set({ accounts: get().accounts.map(x => x.id === a.id ? a : x) }),
+  deleteAccount: (id) => set({ accounts: get().accounts.filter(x => x.id !== id) }),
   addCategory: (c) => set({ categories: [...get().categories, c] }),
   updateCategory: (c) => set({ categories: get().categories.map(x => x.id === c.id ? c : x) }),
   deleteCategory: (id) => set({ categories: get().categories.filter(x => x.id !== id) }),
   addBudget: (b) => set({ budgets: [...get().budgets, b] }),
   addGoal: (g) => set({ goals: [...get().goals, g] }),
   updateGoal: (g) => set({ goals: get().goals.map(x => x.id === g.id ? g : x) }),
-  setBaseCurrency: (c) => set({ settings: { ...get().settings, baseCurrency: c } })
+  setBaseCurrency: (c) => set({ settings: { ...get().settings, baseCurrency: c } }),
+  setExchangeRate: (currency, rate) => set({ settings: { ...get().settings, exchangeRates: { ...get().settings.exchangeRates, [currency]: rate } } })
 }), { name: STORAGE_KEY }));
 
 export function totalsForRange(startISO?: string, endISO?: string) {

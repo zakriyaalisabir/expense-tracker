@@ -97,22 +97,36 @@ export default function SettingsPage(){
                 <Typography variant="h6">Currency Settings</Typography>
               </Box>
               <Divider sx={{ mb: 2 }} />
-              <TextField
-                select
-                fullWidth
-                label="Base Currency"
-                value={settings.baseCurrency}
-                onChange={(e)=>setBaseCurrency(e.target.value as any)}
-                helperText="All amounts will be converted to this currency"
-              >
-                {CURRENCIES.map(c => (
-                  <MenuItem key={c} value={c}>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Typography>{c}</Typography>
-                    </Box>
-                  </MenuItem>
+              <Stack spacing={2}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Base Currency"
+                  value={settings.baseCurrency}
+                  onChange={(e)=>setBaseCurrency(e.target.value as any)}
+                  helperText="All amounts will be converted to this currency"
+                >
+                  {CURRENCIES.map(c => (
+                    <MenuItem key={c} value={c}>
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <Typography>{c}</Typography>
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 2 }}>Exchange Rates (vs {settings.baseCurrency})</Typography>
+                {CURRENCIES.filter(c => c !== settings.baseCurrency).map(c => (
+                  <TextField
+                    key={c}
+                    fullWidth
+                    type="number"
+                    label={`1 ${c} = ? ${settings.baseCurrency}`}
+                    value={settings.exchangeRates?.[c] || 1}
+                    onChange={(e) => useAppStore.getState().setExchangeRate(c, Number(e.target.value))}
+                    inputProps={{ step: 0.01, min: 0 }}
+                  />
                 ))}
-              </TextField>
+              </Stack>
             </CardContent>
           </Card>
         </Grid>
