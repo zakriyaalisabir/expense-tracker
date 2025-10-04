@@ -64,6 +64,17 @@ export default function AuthPage() {
           >
             {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
           </Button>
+          <Button
+            fullWidth
+            variant="text"
+            sx={{ mt: 1 }}
+            onClick={() => {
+              localStorage.setItem('demo-mode', 'true');
+              router.push('/');
+            }}
+          >
+            Continue as Demo
+          </Button>
         </Box>
       </Paper>
     </Container>

@@ -19,6 +19,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
 
   useEffect(() => {
+    const demoMode = localStorage.getItem('demo-mode') === 'true';
+    if (demoMode) {
+      setUser({ id: 'demo', email: 'demo@example.com' } as User);
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
@@ -42,6 +49,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    if (localStorage.getItem('demo-mode') === 'true') {
+      localStorage.removeItem('demo-mode');
+      setUser(null);
+      return;
+    }
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };

@@ -9,7 +9,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) router.push("/auth");
+    const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
+    if (!loading && !user && !demoMode) router.push("/auth");
   }, [loading, user, router]);
 
   if (loading) {
@@ -20,7 +21,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) return null;
+  const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
+  if (!user && !demoMode) return null;
 
   return <>{children}</>;
 }
