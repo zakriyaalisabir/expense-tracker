@@ -8,8 +8,10 @@ import StoreProvider from "@components/StoreProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = React.useState<"light" | "dark">(THEME_MODE.LIGHT);
+  const [mounted, setMounted] = React.useState(false);
   
   React.useEffect(() => {
+    setMounted(true);
     const m = window.localStorage.getItem(THEME_MODE_KEY) as "light" | "dark" | null;
     if (m) setMode(m);
   }, []);

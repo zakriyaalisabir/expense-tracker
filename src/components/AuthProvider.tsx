@@ -1,7 +1,7 @@
 "use client";
 import { createClient } from "@lib/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef } from "react";
 
 type AuthContextType = {
   user: User | null;
@@ -16,9 +16,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const initialized = useRef(false);
 
   useEffect(() => {
-    const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
+    if (initialized.current) return;
+    initialized.current = true;
+    
+    const demoMode = localStorage.getItem('demo-mode') === 'true';
     if (demoMode) {
       setUser({ id: 'demo', email: 'demo@example.com' } as User);
       setLoading(false);
@@ -27,23 +31,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const supabase = createClient();
 
-    const initAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) console.error('Session error:', error);
-        setUser(session?.user ?? null);
-      } catch (err) {
-        console.error('Auth init error:', err);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initAuth();
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) console.error('Session error:', error);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state change:', event, session?.user?.email);
       setUser(session?.user ?? null);
     });
 
@@ -60,13 +54,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
-    if (data.user && typeof window !== 'undefined') {
+    if (data.user) {
       localStorage.setItem('new-user', 'true');
     }
   };
 
   const signOut = async () => {
-    if (typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true') {
+    if (localStorage.getItem('demo-mode') === 'true') {
       localStorage.removeItem('demo-mode');
       setUser(null);
       return;
