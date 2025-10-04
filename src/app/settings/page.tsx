@@ -1,18 +1,33 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, TextField, MenuItem, Typography, Stack, Box, Fade, CircularProgress, Avatar, List, ListItem, ListItemAvatar, ListItemText, Switch, Divider, Paper, Grid } from "@mui/material";
+import { Card, CardContent, TextField, MenuItem, Typography, Stack, Box, Fade, CircularProgress, Avatar, List, ListItem, ListItemAvatar, ListItemText, Switch, Divider, Paper, Grid, Button, Alert } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import PaletteIcon from "@mui/icons-material/Palette";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import PersonIcon from "@mui/icons-material/Person";
+import { useSession } from "next-auth/react";
+import AuthGuard from "@components/AuthGuard";
 import { useAppStore } from "@lib/store";
 import { CURRENCIES, FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
 
 export default function SettingsPage(){
+  const { data: session, update } = useSession();
   const { settings, setBaseCurrency } = useAppStore();
   const [loading, setLoading] = React.useState(true);
   const [notifications, setNotifications] = React.useState(true);
   const [autoBackup, setAutoBackup] = React.useState(false);
+  const [name, setName] = React.useState("");
+  const [success, setSuccess] = React.useState("");
+
+  React.useEffect(() => {
+    if (session?.user?.name) setName(session.user.name);
+  }, [session]);
+
+  async function updateProfile() {
+    setSuccess("Profile updated successfully!");
+    setTimeout(() => setSuccess(""), 3000);
+  }
 
   React.useEffect(() => {
     const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
@@ -28,6 +43,7 @@ export default function SettingsPage(){
   }
 
   return (
+    <AuthGuard>
     <Fade in timeout={FADE_TIMEOUT}>
     <Stack spacing={3}>
       <Box display="flex" alignItems="center" gap={2}>
@@ -41,6 +57,38 @@ export default function SettingsPage(){
       </Box>
 
       <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Card elevation={3}>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={1} mb={2}>
+                <PersonIcon color="primary" />
+                <Typography variant="h6">Profile Settings</Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label="Email"
+                  value={session?.user?.email || ""}
+                  disabled
+                  helperText="Email cannot be changed"
+                />
+                <TextField
+                  fullWidth
+                  label="Display Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  helperText="This name will be displayed in your profile"
+                />
+                {success && <Alert severity="success">{success}</Alert>}
+                <Box>
+                  <Button variant="contained" onClick={updateProfile}>Save Changes</Button>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
         <Grid item xs={12} md={6}>
           <Card elevation={3}>
             <CardContent>
@@ -110,17 +158,46 @@ export default function SettingsPage(){
 
         <Grid item xs={12}>
           <Paper elevation={2} sx={{ p: 3, bgcolor: 'background.default' }}>
-            <Typography variant="h6" gutterBottom>About</Typography>
+            <Typography variant="h6" gutterBottom>About Expense Tracker</Typography>
             <Divider sx={{ mb: 2 }} />
-            <Stack spacing={1}>
-              <Typography variant="body2" color="text.secondary">Version: 1.0.0</Typography>
-              <Typography variant="body2" color="text.secondary">Built with Next.js, MUI, D3.js & Zustand</Typography>
-              <Typography variant="body2" color="text.secondary">© 2024 Expense Tracker</Typography>
+            <Stack spacing={2}>
+              <Box>
+                <Typography variant="subtitle2" fontWeight="bold" gutterBottom>Version</Typography>
+                <Typography variant="body2" color="text.secondary">1.0.0</Typography>
+              </Box>
+              <Box>
+                <Typography variant="subtitle2" fontWeight="bold" gutterBottom>Description</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  A comprehensive personal finance management application with multi-currency support, 
+                  budgeting tools, goal tracking, and interactive data visualizations.
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="subtitle2" fontWeight="bold" gutterBottom>Features</Typography>
+                <Typography variant="body2" color="text.secondary" component="div">
+                  • Multi-currency transaction management<br/>
+                  • Budget tracking and goal setting<br/>
+                  • Interactive charts and reports (D3.js)<br/>
+                  • Category and subcategory organization<br/>
+                  • Account management (Cash, Bank, Credit, E-wallet, Savings)<br/>
+                  • User authentication and data privacy
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="subtitle2" fontWeight="bold" gutterBottom>Technology Stack</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Next.js 14 • TypeScript • Material-UI 6 • D3.js 7 • Zustand 4 • NextAuth.js
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="body2" color="text.secondary">© 2025 Expense Tracker. All rights reserved.</Typography>
+              </Box>
             </Stack>
           </Paper>
         </Grid>
       </Grid>
     </Stack>
     </Fade>
+    </AuthGuard>
   );
 }

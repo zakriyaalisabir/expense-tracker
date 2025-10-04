@@ -1,0 +1,110 @@
+"use client";
+import * as React from "react";
+import { useSession, signOut } from "next-auth/react";
+import { AppBar, Toolbar, Typography, IconButton, Box, Container, Tabs, Tab, LinearProgress, Drawer, List, ListItem, ListItemButton, ListItemText, useMediaQuery, Avatar, Button } from "@mui/material";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import MenuIcon from "@mui/icons-material/Menu";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { TABS, THEME_MODE, THEME_MODE_KEY, LOADING_DELAY, DRAWER_WIDTH, MOBILE_BREAKPOINT } from "@lib/constants";
+
+export default function LayoutContent({ children, mode, setMode }: any) {
+  const [loading, setLoading] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
+  const { data: session } = useSession();
+
+  React.useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
+    return () => clearTimeout(timer);
+  }, [pathname]);
+
+  const current = TABS.findIndex(t => t.href === pathname);
+
+  const handleNavigation = (href: string) => {
+    setDrawerOpen(false);
+    router.push(href);
+  };
+
+  return (
+    <>
+      <AppBar position="sticky" color="default" elevation={1}>
+        <Toolbar>
+          {isMobile && session && (
+            <IconButton edge="start" onClick={() => setDrawerOpen(true)} sx={{ mr: 2 }}>
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Avatar sx={{ bgcolor: "primary.main", mr: 1.5, width: 36, height: 36 }}>
+            <AccountBalanceWalletIcon sx={{ fontSize: 20 }} />
+          </Avatar>
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>Expense Tracker</Typography>
+          {session && (
+            <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
+              <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
+                {TABS.map((t) => (
+                  <Tab key={t.href} label={t.label} component={Link} href={t.href} />
+                ))}
+              </Tabs>
+            </Box>
+          )}
+          <IconButton onClick={() => {
+            const next = mode === THEME_MODE.LIGHT ? THEME_MODE.DARK : THEME_MODE.LIGHT;
+            setMode(next);
+            window.localStorage.setItem(THEME_MODE_KEY, next);
+          }} sx={{ mr: 1 }}>
+            {mode === THEME_MODE.LIGHT ? <Brightness4Icon /> : <Brightness7Icon />}
+          </IconButton>
+          {session && (
+            <Button 
+              variant="outlined" 
+              size="small" 
+              startIcon={<LogoutIcon />}
+              onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+              sx={{ display: { xs: "none", sm: "flex" } }}
+            >
+              Sign Out
+            </Button>
+          )}
+        </Toolbar>
+        {loading && <LinearProgress />}
+      </AppBar>
+      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <Box sx={{ width: DRAWER_WIDTH }} role="presentation">
+          <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1.5 }}>
+            <Avatar sx={{ bgcolor: "primary.main" }}>
+              <AccountBalanceWalletIcon />
+            </Avatar>
+            <Typography variant="h6" fontWeight="bold">Expense Tracker</Typography>
+          </Box>
+          <List>
+            {TABS.map((t) => (
+              <ListItem key={t.href} disablePadding>
+                <ListItemButton selected={pathname === t.href} onClick={() => handleNavigation(t.href)}>
+                  <ListItemText primary={t.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+            {session && (
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => signOut({ callbackUrl: "/auth/signin" })}>
+                  <LogoutIcon sx={{ mr: 2 }} />
+                  <ListItemText primary="Sign Out" />
+                </ListItemButton>
+              </ListItem>
+            )}
+          </List>
+        </Box>
+      </Drawer>
+      <Container maxWidth="lg" sx={{ py: 3 }}>
+        {children}
+      </Container>
+    </>
+  );
+}

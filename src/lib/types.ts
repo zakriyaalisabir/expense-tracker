@@ -3,6 +3,7 @@ export type CurrencyCode = "THB" | "USD" | "EUR" | "JPY";
 
 export type Account = {
   id: string;
+  user_id: string;
   name: string;
   type: AccountType;
   currency: CurrencyCode;
@@ -12,6 +13,7 @@ export type Account = {
 export type CategoryType = "income" | "expense" | "savings";
 export type Category = {
   id: string;
+  user_id: string;
   name: string;
   type: CategoryType;
   parent_id?: string;
@@ -20,6 +22,7 @@ export type Category = {
 
 export type Transaction = {
   id: string;
+  user_id: string;
   date: string; // ISO
   type: CategoryType;
   amount: number;
@@ -35,6 +38,7 @@ export type Transaction = {
 
 export type Goal = {
   id: string;
+  user_id: string;
   name: string;
   target_amount: number;
   target_date: string; // ISO
@@ -45,6 +49,7 @@ export type Goal = {
 
 export type Budget = {
   id: string;
+  user_id: string;
   month: string; // YYYY-MM
   total?: number;
   byCategory?: { [category_id: string]: number };

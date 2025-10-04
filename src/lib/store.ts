@@ -43,55 +43,56 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
   ...initial,
   seed: () => {
     if (get().accounts.length) return;
+    const userId = "demo";
     const accounts: Account[] = [
-      { id: "acc_cash", name: "Cash", type: "cash", currency: "THB", opening_balance: 3000 },
-      { id: "acc_kbank", name: "KBank", type: "bank", currency: "THB", opening_balance: 25000 },
-      { id: "acc_visa", name: "VISA", type: "credit", currency: "THB", opening_balance: -12000 },
-      { id: "acc_wise", name: "Wise USD", type: "bank", currency: "USD", opening_balance: 500 },
-      { id: "acc_savings", name: "Savings Account", type: "savings", currency: "THB", opening_balance: 50000 }
+      { id: "acc_cash", user_id: userId, name: "Cash", type: "cash", currency: "THB", opening_balance: 3000 },
+      { id: "acc_kbank", user_id: userId, name: "KBank", type: "bank", currency: "THB", opening_balance: 25000 },
+      { id: "acc_visa", user_id: userId, name: "VISA", type: "credit", currency: "THB", opening_balance: -12000 },
+      { id: "acc_wise", user_id: userId, name: "Wise USD", type: "bank", currency: "USD", opening_balance: 500 },
+      { id: "acc_savings", user_id: userId, name: "Savings Account", type: "savings", currency: "THB", opening_balance: 50000 }
     ];
     const categories: Category[] = [
-      { id: "cat_salary", name: "Salary", type: "income" },
-      { id: "cat_bonus", name: "Bonus", type: "income" },
-      { id: "cat_food", name: "Food", type: "expense" },
-      { id: "cat_food_lunch", name: "Lunch", type: "expense", parent_id: "cat_food" },
-      { id: "cat_food_dinner", name: "Dinner", type: "expense", parent_id: "cat_food" },
-      { id: "cat_food_groceries", name: "Groceries", type: "expense", parent_id: "cat_food" },
-      { id: "cat_rent", name: "Rent", type: "expense" },
-      { id: "cat_transport", name: "Transport", type: "expense" },
-      { id: "cat_transport_fuel", name: "Fuel", type: "expense", parent_id: "cat_transport" },
-      { id: "cat_transport_public", name: "Public Transit", type: "expense", parent_id: "cat_transport" },
-      { id: "cat_health", name: "Health", type: "expense" },
-      { id: "cat_shopping", name: "Shopping", type: "expense" },
-      { id: "cat_shopping_clothes", name: "Clothes", type: "expense", parent_id: "cat_shopping" },
-      { id: "cat_shopping_electronics", name: "Electronics", type: "expense", parent_id: "cat_shopping" },
-      { id: "cat_emergency", name: "Emergency Fund", type: "savings" },
-      { id: "cat_investment", name: "Investment", type: "savings" },
-      { id: "cat_retirement", name: "Retirement", type: "savings" }
+      { id: "cat_salary", user_id: userId, name: "Salary", type: "income" },
+      { id: "cat_bonus", user_id: userId, name: "Bonus", type: "income" },
+      { id: "cat_food", user_id: userId, name: "Food", type: "expense" },
+      { id: "cat_food_lunch", user_id: userId, name: "Lunch", type: "expense", parent_id: "cat_food" },
+      { id: "cat_food_dinner", user_id: userId, name: "Dinner", type: "expense", parent_id: "cat_food" },
+      { id: "cat_food_groceries", user_id: userId, name: "Groceries", type: "expense", parent_id: "cat_food" },
+      { id: "cat_rent", user_id: userId, name: "Rent", type: "expense" },
+      { id: "cat_transport", user_id: userId, name: "Transport", type: "expense" },
+      { id: "cat_transport_fuel", user_id: userId, name: "Fuel", type: "expense", parent_id: "cat_transport" },
+      { id: "cat_transport_public", user_id: userId, name: "Public Transit", type: "expense", parent_id: "cat_transport" },
+      { id: "cat_health", user_id: userId, name: "Health", type: "expense" },
+      { id: "cat_shopping", user_id: userId, name: "Shopping", type: "expense" },
+      { id: "cat_shopping_clothes", user_id: userId, name: "Clothes", type: "expense", parent_id: "cat_shopping" },
+      { id: "cat_shopping_electronics", user_id: userId, name: "Electronics", type: "expense", parent_id: "cat_shopping" },
+      { id: "cat_emergency", user_id: userId, name: "Emergency Fund", type: "savings" },
+      { id: "cat_investment", user_id: userId, name: "Investment", type: "savings" },
+      { id: "cat_retirement", user_id: userId, name: "Retirement", type: "savings" }
     ];
     const transactions: Transaction[] = [
-      { id: uid("t"), date: new Date().toISOString(), type: "income", amount: 60000, currency: "THB",
+      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "income", amount: 60000, currency: "THB",
         account_id: "acc_kbank", category_id: "cat_salary", tags: ["monthly"], description: "Salary",
         fx_rate: 1, base_amount: 60000 },
-      { id: uid("t"), date: new Date().toISOString(), type: "expense", amount: 350, currency: "THB",
+      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "expense", amount: 350, currency: "THB",
         account_id: "acc_cash", category_id: "cat_food", subcategory_id: "cat_food_lunch", tags: ["lunch"], description: "Pad Krapow",
         fx_rate: 1, base_amount: 350 },
-      { id: uid("t"), date: new Date().toISOString(), type: "expense", amount: 15000, currency: "THB",
+      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "expense", amount: 15000, currency: "THB",
         account_id: "acc_kbank", category_id: "cat_rent", tags: ["condo"], description: "Monthly rent",
         fx_rate: 1, base_amount: 15000 },
-      { id: uid("t"), date: new Date().toISOString(), type: "expense", amount: 20, currency: "USD",
+      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "expense", amount: 20, currency: "USD",
         account_id: "acc_wise", category_id: "cat_shopping", tags: ["online"], description: "Domain",
         fx_rate: 36, base_amount: 720 },
-      { id: uid("t"), date: new Date().toISOString(), type: "savings", amount: 10000, currency: "THB",
+      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "savings", amount: 10000, currency: "THB",
         account_id: "acc_savings", category_id: "cat_emergency", tags: ["monthly"], description: "Emergency fund contribution",
         fx_rate: 1, base_amount: 10000 }
     ];
     const goals: Goal[] = [
-      { id: "goal_car", name: "Buy a Car", target_amount: 500000, target_date: new Date(new Date().getFullYear(), 11, 31).toISOString(),
+      { id: "goal_car", user_id: userId, name: "Buy a Car", target_amount: 500000, target_date: new Date(new Date().getFullYear(), 11, 31).toISOString(),
         monthly_contribution: 10000, source_account_id: "acc_kbank", progress_cached: 60000 }
     ];
     const budgets: Budget[] = [
-      { id: "bud_ym", month: new Date().toISOString().slice(0,7), total: 30000, byCategory: { "cat_food": 5000, "cat_shopping": 8000, "cat_transport": 3000 } }
+      { id: "bud_ym", user_id: userId, month: new Date().toISOString().slice(0,7), total: 30000, byCategory: { "cat_food": 5000, "cat_shopping": 8000, "cat_transport": 3000 } }
     ];
     set({ accounts, categories, transactions, goals, budgets });
   },

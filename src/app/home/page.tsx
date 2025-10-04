@@ -9,6 +9,7 @@ import CategoryForm from "@components/CategoryForm";
 import AccountForm from "@components/AccountForm";
 import BudgetForm from "@components/BudgetForm";
 import GoalForm from "@components/GoalForm";
+import AuthGuard from "@components/AuthGuard";
 import { useAppStore, totalsForRange } from "@lib/store";
 
 const CurrencySummary = dynamic(() => import("@components/CurrencySummary"), { ssr: false });
@@ -41,6 +42,7 @@ export default function Home(){
   }
 
   return (
+    <AuthGuard>
     <Fade in timeout={FADE_TIMEOUT}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -60,5 +62,6 @@ export default function Home(){
         <Grid item xs={12}><AccountList/></Grid>
       </Grid>
     </Fade>
+    </AuthGuard>
   );
 }
