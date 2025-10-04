@@ -19,8 +19,13 @@ type Actions = {
   updateTransaction: (t: Transaction) => void;
   deleteTransaction: (id: string) => void;
   addAccount: (a: Account) => void;
+  updateAccount: (a: Account) => void;
+  addCategory: (c: Category) => void;
+  updateCategory: (c: Category) => void;
+  deleteCategory: (id: string) => void;
   addBudget: (b: Budget) => void;
   addGoal: (g: Goal) => void;
+  updateGoal: (g: Goal) => void;
   setBaseCurrency: (c: CurrencyCode) => void;
 };
 
@@ -30,6 +35,8 @@ const initial: State = {
 };
 
 function uid(prefix: string) { return `${prefix}_${Math.random().toString(36).slice(2,10)}`; }
+
+export { uid };
 
 export const useAppStore = create<State & Actions>()(persist((set, get) => ({
   ...initial,
@@ -91,8 +98,13 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
   updateTransaction: (t) => set({ transactions: get().transactions.map(x => x.id === t.id ? t : x) }),
   deleteTransaction: (id) => set({ transactions: get().transactions.filter(x => x.id !== id) }),
   addAccount: (a) => set({ accounts: [...get().accounts, a] }),
+  updateAccount: (a) => set({ accounts: get().accounts.map(x => x.id === a.id ? a : x) }),
+  addCategory: (c) => set({ categories: [...get().categories, c] }),
+  updateCategory: (c) => set({ categories: get().categories.map(x => x.id === c.id ? c : x) }),
+  deleteCategory: (id) => set({ categories: get().categories.filter(x => x.id !== id) }),
   addBudget: (b) => set({ budgets: [...get().budgets, b] }),
   addGoal: (g) => set({ goals: [...get().goals, g] }),
+  updateGoal: (g) => set({ goals: get().goals.map(x => x.id === g.id ? g : x) }),
   setBaseCurrency: (c) => set({ settings: { ...get().settings, baseCurrency: c } })
 }), { name: "expense-tracker-v1" }));
 

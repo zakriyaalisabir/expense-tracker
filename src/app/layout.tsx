@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 const tabs = [
   { label: "Dashboard", href: "/" },
   { label: "Transactions", href: "/transactions" },
+  { label: "Categories", href: "/categories" },
   { label: "Accounts", href: "/accounts" },
   { label: "Budgets", href: "/budgets" },
   { label: "Goals", href: "/goals" },

@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { Grid, Card, CardContent, Typography, Stack, Divider, Skeleton } from "@mui/material";
 import MoneyCard from "@components/MoneyCard";
 import TransactionForm from "@components/TransactionForm";
+import CategoryForm from "@components/CategoryForm";
 import { useAppStore, totalsForRange } from "@lib/store";
 
 const IncomeExpenseSavingsChart = dynamic(() => import("@components/charts/IncomeExpenseSavingsChart"), { ssr: false });
@@ -38,7 +39,7 @@ export default function Dashboard(){
   }
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}><Stack direction="row" spacing={2}><TransactionForm/></Stack></Grid>
+      <Grid item xs={12}><Stack direction="row" spacing={2}><TransactionForm/><CategoryForm/></Stack></Grid>
       <Grid item xs={12} sm={6} md={3}><MoneyCard title="Total Income" value={income} color="success" /></Grid>
       <Grid item xs={12} sm={6} md={3}><MoneyCard title="Total Expenses" value={expense} color="error" /></Grid>
       <Grid item xs={12} sm={6} md={3}><MoneyCard title="Saved" value={saved} color="info" /></Grid>

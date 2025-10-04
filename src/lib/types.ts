@@ -15,6 +15,7 @@ export type Category = {
   name: string;
   type: CategoryType;
   parent_id?: string;
+  currency?: CurrencyCode;
 };
 
 export type Transaction = {
