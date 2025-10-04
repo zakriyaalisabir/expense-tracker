@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, Slide, IconButton } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import EditIcon from "@mui/icons-material/Edit";
 import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore, uid } from "@lib/store";
@@ -58,8 +58,8 @@ export default function AccountForm({ editAccount, onClose }: Props = {}) {
 
   return (
     <>
-      {!editAccount && <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AddIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Account</Button>}
-      {!editAccount && <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}><AddIcon fontSize="small" /></Button>}
+      {!editAccount && <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AccountBalanceWalletIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Account</Button>}
+      {!editAccount && <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}><AccountBalanceWalletIcon fontSize="small" /></Button>}
       {editAccount && <IconButton size="small" onClick={() => setOpen(true)}><EditIcon fontSize="small" /></IconButton>}
       <Dialog open={open} onClose={() => { setOpen(false); onClose?.(); }} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>{editAccount ? "Edit" : "New"} Account</DialogTitle>

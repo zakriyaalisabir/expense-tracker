@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide, Box } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore } from "@lib/store";
 import { toBase, FX } from "@lib/currency";
@@ -75,9 +75,9 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
   }
 
   return (<>
-    <Button variant="contained" onClick={()=>setOpen(true)} startIcon={<AddIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Transaction</Button>
+    <Button variant="contained" onClick={()=>setOpen(true)} startIcon={<ReceiptIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Transaction</Button>
     <Button variant="contained" onClick={()=>setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
-      <AddIcon fontSize="small" />
+      <ReceiptIcon fontSize="small" />
     </Button>
     <Dialog open={open} onClose={()=>{setOpen(false); onClose?.();}} fullWidth maxWidth="sm" TransitionComponent={Transition}>
       <DialogTitle>{editTransaction ? "Edit" : "New"} Transaction</DialogTitle>

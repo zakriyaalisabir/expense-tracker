@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide, IconButton } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import CategoryIcon from "@mui/icons-material/Category";
 import { TransitionProps } from "@mui/material/transitions";
@@ -16,11 +15,15 @@ import { useAppStore, uid } from "@lib/store";
 import { Category, CategoryType, CurrencyCode } from "@lib/types";
 import { CURRENCIES, CATEGORY_TYPES } from "@lib/constants";
 
-type Props = { editCategory?: Category; onClose?: () => void };
+type Props = {
+  editCategory?: Category;
+  onClose?: () => void;
+  autoOpen?: boolean;
+};
 
-export default function CategoryForm({ editCategory, onClose }: Props) {
+export default function CategoryForm({ editCategory, onClose, autoOpen = false }: Props) {
   const { categories, addCategory, updateCategory } = useAppStore();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(autoOpen && !editCategory);
   const [type, setType] = React.useState<CategoryType>(editCategory?.type || "expense");
   const [name, setName] = React.useState(editCategory?.name || "");
   const [parentId, setParentId] = React.useState(editCategory?.parent_id || "");
@@ -34,9 +37,17 @@ export default function CategoryForm({ editCategory, onClose }: Props) {
       setName(editCategory.name);
       setParentId(editCategory.parent_id || "");
       setCurrency(editCategory.currency || "THB");
+      if (autoOpen) {
+        setOpen(true);
+      }
+    }
+  }, [editCategory, autoOpen]);
+
+  React.useEffect(() => {
+    if (autoOpen && !editCategory) {
       setOpen(true);
     }
-  }, [editCategory]);
+  }, [autoOpen, editCategory]);
 
   async function submit() {
     if (!name.trim()) return;

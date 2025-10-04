@@ -137,12 +137,16 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     const { userId } = get();
     if (!userId) return;
     const supabase = createClient();
-    const { data, error } = await supabase.from("budgets").insert({ ...b, by_category: b.byCategory, user_id: userId }).select().single();
+    const { byCategory, ...rest } = b;
+    const payload = { ...rest, by_category: byCategory, user_id: userId };
+    const { data, error } = await supabase.from("budgets").insert(payload).select().single();
     if (!error && data) set({ budgets: [...get().budgets, { ...data, byCategory: data.by_category }] });
   },
   updateBudget: async (b) => {
     const supabase = createClient();
-    const { error } = await supabase.from("budgets").update({ ...b, by_category: b.byCategory }).eq("id", b.id);
+    const { byCategory, id, user_id: _userId, ...rest } = b;
+    const payload = { ...rest, by_category: byCategory };
+    const { error } = await supabase.from("budgets").update(payload).eq("id", id);
     if (!error) set({ budgets: get().budgets.map(x => x.id === b.id ? b : x) });
   },
   deleteBudget: async (id) => {

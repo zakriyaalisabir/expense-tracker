@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, Slide, FormControl, InputLabel, Select, MenuItem, Box, IconButton, Typography } from "@mui/material";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TransitionProps } from "@mui/material/transitions";
@@ -61,9 +61,9 @@ export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budge
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AccountBalanceIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Budget</Button>
+      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<BarChartIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Budget</Button>
       <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
-        <AccountBalanceIcon fontSize="small" />
+        <BarChartIcon fontSize="small" />
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>{editBudget ? "Edit Budget" : "New Budget"}</DialogTitle>

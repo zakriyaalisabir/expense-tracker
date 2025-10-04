@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Card, CardContent, Grid, Stack, Typography, CircularProgress, Box, LinearProgress, Chip, IconButton, Tooltip } from "@mui/material";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import EditIcon from "@mui/icons-material/Edit";
@@ -32,7 +32,7 @@ export default function BudgetsPage(){
 
   return (
     <PageLayout
-      icon={AccountBalanceWalletIcon}
+      icon={BarChartIcon}
       title="Budgets"
       subtitle={`${budgets.length} active budgets`}
       actions={<BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />}
