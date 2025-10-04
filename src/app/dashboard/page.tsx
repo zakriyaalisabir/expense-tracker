@@ -65,13 +65,13 @@ export default function Dashboard(){
             <CardContent>
               <Stack spacing={2}>
                 <Typography variant="h6">Date Range Filter</Typography>
-                <ToggleButtonGroup exclusive value={period} onChange={(_, v) => v && setPeriod(v)} fullWidth>
-                  <ToggleButton value="month">Current Month</ToggleButton>
-                  <ToggleButton value="year">Current Year</ToggleButton>
-                  <ToggleButton value="custom">Custom Range</ToggleButton>
+                <ToggleButtonGroup exclusive value={period} onChange={(_, v) => v && setPeriod(v)} fullWidth size="small">
+                  <ToggleButton value="month">Month</ToggleButton>
+                  <ToggleButton value="year">Year</ToggleButton>
+                  <ToggleButton value="custom">Custom</ToggleButton>
                 </ToggleButtonGroup>
                 {period === "custom" && (
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                     <TextField
                       label="Start Date"
                       type="date"
@@ -79,6 +79,7 @@ export default function Dashboard(){
                       onChange={(e) => setStartDate(e.target.value)}
                       InputLabelProps={{ shrink: true }}
                       fullWidth
+                      size="small"
                     />
                     <TextField
                       label="End Date"
@@ -87,6 +88,7 @@ export default function Dashboard(){
                       onChange={(e) => setEndDate(e.target.value)}
                       InputLabelProps={{ shrink: true }}
                       fullWidth
+                      size="small"
                     />
                   </Stack>
                 )}
@@ -99,19 +101,19 @@ export default function Dashboard(){
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly Income, Expenses & Savings</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><IncomeExpenseSavingsChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12} md={8}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Monthly Income vs Expenses</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><MonthlyIncomeExpenseChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12} md={4}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Category Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><CategoryBreakdownChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Currency Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><CurrencyBreakdownChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly by Currency</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><MonthlyCurrencyChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Categories by Currency</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><CategoryByCurrencyChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Savings Rate Trend</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><SavingsRateChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Account Balances</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><AccountBalanceChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Top 10 Expenses</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><TopExpensesChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Subcategory Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><SubcategoryChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Cumulative Cash Flow</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><CashFlowChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Spending by Weekday</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><WeekdaySpendingChart/></Box></CardContent></Card></Grid>
-        <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Daily Trend</Typography><Divider sx={{my:1}}/><Box sx={{height:320}}><TrendHeatmap/></Box></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly Income, Expenses & Savings</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><IncomeExpenseSavingsChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12} md={8}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Monthly Income vs Expenses</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><MonthlyIncomeExpenseChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12} md={4}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Category Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><CategoryBreakdownChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Currency Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><CurrencyBreakdownChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Monthly by Currency</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><MonthlyCurrencyChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Categories by Currency</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><CategoryByCurrencyChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Savings Rate Trend</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><SavingsRateChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Account Balances</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><AccountBalanceChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Top 10 Expenses</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><TopExpensesChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Subcategory Breakdown</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><SubcategoryChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12}><Card><CardContent><Typography variant="h6">Cumulative Cash Flow</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><CashFlowChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Spending by Weekday</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><WeekdaySpendingChart/></Box></CardContent></Card></Grid>
+        <Grid item xs={12} md={6}><Card sx={{height:'100%'}}><CardContent><Typography variant="h6">Daily Trend</Typography><Divider sx={{my:1}}/><Box sx={{height:{xs:250,sm:320}}}><TrendHeatmap/></Box></CardContent></Card></Grid>
       </Grid>
     </Fade>
   );

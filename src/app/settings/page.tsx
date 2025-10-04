@@ -140,7 +140,7 @@ export default function SettingsPage(){
                 {currencySuccess && <Alert severity="success">{currencySuccess}</Alert>}
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="subtitle2" fontWeight="bold">Add New Currency</Typography>
-                <Stack direction="row" spacing={1}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
                   <TextField
                     label="Currency Code"
                     value={newCurrency}
@@ -148,6 +148,7 @@ export default function SettingsPage(){
                     placeholder="GBP"
                     inputProps={{ maxLength: 5 }}
                     sx={{ flex: 1 }}
+                    fullWidth
                   />
                   <TextField
                     label="Rate"
@@ -156,6 +157,7 @@ export default function SettingsPage(){
                     onChange={(e) => setNewRate(e.target.value)}
                     inputProps={{ step: 0.01, min: 0 }}
                     sx={{ flex: 1 }}
+                    fullWidth
                   />
                 </Stack>
                 <Button 

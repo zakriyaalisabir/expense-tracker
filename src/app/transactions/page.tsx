@@ -81,11 +81,13 @@ export default function TransactionsPage(){
   return (
     <Fade in timeout={FADE_TIMEOUT}>
     <Stack spacing={2}>
-      <TransactionForm editTransaction={editTransaction} onClose={() => setEditTransaction(null)} />
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }} justifyContent="space-between" mb={2}>
+        <Typography variant="h6">Transactions ({transactions.length})</Typography>
+        <TransactionForm editTransaction={editTransaction} onClose={() => setEditTransaction(null)} />
+      </Stack>
       <Card><CardContent>
-        <Typography variant="h6" sx={{ mb: 2 }}>Transactions ({transactions.length})</Typography>
-        <TableContainer component={Paper} variant="outlined">
-        <Table size="small" stickyHeader>
+        <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
+        <Table size="small" stickyHeader sx={{ minWidth: 800 }}>
           <TableHead>
             <TableRow>
               <TableCell><strong>Date</strong></TableCell>
