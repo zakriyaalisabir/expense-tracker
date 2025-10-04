@@ -62,6 +62,26 @@ export default function SignIn() {
     }
   }
 
+  async function handleDemoLogin() {
+    setLoading(true);
+    const demoEmail = "demo@expense-tracker.com";
+    const demoPassword = "demo123";
+    
+    let res = await signIn("credentials", { redirect: false, email: demoEmail, password: demoPassword });
+    
+    if (res?.error) {
+      await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: demoEmail, password: demoPassword, name: "Demo User" })
+      });
+      res = await signIn("credentials", { redirect: false, email: demoEmail, password: demoPassword });
+    }
+    
+    setLoading(false);
+    router.push("/home");
+  }
+
   return (
     <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" sx={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
       <Fade in timeout={800}>
@@ -144,6 +164,15 @@ export default function SignIn() {
               sx={{ py: 1.5, fontWeight: "bold" }}
             >
               {loading ? "Loading..." : tab === 0 ? "Sign In" : "Create Account"}
+            </Button>
+            <Button 
+              variant="outlined" 
+              size="large"
+              onClick={handleDemoLogin}
+              disabled={loading}
+              sx={{ py: 1.5 }}
+            >
+              {loading ? "Loading Demo..." : "Continue with Demo Account"}
             </Button>
           </Stack>
         </CardContent>

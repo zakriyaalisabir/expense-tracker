@@ -19,6 +19,7 @@ type Props = { editTransaction?: any; onClose?: () => void };
 
 export default function TransactionForm({ editTransaction, onClose }: Props = {}){
   const { accounts, categories, addTransaction, updateTransaction, settings } = useAppStore();
+  const allCurrencies = [...CURRENCIES, ...(settings.customCurrencies || [])];
   const [open,setOpen] = React.useState(false);
   const [type,setType] = React.useState<"income"|"expense"|"savings">("expense");
   const [form,setForm] = React.useState<any>({
@@ -53,6 +54,7 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
     const base_amount = toBase(Number(form.amount), form.currency, settings.baseCurrency);
     const t: Transaction = {
       id: editTransaction?.id || `t_${Math.random().toString(36).slice(2,10)}`,
+      user_id: editTransaction?.user_id || "demo",
       date: new Date(form.date).toISOString(),
       type, amount: Number(form.amount), currency: form.currency,
       account_id: form.account_id, category_id: form.category_id,
@@ -86,7 +88,7 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
           <TextField label="Date & Time" type="datetime-local" value={form.date} onChange={e=>setForm({...form, date:e.target.value})}/>
           <TextField label="Amount" type="number" value={form.amount} onChange={e=>setForm({...form, amount:e.target.value})}/>
           <TextField select label="Currency" value={form.currency} onChange={e=>setForm({...form, currency:e.target.value})}>
-            {CURRENCIES.map(c=>(<MenuItem key={c} value={c}>{c}</MenuItem>))}
+            {allCurrencies.map(c=>(<MenuItem key={c} value={c}>{c}</MenuItem>))}
           </TextField>
           <TextField select label="Account" value={form.account_id} onChange={e=>setForm({...form, account_id:e.target.value})}>
             {useAppStore.getState().accounts.map(a=>(<MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>))}

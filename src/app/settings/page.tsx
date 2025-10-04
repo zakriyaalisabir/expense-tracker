@@ -117,7 +117,7 @@ export default function SettingsPage(){
                   onChange={(e)=>setBaseCurrency(e.target.value as any)}
                   helperText="All amounts will be converted to this currency"
                 >
-                  {CURRENCIES.map(c => (
+                  {allCurrencies.map(c => (
                     <MenuItem key={c} value={c}>
                       <Box display="flex" alignItems="center" gap={1}>
                         <Typography>{c}</Typography>
