@@ -63,7 +63,7 @@ export default function Dashboard(){
       <Stack spacing={3}>
         <Box display="flex" alignItems="center" gap={2}>
           <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-            <DashboardIcon fontSize="large" />
+            <DashboardIcon fontSize="large" sx={{ color: 'white' }} />
           </Avatar>
           <Box>
             <Typography variant="h4" fontWeight="bold">Dashboard</Typography>

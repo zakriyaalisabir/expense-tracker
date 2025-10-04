@@ -49,7 +49,7 @@ export default function CategoriesPage() {
         <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
           <Box display="flex" alignItems="center" gap={2}>
             <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-              <CategoryIcon fontSize="large" />
+              <CategoryIcon fontSize="large" sx={{ color: 'white' }} />
             </Avatar>
             <Box>
               <Typography variant="h4" fontWeight="bold">Categories</Typography>

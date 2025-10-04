@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Card, CardContent, Grid, Stack, Typography, Fade, CircularProgress, Box, Avatar, Divider, LinearProgress, Chip, IconButton, Tooltip } from "@mui/material";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import EditIcon from "@mui/icons-material/Edit";
@@ -37,7 +37,7 @@ export default function BudgetsPage(){
       <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
         <Box display="flex" alignItems="center" gap={2}>
           <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-            <AccountBalanceIcon fontSize="large" />
+            <AccountBalanceWalletIcon fontSize="large" sx={{ color: 'white' }} />
           </Avatar>
           <Box>
             <Typography variant="h4" fontWeight="bold">Budgets</Typography>

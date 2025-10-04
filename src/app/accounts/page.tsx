@@ -30,7 +30,7 @@ export default function AccountsPage(){
       <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
         <Box display="flex" alignItems="center" gap={2}>
           <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-            <AccountBalanceWalletIcon fontSize="large" />
+            <AccountBalanceWalletIcon fontSize="large" sx={{ color: 'white' }} />
           </Avatar>
           <Box>
             <Typography variant="h4" fontWeight="bold">Accounts</Typography>

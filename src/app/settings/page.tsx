@@ -59,7 +59,7 @@ export default function SettingsPage(){
     <Stack spacing={3}>
       <Box display="flex" alignItems="center" gap={2}>
         <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-          <SettingsIcon fontSize="large" />
+          <SettingsIcon fontSize="large" sx={{ color: 'white' }} />
         </Avatar>
         <Box>
           <Typography variant="h4" fontWeight="bold">Settings</Typography>

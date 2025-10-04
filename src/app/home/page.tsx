@@ -1,7 +1,8 @@
 "use client";
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { Grid, Stack, Skeleton, Fade } from "@mui/material";
+import { Grid, Stack, Skeleton, Fade, Box, Typography, Avatar, Divider } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
 import { FADE_TIMEOUT } from "@lib/constants";
 import MoneyCard from "@components/MoneyCard";
 import TransactionForm from "@components/TransactionForm";
@@ -48,6 +49,17 @@ export default function Home(){
   return (
     <AuthGuard>
     <Fade in timeout={FADE_TIMEOUT}>
+      <Stack spacing={3}>
+        <Box display="flex" alignItems="center" gap={2}>
+          <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+            <HomeIcon fontSize="large" sx={{ color: 'white' }} />
+          </Avatar>
+          <Box>
+            <Typography variant="h4" fontWeight="bold">Home</Typography>
+            <Typography variant="body2" color="text.secondary">Quick overview and actions</Typography>
+          </Box>
+        </Box>
+        <Divider />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
@@ -64,6 +76,7 @@ export default function Home(){
         <Grid item xs={12} sm={6} md={3}><MoneyCard title="Net Savings" value={savings} /></Grid>
         <Grid item xs={12}><CurrencySummary/></Grid>
       </Grid>
+      </Stack>
     </Fade>
     </AuthGuard>
   );
