@@ -1,6 +1,15 @@
 "use client";
 import * as React from "react";
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { TransitionProps } from "@mui/material/transitions";
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & { children: React.ReactElement<any, any> },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 import { useAppStore, uid } from "@lib/store";
 import { Category, CategoryType, CurrencyCode } from "@lib/types";
 
@@ -43,10 +52,15 @@ export default function CategoryForm({ editCategory }: Props) {
 
   return (
     <>
-      <Button variant={editCategory ? "text" : "outlined"} size={editCategory ? "small" : "medium"} onClick={() => setOpen(true)}>
+      <Button 
+        variant={editCategory ? "text" : "contained"} 
+        size={editCategory ? "small" : "medium"} 
+        onClick={() => setOpen(true)}
+        startIcon={editCategory ? undefined : <AddIcon />}
+      >
         {editCategory ? "Edit" : "Add Category"}
       </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>{editCategory ? "Edit" : "New"} Category</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>

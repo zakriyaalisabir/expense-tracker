@@ -1,9 +1,18 @@
 "use client";
 import * as React from "react";
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore } from "@lib/store";
 import { toBase, FX } from "@lib/currency";
 import { Transaction } from "@lib/types";
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & { children: React.ReactElement<any, any> },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export default function TransactionForm(){
   const { accounts, categories, addTransaction, settings } = useAppStore();
@@ -36,8 +45,8 @@ export default function TransactionForm(){
   }
 
   return (<>
-    <Button variant="contained" onClick={()=>setOpen(true)}>Add Transaction</Button>
-    <Dialog open={open} onClose={()=>setOpen(false)} fullWidth maxWidth="sm">
+    <Button variant="contained" onClick={()=>setOpen(true)} startIcon={<AddIcon />}>Add Transaction</Button>
+    <Dialog open={open} onClose={()=>setOpen(false)} fullWidth maxWidth="sm" TransitionComponent={Transition}>
       <DialogTitle>New Transaction</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>

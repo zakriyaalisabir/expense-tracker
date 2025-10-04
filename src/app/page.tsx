@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { Grid, Card, CardContent, Typography, Stack, Divider, Skeleton } from "@mui/material";
+import { Grid, Card, CardContent, Typography, Stack, Divider, Skeleton, Fade } from "@mui/material";
 import MoneyCard from "@components/MoneyCard";
 import TransactionForm from "@components/TransactionForm";
 import CategoryForm from "@components/CategoryForm";
@@ -35,11 +35,29 @@ export default function Dashboard(){
   }, [seed]);
 
   if (!hydrated) {
-    return <Typography color="text.secondary">Loading...</Typography>;
+    return (
+      <Stack spacing={2}>
+        <Skeleton variant="rectangular" height={100} />
+        <Grid container spacing={2}>
+          {[1,2,3,4].map(i => (
+            <Grid item xs={12} sm={6} md={3} key={i}>
+              <Skeleton variant="rectangular" height={80} />
+            </Grid>
+          ))}
+        </Grid>
+        <Skeleton variant="rectangular" height={320} />
+      </Stack>
+    );
   }
   return (
+    <Fade in timeout={500}>
     <Grid container spacing={2}>
-      <Grid item xs={12}><Stack direction="row" spacing={2}><TransactionForm/><CategoryForm/></Stack></Grid>
+      <Grid item xs={12}>
+        <Stack direction="row" spacing={2} flexWrap="wrap" gap={1}>
+          <TransactionForm/>
+          <CategoryForm/>
+        </Stack>
+      </Grid>
       <Grid item xs={12} sm={6} md={3}><MoneyCard title="Total Income" value={income} color="success" /></Grid>
       <Grid item xs={12} sm={6} md={3}><MoneyCard title="Total Expenses" value={expense} color="error" /></Grid>
       <Grid item xs={12} sm={6} md={3}><MoneyCard title="Saved" value={saved} color="info" /></Grid>
@@ -60,5 +78,6 @@ export default function Dashboard(){
       <Grid item xs={12} md={6}><Card><CardContent><Typography variant="h6">Daily Trend</Typography><Divider sx={{my:1}}/><TrendHeatmap/></CardContent></Card></Grid>
       <Grid item xs={12}><AccountList/></Grid>
     </Grid>
+    </Fade>
   );
 }

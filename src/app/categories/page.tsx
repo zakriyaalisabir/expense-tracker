@@ -1,22 +1,39 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Stack, Typography, Chip, Grid, Box, IconButton } from "@mui/material";
+import { Card, CardContent, Stack, Typography, Chip, Grid, Box, IconButton, Fade, CircularProgress, Divider } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import CategoryForm from "@components/CategoryForm";
 import { useAppStore } from "@lib/store";
 import { Category } from "@lib/types";
 
 export default function CategoriesPage() {
   const { categories, deleteCategory } = useAppStore();
+  const [loading, setLoading] = React.useState(true);
   
+  React.useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   const mainCategories = categories.filter(c => !c.parent_id);
   const getSubcategories = (parentId: string) => categories.filter(c => c.parent_id === parentId);
 
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <Stack spacing={2}>
-      <Stack direction="row" spacing={2}>
+    <Fade in timeout={500}>
+    <Stack spacing={3}>
+      <Box>
         <CategoryForm />
-      </Stack>
+      </Box>
+      <Divider />
       <Grid container spacing={2}>
         {["income", "expense", "savings"].map(type => (
           <Grid item xs={12} md={4} key={type}>
@@ -61,5 +78,6 @@ export default function CategoriesPage() {
         ))}
       </Grid>
     </Stack>
+    </Fade>
   );
 }
