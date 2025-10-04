@@ -3,7 +3,7 @@ import * as React from "react";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
 import { THEME_MODE, THEME_MODE_KEY, COLORS, BORDER_RADIUS, ELEVATION } from "@lib/constants";
 import LayoutContent from "@components/LayoutContent";
-import { AuthProvider } from "@/components/AuthProvider";
+import { AuthProvider } from "@components/AuthProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = React.useState<"light" | "dark">(THEME_MODE.LIGHT);

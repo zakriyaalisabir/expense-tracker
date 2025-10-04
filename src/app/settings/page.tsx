@@ -6,13 +6,13 @@ import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import PaletteIcon from "@mui/icons-material/Palette";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@components/AuthProvider";
 import AuthGuard from "@components/AuthGuard";
 import { useAppStore } from "@lib/store";
 import { CURRENCIES, FADE_TIMEOUT, LOADING_DELAY } from "@lib/constants";
 
 export default function SettingsPage(){
-  const { data: session, update } = useSession();
+  const { user } = useAuth();
   const { settings, setBaseCurrency, addCustomCurrency } = useAppStore();
   const [loading, setLoading] = React.useState(true);
   const [notifications, setNotifications] = React.useState(true);
@@ -32,8 +32,8 @@ export default function SettingsPage(){
   }
 
   React.useEffect(() => {
-    if (session?.user?.name) setName(session.user.name);
-  }, [session]);
+    if (user?.email) setName(user.email.split('@')[0]);
+  }, [user]);
 
   async function updateProfile() {
     setSuccess("Profile updated successfully!");
@@ -81,7 +81,7 @@ export default function SettingsPage(){
                 <TextField
                   fullWidth
                   label="Email"
-                  value={session?.user?.email || ""}
+                  value={user?.email || ""}
                   disabled
                   helperText="Email cannot be changed"
                 />

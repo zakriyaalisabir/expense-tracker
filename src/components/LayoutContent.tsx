@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useAuth } from "@components/AuthProvider";
 import { AppBar, Toolbar, Typography, IconButton, Box, Container, Tabs, Tab, LinearProgress, Drawer, List, ListItem, ListItemButton, ListItemText, useMediaQuery, Avatar, Button } from "@mui/material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
@@ -17,7 +17,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
   const pathname = usePathname();
   const router = useRouter();
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
-  const { data: session } = useSession();
+  const { user, signOut } = useAuth();
 
   React.useEffect(() => {
     setLoading(true);
@@ -36,7 +36,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
     <>
       <AppBar position="sticky" color="default" elevation={1}>
         <Toolbar>
-          {isMobile && session && (
+          {isMobile && (
             <IconButton edge="start" onClick={() => setDrawerOpen(true)} sx={{ mr: 2 }}>
               <MenuIcon />
             </IconButton>
@@ -45,7 +45,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
             <AccountBalanceWalletIcon sx={{ fontSize: 22, color: "inherit" }} />
           </Avatar>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: '-0.02em' }}>Expense Tracker</Typography>
-          {session && (
+          {user && (
             <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
               <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
                 {TABS.map((t) => (
@@ -61,17 +61,15 @@ export default function LayoutContent({ children, mode, setMode }: any) {
           }} sx={{ mr: 1 }}>
             {mode === THEME_MODE.LIGHT ? <Brightness4Icon /> : <Brightness7Icon />}
           </IconButton>
-          {session && (
-            <Button 
-              variant="outlined" 
-              size="small" 
-              startIcon={<LogoutIcon />}
-              onClick={() => signOut({ callbackUrl: "/auth/signin" })}
-              sx={{ display: { xs: "none", sm: "flex" } }}
-            >
-              Sign Out
-            </Button>
-          )}
+          <Button 
+            variant="outlined" 
+            size="small" 
+            startIcon={<LogoutIcon />}
+            onClick={() => user ? signOut() : router.push('/auth')}
+            sx={{ display: { xs: "none", sm: "flex" } }}
+          >
+            {user ? 'Sign Out' : 'Sign In'}
+          </Button>
         </Toolbar>
         {loading && <LinearProgress />}
       </AppBar>
@@ -91,9 +89,9 @@ export default function LayoutContent({ children, mode, setMode }: any) {
                 </ListItemButton>
               </ListItem>
             ))}
-            {session && (
+            {user && (
               <ListItem disablePadding>
-                <ListItemButton onClick={() => signOut({ callbackUrl: "/auth/signin" })}>
+                <ListItemButton onClick={() => signOut()}>
                   <LogoutIcon sx={{ mr: 2 }} />
                   <ListItemText primary="Sign Out" />
                 </ListItemButton>

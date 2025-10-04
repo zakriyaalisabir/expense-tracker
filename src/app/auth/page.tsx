@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@components/AuthProvider";
 import { Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
