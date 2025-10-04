@@ -28,10 +28,14 @@ export default function CurrencySummary() {
                       <Chip label={totals.expense.toFixed(2)} color="error" size="small" />
                     </Stack>
                     <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="body2" color="text.secondary">Savings:</Typography>
+                      <Typography variant="body2" color="text.secondary">Saved:</Typography>
+                      <Chip label={totals.saved.toFixed(2)} color="info" size="small" />
+                    </Stack>
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography variant="body2" color="text.secondary">Net:</Typography>
                       <Chip 
                         label={totals.savings.toFixed(2)} 
-                        color={totals.savings >= 0 ? "info" : "warning"} 
+                        color={totals.savings >= 0 ? "success" : "warning"} 
                         size="small" 
                       />
                     </Stack>

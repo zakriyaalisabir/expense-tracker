@@ -1,4 +1,4 @@
-export type AccountType = "cash" | "bank" | "credit" | "ewallet";
+export type AccountType = "cash" | "bank" | "credit" | "ewallet" | "savings";
 export type CurrencyCode = "THB" | "USD" | "EUR" | "JPY";
 
 export type Account = {
@@ -9,7 +9,7 @@ export type Account = {
   opening_balance: number;
 };
 
-export type CategoryType = "income" | "expense";
+export type CategoryType = "income" | "expense" | "savings";
 export type Category = {
   id: string;
   name: string;

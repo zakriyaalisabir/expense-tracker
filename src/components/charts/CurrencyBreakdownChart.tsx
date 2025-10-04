@@ -21,18 +21,19 @@ export default function CurrencyBreakdownChart() {
       currency,
       income: totals.income,
       expense: totals.expense,
+      saved: totals.saved,
       savings: totals.savings
     }));
 
     if (data.length === 0) return;
 
     const x0 = d3.scaleBand().domain(data.map(d => d.currency)).range([0, innerW]).padding(0.1);
-    const x1 = d3.scaleBand().domain(["income", "expense", "savings"]).range([0, x0.bandwidth()]).padding(0.05);
-    const maxY = d3.max(data, d => Math.max(d.income, d.expense, Math.abs(d.savings))) || 1;
+    const x1 = d3.scaleBand().domain(["income", "expense", "saved"]).range([0, x0.bandwidth()]).padding(0.05);
+    const maxY = d3.max(data, d => Math.max(d.income, d.expense, d.saved)) || 1;
     const y = d3.scaleLinear().domain([-maxY * 0.2, maxY]).nice().range([innerH, 0]);
 
     const color = d3.scaleOrdinal<string>()
-      .domain(["income", "expense", "savings"])
+      .domain(["income", "expense", "saved"])
       .range(["#4caf50", "#ef5350", "#2196f3"]);
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
@@ -59,13 +60,13 @@ export default function CurrencyBreakdownChart() {
         .text(`${d.currency} Expense: ${d.expense.toFixed(2)}`);
 
       currencyG.append("rect")
-        .attr("x", x1("savings"))
-        .attr("y", d.savings >= 0 ? y(d.savings) : y(0))
+        .attr("x", x1("saved"))
+        .attr("y", y(d.saved))
         .attr("width", x1.bandwidth())
-        .attr("height", Math.abs(innerH - y(d.savings) - (innerH - y(0))))
-        .attr("fill", color("savings"))
+        .attr("height", innerH - y(d.saved))
+        .attr("fill", color("saved"))
         .append("title")
-        .text(`${d.currency} Savings: ${d.savings.toFixed(2)}`);
+        .text(`${d.currency} Saved: ${d.saved.toFixed(2)}`);
     });
 
     g.append("g").attr("transform", `translate(0,${innerH})`).call(d3.axisBottom(x0));

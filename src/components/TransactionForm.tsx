@@ -8,7 +8,7 @@ import { Transaction } from "@lib/types";
 export default function TransactionForm(){
   const { accounts, categories, addTransaction, settings } = useAppStore();
   const [open,setOpen] = React.useState(false);
-  const [type,setType] = React.useState<"income"|"expense">("expense");
+  const [type,setType] = React.useState<"income"|"expense"|"savings">("expense");
   const [form,setForm] = React.useState<any>({
     date: new Date().toISOString().slice(0,16),
     amount: 0, currency: settings.baseCurrency, account_id: accounts[0]?.id ?? "",
@@ -44,6 +44,7 @@ export default function TransactionForm(){
           <ToggleButtonGroup exclusive value={type} onChange={(_,v)=>v&&setType(v)}>
             <ToggleButton value="income">Income</ToggleButton>
             <ToggleButton value="expense">Expense</ToggleButton>
+            <ToggleButton value="savings">Savings</ToggleButton>
           </ToggleButtonGroup>
           <TextField label="Date & Time" type="datetime-local" value={form.date} onChange={e=>setForm({...form, date:e.target.value})}/>
           <TextField label="Amount" type="number" value={form.amount} onChange={e=>setForm({...form, amount:e.target.value})}/>

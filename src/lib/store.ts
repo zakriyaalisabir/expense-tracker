@@ -39,7 +39,8 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
       { id: "acc_cash", name: "Cash", type: "cash", currency: "THB", opening_balance: 3000 },
       { id: "acc_kbank", name: "KBank", type: "bank", currency: "THB", opening_balance: 25000 },
       { id: "acc_visa", name: "VISA", type: "credit", currency: "THB", opening_balance: -12000 },
-      { id: "acc_wise", name: "Wise USD", type: "bank", currency: "USD", opening_balance: 500 }
+      { id: "acc_wise", name: "Wise USD", type: "bank", currency: "USD", opening_balance: 500 },
+      { id: "acc_savings", name: "Savings Account", type: "savings", currency: "THB", opening_balance: 50000 }
     ];
     const categories: Category[] = [
       { id: "cat_salary", name: "Salary", type: "income" },
@@ -55,7 +56,10 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
       { id: "cat_health", name: "Health", type: "expense" },
       { id: "cat_shopping", name: "Shopping", type: "expense" },
       { id: "cat_shopping_clothes", name: "Clothes", type: "expense", parent_id: "cat_shopping" },
-      { id: "cat_shopping_electronics", name: "Electronics", type: "expense", parent_id: "cat_shopping" }
+      { id: "cat_shopping_electronics", name: "Electronics", type: "expense", parent_id: "cat_shopping" },
+      { id: "cat_emergency", name: "Emergency Fund", type: "savings" },
+      { id: "cat_investment", name: "Investment", type: "savings" },
+      { id: "cat_retirement", name: "Retirement", type: "savings" }
     ];
     const transactions: Transaction[] = [
       { id: uid("t"), date: new Date().toISOString(), type: "income", amount: 60000, currency: "THB",
@@ -69,7 +73,10 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
         fx_rate: 1, base_amount: 15000 },
       { id: uid("t"), date: new Date().toISOString(), type: "expense", amount: 20, currency: "USD",
         account_id: "acc_wise", category_id: "cat_shopping", tags: ["online"], description: "Domain",
-        fx_rate: 36, base_amount: 720 }
+        fx_rate: 36, base_amount: 720 },
+      { id: uid("t"), date: new Date().toISOString(), type: "savings", amount: 10000, currency: "THB",
+        account_id: "acc_savings", category_id: "cat_emergency", tags: ["monthly"], description: "Emergency fund contribution",
+        fx_rate: 1, base_amount: 10000 }
     ];
     const goals: Goal[] = [
       { id: "goal_car", name: "Buy a Car", target_amount: 500000, target_date: new Date(new Date().getFullYear(), 11, 31).toISOString(),
@@ -99,7 +106,9 @@ export function totalsForRange(startISO?: string, endISO?: string) {
   });
   const income = inRange.filter(t => t.type === "income").reduce((a,b)=>a+b.base_amount,0);
   const expense = inRange.filter(t => t.type === "expense").reduce((a,b)=>a+b.base_amount,0);
-  return { income, expense, savings: income - expense, savingsPct: income ? ((income - expense)/income)*100 : 0 };
+  const saved = inRange.filter(t => t.type === "savings").reduce((a,b)=>a+b.base_amount,0);
+  const netSavings = income - expense - saved;
+  return { income, expense, saved, savings: netSavings, savingsPct: income ? ((netSavings)/income)*100 : 0 };
 }
 
 export function totalsForRangeByCurrency(startISO?: string, endISO?: string, currency?: CurrencyCode) {
