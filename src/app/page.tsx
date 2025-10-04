@@ -5,6 +5,9 @@ import { Grid, Card, CardContent, Typography, Stack, Divider, Skeleton, Fade } f
 import MoneyCard from "@components/MoneyCard";
 import TransactionForm from "@components/TransactionForm";
 import CategoryForm from "@components/CategoryForm";
+import AccountForm from "@components/AccountForm";
+import BudgetForm from "@components/BudgetForm";
+import GoalForm from "@components/GoalForm";
 import { useAppStore, totalsForRange } from "@lib/store";
 
 const IncomeExpenseSavingsChart = dynamic(() => import("@components/charts/IncomeExpenseSavingsChart"), { ssr: false });
@@ -53,9 +56,12 @@ export default function Dashboard(){
     <Fade in timeout={500}>
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Stack direction="row" spacing={2} flexWrap="wrap" gap={1}>
+        <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
           <TransactionForm/>
           <CategoryForm/>
+          <AccountForm/>
+          <BudgetForm/>
+          <GoalForm/>
         </Stack>
       </Grid>
       <Grid item xs={12} sm={6} md={3}><MoneyCard title="Total Income" value={income} color="success" /></Grid>
