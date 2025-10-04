@@ -41,7 +41,11 @@ export default function AuthPage() {
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
+      options: { 
+        redirectTo: typeof window !== 'undefined' 
+          ? `${window.location.origin}/auth/callback` 
+          : '/auth/callback'
+      }
     });
     if (error) setError(error.message);
   };
