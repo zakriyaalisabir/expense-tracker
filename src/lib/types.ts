@@ -14,6 +14,7 @@ export type Category = {
   id: string;
   name: string;
   type: CategoryType;
+  parent_id?: string;
 };
 
 export type Transaction = {
@@ -24,6 +25,7 @@ export type Transaction = {
   currency: CurrencyCode;
   account_id: string;
   category_id: string;
+  subcategory_id?: string;
   tags: string[];
   description?: string;
   fx_rate: number;

@@ -45,17 +45,24 @@ export const useAppStore = create<State & Actions>()(persist((set, get) => ({
       { id: "cat_salary", name: "Salary", type: "income" },
       { id: "cat_bonus", name: "Bonus", type: "income" },
       { id: "cat_food", name: "Food", type: "expense" },
+      { id: "cat_food_lunch", name: "Lunch", type: "expense", parent_id: "cat_food" },
+      { id: "cat_food_dinner", name: "Dinner", type: "expense", parent_id: "cat_food" },
+      { id: "cat_food_groceries", name: "Groceries", type: "expense", parent_id: "cat_food" },
       { id: "cat_rent", name: "Rent", type: "expense" },
       { id: "cat_transport", name: "Transport", type: "expense" },
+      { id: "cat_transport_fuel", name: "Fuel", type: "expense", parent_id: "cat_transport" },
+      { id: "cat_transport_public", name: "Public Transit", type: "expense", parent_id: "cat_transport" },
       { id: "cat_health", name: "Health", type: "expense" },
-      { id: "cat_shopping", name: "Shopping", type: "expense" }
+      { id: "cat_shopping", name: "Shopping", type: "expense" },
+      { id: "cat_shopping_clothes", name: "Clothes", type: "expense", parent_id: "cat_shopping" },
+      { id: "cat_shopping_electronics", name: "Electronics", type: "expense", parent_id: "cat_shopping" }
     ];
     const transactions: Transaction[] = [
       { id: uid("t"), date: new Date().toISOString(), type: "income", amount: 60000, currency: "THB",
         account_id: "acc_kbank", category_id: "cat_salary", tags: ["monthly"], description: "Salary",
         fx_rate: 1, base_amount: 60000 },
       { id: uid("t"), date: new Date().toISOString(), type: "expense", amount: 350, currency: "THB",
-        account_id: "acc_cash", category_id: "cat_food", tags: ["lunch"], description: "Pad Krapow",
+        account_id: "acc_cash", category_id: "cat_food", subcategory_id: "cat_food_lunch", tags: ["lunch"], description: "Pad Krapow",
         fx_rate: 1, base_amount: 350 },
       { id: uid("t"), date: new Date().toISOString(), type: "expense", amount: 15000, currency: "THB",
         account_id: "acc_kbank", category_id: "cat_rent", tags: ["condo"], description: "Monthly rent",
