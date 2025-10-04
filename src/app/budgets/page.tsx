@@ -32,7 +32,6 @@ export default function BudgetsPage(){
 
   return (
     <Fade in timeout={FADE_TIMEOUT}>
-    <Box>
     <Stack spacing={3}>
       <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
         <Box display="flex" alignItems="center" gap={2}>
@@ -49,7 +48,6 @@ export default function BudgetsPage(){
         <BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />
       </Box>
       <Divider />
-      <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
       <Grid container spacing={3}>
         {budgets.map(budget => {
           const monthTx = transactions.filter(t => t.type === "expense" && t.date.slice(0,7) === budget.month);
@@ -136,9 +134,7 @@ export default function BudgetsPage(){
           );
         })}
       </Grid>
-      </Box>
     </Stack>
-    </Box>
     </Fade>
   );
 }

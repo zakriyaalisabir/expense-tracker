@@ -42,7 +42,6 @@ export default function GoalsPage(){
         <GoalForm />
       </Box>
       <Divider />
-      <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
       <Grid container spacing={3}>
         {goals.map(g => (
           <Grid item xs={12} md={6} key={g.id}>
@@ -50,7 +49,6 @@ export default function GoalsPage(){
           </Grid>
         ))}
       </Grid>
-      </Box>
     </Stack>
     </Fade>
   );
