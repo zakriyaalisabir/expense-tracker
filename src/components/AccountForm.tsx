@@ -35,18 +35,18 @@ export default function AccountForm({ editAccount, onClose }: Props = {}) {
     }
   }, [editAccount]);
 
-  function submit() {
+  async function submit() {
     if (!name.trim()) return;
-    const account: Account = {
-      id: editAccount?.id || uid("acc"),
-      user_id: editAccount?.user_id || "demo",
+    const data = {
       name: name.trim(),
       type,
       currency,
       opening_balance: Number(balance)
     };
-    editAccount ? updateAccount(account) : addAccount(account);
-    if (!editAccount) {
+    if (editAccount) {
+      await updateAccount({ ...data, id: editAccount.id, user_id: editAccount.user_id });
+    } else {
+      await addAccount(data);
       setName("");
       setType("bank");
       setCurrency("THB");

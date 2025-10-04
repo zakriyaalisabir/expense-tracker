@@ -25,8 +25,8 @@ export default function SettingsPage(){
 
   const allCurrencies = [...CURRENCIES, ...(settings.customCurrencies || [])];
 
-  function handleRateChange(currency: string, rate: number) {
-    useAppStore.getState().setExchangeRate(currency, rate);
+  async function handleRateChange(currency: string, rate: number) {
+    await useAppStore.getState().setExchangeRate(currency, rate);
     setCurrencySuccess("Exchange rates saved!");
     setTimeout(() => setCurrencySuccess(""), 2000);
   }
@@ -115,7 +115,7 @@ export default function SettingsPage(){
                   fullWidth
                   label="Base Currency"
                   value={settings.baseCurrency}
-                  onChange={(e)=>setBaseCurrency(e.target.value as any)}
+                  onChange={(e)=>setBaseCurrency(e.target.value as any).catch(console.error)}
                   helperText="All amounts will be converted to this currency"
                 >
                   {allCurrencies.map(c => (
@@ -164,9 +164,9 @@ export default function SettingsPage(){
                 <Button 
                   variant="outlined" 
                   fullWidth
-                  onClick={() => {
+                  onClick={async () => {
                     if (newCurrency && !allCurrencies.includes(newCurrency)) {
-                      addCustomCurrency(newCurrency, Number(newRate));
+                      await addCustomCurrency(newCurrency, Number(newRate));
                       setNewCurrency("");
                       setNewRate("1");
                       setCurrencySuccess(`${newCurrency} added successfully!`);

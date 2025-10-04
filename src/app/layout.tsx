@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
 import { THEME_MODE, THEME_MODE_KEY, COLORS, BORDER_RADIUS, ELEVATION } from "@lib/constants";
 import LayoutContent from "@components/LayoutContent";
 import { AuthProvider } from "@components/AuthProvider";
+import StoreProvider from "@components/StoreProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = React.useState<"light" | "dark">(THEME_MODE.LIGHT);
@@ -157,12 +158,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         backgroundAttachment: 'fixed'
       }}>
         <AuthProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <LayoutContent mode={mode} setMode={setMode}>
-              {children}
-            </LayoutContent>
-          </ThemeProvider>
+          <StoreProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <LayoutContent mode={mode} setMode={setMode}>
+                {children}
+              </LayoutContent>
+            </ThemeProvider>
+          </StoreProvider>
         </AuthProvider>
       </body>
     </html>

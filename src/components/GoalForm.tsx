@@ -26,19 +26,16 @@ export default function GoalForm() {
     if (accounts.length && !accountId) setAccountId(accounts[0].id);
   }, [accounts, accountId]);
 
-  function submit() {
+  async function submit() {
     if (!name.trim()) return;
-    const goal: Goal = {
-      id: uid("goal"),
-      user_id: "local-user",
+    await addGoal({
       name: name.trim(),
       target_amount: Number(targetAmount),
       target_date: new Date(targetDate).toISOString(),
       monthly_contribution: Number(monthlyContribution),
       source_account_id: accountId,
       progress_cached: 0
-    };
-    addGoal(goal);
+    });
     setName("");
     setTargetAmount("0");
     setTargetDate(new Date(new Date().getFullYear() + 1, 0, 1).toISOString().slice(0, 10));

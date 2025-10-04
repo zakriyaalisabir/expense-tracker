@@ -1,9 +1,8 @@
 "use client";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { Account, Category, Transaction, Goal, Budget, BaseSettings, CurrencyCode } from "./types";
 import { differenceInMonths, parseISO } from "date-fns";
-import { STORAGE_KEY } from "./constants";
+import { createClient } from "./supabase/client";
 
 type State = {
   settings: BaseSettings;
@@ -12,119 +11,182 @@ type State = {
   transactions: Transaction[];
   goals: Goal[];
   budgets: Budget[];
+  isLoading: boolean;
+  userId: string | null;
 };
 
 type Actions = {
-  seed: () => void;
-  addTransaction: (t: Transaction) => void;
-  updateTransaction: (t: Transaction) => void;
-  deleteTransaction: (id: string) => void;
-  addAccount: (a: Account) => void;
-  updateAccount: (a: Account) => void;
-  deleteAccount: (id: string) => void;
-  addCategory: (c: Category) => void;
-  updateCategory: (c: Category) => void;
-  deleteCategory: (id: string) => void;
-  addBudget: (b: Budget) => void;
-  updateBudget: (b: Budget) => void;
-  deleteBudget: (id: string) => void;
-  addGoal: (g: Goal) => void;
-  updateGoal: (g: Goal) => void;
-  setBaseCurrency: (c: CurrencyCode) => void;
-  setExchangeRate: (currency: string, rate: number) => void;
-  addCustomCurrency: (code: string, rate: number) => void;
+  setUserId: (id: string | null) => void;
+  loadData: () => Promise<void>;
+  addTransaction: (t: Omit<Transaction, "id" | "user_id">) => Promise<void>;
+  updateTransaction: (t: Transaction) => Promise<void>;
+  deleteTransaction: (id: string) => Promise<void>;
+  addAccount: (a: Omit<Account, "id" | "user_id">) => Promise<void>;
+  updateAccount: (a: Account) => Promise<void>;
+  deleteAccount: (id: string) => Promise<void>;
+  addCategory: (c: Omit<Category, "id" | "user_id">) => Promise<void>;
+  updateCategory: (c: Category) => Promise<void>;
+  deleteCategory: (id: string) => Promise<void>;
+  addBudget: (b: Omit<Budget, "id" | "user_id">) => Promise<void>;
+  updateBudget: (b: Budget) => Promise<void>;
+  deleteBudget: (id: string) => Promise<void>;
+  addGoal: (g: Omit<Goal, "id" | "user_id">) => Promise<void>;
+  updateGoal: (g: Goal) => Promise<void>;
+  setBaseCurrency: (c: CurrencyCode) => Promise<void>;
+  setExchangeRate: (currency: string, rate: number) => Promise<void>;
+  addCustomCurrency: (code: string, rate: number) => Promise<void>;
 };
 
 const initial: State = {
   settings: { baseCurrency: "THB", exchangeRates: { THB: 1, USD: 36, EUR: 39, JPY: 0.25 } },
-  accounts: [], categories: [], transactions: [], goals: [], budgets: []
+  accounts: [], categories: [], transactions: [], goals: [], budgets: [],
+  isLoading: false, userId: null
 };
 
 function uid(prefix: string) { return `${prefix}_${Math.random().toString(36).slice(2,10)}`; }
 
 export { uid };
 
-export const useAppStore = create<State & Actions>()(persist((set, get) => ({
+export const useAppStore = create<State & Actions>()((set, get) => ({
   ...initial,
-  seed: () => {
-    if (get().accounts.length) return;
-    const userId = "demo";
-    const accounts: Account[] = [
-      { id: "acc_cash", user_id: userId, name: "Cash", type: "cash", currency: "THB", opening_balance: 3000 },
-      { id: "acc_kbank", user_id: userId, name: "KBank", type: "bank", currency: "THB", opening_balance: 25000 },
-      { id: "acc_visa", user_id: userId, name: "VISA", type: "credit", currency: "THB", opening_balance: -12000 },
-      { id: "acc_wise", user_id: userId, name: "Wise USD", type: "bank", currency: "USD", opening_balance: 500 },
-      { id: "acc_savings", user_id: userId, name: "Savings Account", type: "savings", currency: "THB", opening_balance: 50000 }
-    ];
-    const categories: Category[] = [
-      { id: "cat_salary", user_id: userId, name: "Salary", type: "income" },
-      { id: "cat_bonus", user_id: userId, name: "Bonus", type: "income" },
-      { id: "cat_food", user_id: userId, name: "Food", type: "expense" },
-      { id: "cat_food_lunch", user_id: userId, name: "Lunch", type: "expense", parent_id: "cat_food" },
-      { id: "cat_food_dinner", user_id: userId, name: "Dinner", type: "expense", parent_id: "cat_food" },
-      { id: "cat_food_groceries", user_id: userId, name: "Groceries", type: "expense", parent_id: "cat_food" },
-      { id: "cat_rent", user_id: userId, name: "Rent", type: "expense" },
-      { id: "cat_transport", user_id: userId, name: "Transport", type: "expense" },
-      { id: "cat_transport_fuel", user_id: userId, name: "Fuel", type: "expense", parent_id: "cat_transport" },
-      { id: "cat_transport_public", user_id: userId, name: "Public Transit", type: "expense", parent_id: "cat_transport" },
-      { id: "cat_health", user_id: userId, name: "Health", type: "expense" },
-      { id: "cat_shopping", user_id: userId, name: "Shopping", type: "expense" },
-      { id: "cat_shopping_clothes", user_id: userId, name: "Clothes", type: "expense", parent_id: "cat_shopping" },
-      { id: "cat_shopping_electronics", user_id: userId, name: "Electronics", type: "expense", parent_id: "cat_shopping" },
-      { id: "cat_emergency", user_id: userId, name: "Emergency Fund", type: "savings" },
-      { id: "cat_investment", user_id: userId, name: "Investment", type: "savings" },
-      { id: "cat_retirement", user_id: userId, name: "Retirement", type: "savings" }
-    ];
-    const transactions: Transaction[] = [
-      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "income", amount: 60000, currency: "THB",
-        account_id: "acc_kbank", category_id: "cat_salary", tags: ["monthly"], description: "Salary",
-        fx_rate: 1, base_amount: 60000 },
-      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "expense", amount: 350, currency: "THB",
-        account_id: "acc_cash", category_id: "cat_food", subcategory_id: "cat_food_lunch", tags: ["lunch"], description: "Pad Krapow",
-        fx_rate: 1, base_amount: 350 },
-      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "expense", amount: 15000, currency: "THB",
-        account_id: "acc_kbank", category_id: "cat_rent", tags: ["condo"], description: "Monthly rent",
-        fx_rate: 1, base_amount: 15000 },
-      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "expense", amount: 20, currency: "USD",
-        account_id: "acc_wise", category_id: "cat_shopping", tags: ["online"], description: "Domain",
-        fx_rate: 36, base_amount: 720 },
-      { id: uid("t"), user_id: userId, date: new Date().toISOString(), type: "savings", amount: 10000, currency: "THB",
-        account_id: "acc_savings", category_id: "cat_emergency", tags: ["monthly"], description: "Emergency fund contribution",
-        fx_rate: 1, base_amount: 10000 }
-    ];
-    const goals: Goal[] = [
-      { id: "goal_car", user_id: userId, name: "Buy a Car", target_amount: 500000, target_date: new Date(new Date().getFullYear(), 11, 31).toISOString(),
-        monthly_contribution: 10000, source_account_id: "acc_kbank", progress_cached: 60000 }
-    ];
-    const budgets: Budget[] = [
-      { id: "bud_ym", user_id: userId, month: new Date().toISOString().slice(0,7), total: 30000, byCategory: { "cat_food": 5000, "cat_shopping": 8000, "cat_transport": 3000 } }
-    ];
-    set({ accounts, categories, transactions, goals, budgets });
+  setUserId: (id) => set({ userId: id }),
+  loadData: async () => {
+    const { userId } = get();
+    if (!userId) return;
+    set({ isLoading: true });
+    const supabase = createClient();
+    try {
+      const [settingsRes, accountsRes, categoriesRes, transactionsRes, goalsRes, budgetsRes] = await Promise.all([
+        supabase.from("user_settings").select("*").eq("user_id", userId).single(),
+        supabase.from("accounts").select("*").eq("user_id", userId),
+        supabase.from("categories").select("*").eq("user_id", userId),
+        supabase.from("transactions").select("*").eq("user_id", userId),
+        supabase.from("goals").select("*").eq("user_id", userId),
+        supabase.from("budgets").select("*").eq("user_id", userId)
+      ]);
+      set({
+        settings: settingsRes.data ? {
+          baseCurrency: settingsRes.data.base_currency as CurrencyCode,
+          exchangeRates: settingsRes.data.exchange_rates || {},
+          customCurrencies: settingsRes.data.custom_currencies || []
+        } : initial.settings,
+        accounts: accountsRes.data || [],
+        categories: categoriesRes.data || [],
+        transactions: transactionsRes.data || [],
+        goals: goalsRes.data || [],
+        budgets: (budgetsRes.data || []).map(b => ({ ...b, byCategory: b.by_category })),
+        isLoading: false
+      });
+    } catch (e) {
+      console.error("Load error:", e);
+      set({ isLoading: false });
+    }
   },
-  addTransaction: (t) => set({ transactions: [...get().transactions, t] }),
-  updateTransaction: (t) => set({ transactions: get().transactions.map(x => x.id === t.id ? t : x) }),
-  deleteTransaction: (id) => set({ transactions: get().transactions.filter(x => x.id !== id) }),
-  addAccount: (a) => set({ accounts: [...get().accounts, a] }),
-  updateAccount: (a) => set({ accounts: get().accounts.map(x => x.id === a.id ? a : x) }),
-  deleteAccount: (id) => set({ accounts: get().accounts.filter(x => x.id !== id) }),
-  addCategory: (c) => set({ categories: [...get().categories, c] }),
-  updateCategory: (c) => set({ categories: get().categories.map(x => x.id === c.id ? c : x) }),
-  deleteCategory: (id) => set({ categories: get().categories.filter(x => x.id !== id) }),
-  addBudget: (b) => set({ budgets: [...get().budgets, b] }),
-  updateBudget: (b) => set({ budgets: get().budgets.map(x => x.id === b.id ? b : x) }),
-  deleteBudget: (id) => set({ budgets: get().budgets.filter(x => x.id !== id) }),
-  addGoal: (g) => set({ goals: [...get().goals, g] }),
-  updateGoal: (g) => set({ goals: get().goals.map(x => x.id === g.id ? g : x) }),
-  setBaseCurrency: (c) => set({ settings: { ...get().settings, baseCurrency: c } }),
-  setExchangeRate: (currency, rate) => set({ settings: { ...get().settings, exchangeRates: { ...get().settings.exchangeRates, [currency]: rate } } }),
-  addCustomCurrency: (code, rate) => set({ 
-    settings: { 
-      ...get().settings, 
-      customCurrencies: [...(get().settings.customCurrencies || []), code],
-      exchangeRates: { ...get().settings.exchangeRates, [code]: rate }
-    } 
-  })
-}), { name: STORAGE_KEY }));
+  addTransaction: async (t) => {
+    const { userId } = get();
+    if (!userId) return;
+    const supabase = createClient();
+    const { data, error } = await supabase.from("transactions").insert({ ...t, user_id: userId }).select().single();
+    if (!error && data) set({ transactions: [...get().transactions, data] });
+  },
+  updateTransaction: async (t) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("transactions").update(t).eq("id", t.id);
+    if (!error) set({ transactions: get().transactions.map(x => x.id === t.id ? t : x) });
+  },
+  deleteTransaction: async (id) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("transactions").delete().eq("id", id);
+    if (!error) set({ transactions: get().transactions.filter(x => x.id !== id) });
+  },
+  addAccount: async (a) => {
+    const { userId } = get();
+    if (!userId) return;
+    const supabase = createClient();
+    const { data, error } = await supabase.from("accounts").insert({ ...a, user_id: userId }).select().single();
+    if (!error && data) set({ accounts: [...get().accounts, data] });
+  },
+  updateAccount: async (a) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("accounts").update(a).eq("id", a.id);
+    if (!error) set({ accounts: get().accounts.map(x => x.id === a.id ? a : x) });
+  },
+  deleteAccount: async (id) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("accounts").delete().eq("id", id);
+    if (!error) set({ accounts: get().accounts.filter(x => x.id !== id) });
+  },
+  addCategory: async (c) => {
+    const { userId } = get();
+    if (!userId) return;
+    const supabase = createClient();
+    const { data, error } = await supabase.from("categories").insert({ ...c, user_id: userId }).select().single();
+    if (!error && data) set({ categories: [...get().categories, data] });
+  },
+  updateCategory: async (c) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("categories").update(c).eq("id", c.id);
+    if (!error) set({ categories: get().categories.map(x => x.id === c.id ? c : x) });
+  },
+  deleteCategory: async (id) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("categories").delete().eq("id", id);
+    if (!error) set({ categories: get().categories.filter(x => x.id !== id) });
+  },
+  addBudget: async (b) => {
+    const { userId } = get();
+    if (!userId) return;
+    const supabase = createClient();
+    const { data, error } = await supabase.from("budgets").insert({ ...b, by_category: b.byCategory, user_id: userId }).select().single();
+    if (!error && data) set({ budgets: [...get().budgets, { ...data, byCategory: data.by_category }] });
+  },
+  updateBudget: async (b) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("budgets").update({ ...b, by_category: b.byCategory }).eq("id", b.id);
+    if (!error) set({ budgets: get().budgets.map(x => x.id === b.id ? b : x) });
+  },
+  deleteBudget: async (id) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("budgets").delete().eq("id", id);
+    if (!error) set({ budgets: get().budgets.filter(x => x.id !== id) });
+  },
+  addGoal: async (g) => {
+    const { userId } = get();
+    if (!userId) return;
+    const supabase = createClient();
+    const { data, error } = await supabase.from("goals").insert({ ...g, user_id: userId }).select().single();
+    if (!error && data) set({ goals: [...get().goals, data] });
+  },
+  updateGoal: async (g) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("goals").update(g).eq("id", g.id);
+    if (!error) set({ goals: get().goals.map(x => x.id === g.id ? g : x) });
+  },
+  setBaseCurrency: async (c) => {
+    const { userId } = get();
+    if (!userId) return;
+    const supabase = createClient();
+    const { error } = await supabase.from("user_settings").update({ base_currency: c }).eq("user_id", userId);
+    if (!error) set({ settings: { ...get().settings, baseCurrency: c } });
+  },
+  setExchangeRate: async (currency, rate) => {
+    const { userId, settings } = get();
+    if (!userId) return;
+    const newRates = { ...settings.exchangeRates, [currency]: rate };
+    const supabase = createClient();
+    const { error } = await supabase.from("user_settings").update({ exchange_rates: newRates }).eq("user_id", userId);
+    if (!error) set({ settings: { ...settings, exchangeRates: newRates } });
+  },
+  addCustomCurrency: async (code, rate) => {
+    const { userId, settings } = get();
+    if (!userId) return;
+    const newCurrencies = [...(settings.customCurrencies || []), code];
+    const newRates = { ...settings.exchangeRates, [code]: rate };
+    const supabase = createClient();
+    const { error } = await supabase.from("user_settings").update({ custom_currencies: newCurrencies, exchange_rates: newRates }).eq("user_id", userId);
+    if (!error) set({ settings: { ...settings, customCurrencies: newCurrencies, exchangeRates: newRates } });
+  }
+}));
 
 export function totalsForRange(startISO?: string, endISO?: string) {
   const tx = useAppStore.getState().transactions;

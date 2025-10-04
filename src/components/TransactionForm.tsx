@@ -49,12 +49,10 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
     }
   }, [editTransaction]);
 
-  function submit(){
+  async function submit(){
     const fx_rate = FX[form.currency as keyof typeof FX] || 1;
     const base_amount = toBase(Number(form.amount), form.currency, settings.baseCurrency);
-    const t: Transaction = {
-      id: editTransaction?.id || `t_${Math.random().toString(36).slice(2,10)}`,
-      user_id: editTransaction?.user_id || "demo",
+    const data = {
       date: new Date(form.date).toISOString(),
       type, amount: Number(form.amount), currency: form.currency,
       account_id: form.account_id, category_id: form.category_id,
@@ -62,8 +60,10 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
       tags: form.tags ? form.tags.split(",").map((s:string)=>s.trim()).filter(Boolean):[],
       description: form.description, fx_rate, base_amount
     };
-    editTransaction ? updateTransaction(t) : addTransaction(t);
-    if (!editTransaction) {
+    if (editTransaction) {
+      await updateTransaction({ ...data, id: editTransaction.id, user_id: editTransaction.user_id });
+    } else {
+      await addTransaction(data);
       setForm({
         date: new Date().toISOString().slice(0,16),
         amount: 0, currency: settings.baseCurrency, account_id: accounts[0]?.id ?? "",

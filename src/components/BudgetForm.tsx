@@ -36,18 +36,16 @@ export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budge
     if (onClose) onClose();
   };
 
-  function submit() {
-    const budget: Budget = {
-      id: editBudget?.id || uid("bud"),
-      user_id: editBudget?.user_id || "demo",
+  async function submit() {
+    const data = {
       month,
       total: Number(total),
       byCategory
     };
-    if (editBudget) updateBudget(budget);
-    else addBudget(budget);
-    
-    if (!editBudget) {
+    if (editBudget) {
+      await updateBudget({ ...data, id: editBudget.id, user_id: editBudget.user_id });
+    } else {
+      await addBudget(data);
       setMonth(new Date().toISOString().slice(0, 7));
       setTotal("0");
       setByCategory({});

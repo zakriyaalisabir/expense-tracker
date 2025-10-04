@@ -37,18 +37,18 @@ export default function CategoryForm({ editCategory }: Props) {
     }
   }, [editCategory]);
 
-  function submit() {
+  async function submit() {
     if (!name.trim()) return;
-    const category: Category = {
-      id: editCategory?.id || uid("cat"),
-      user_id: editCategory?.user_id || "local-user",
+    const data = {
       name: name.trim(),
       type,
       parent_id: parentId || undefined,
       currency
     };
-    editCategory ? updateCategory(category) : addCategory(category);
-    if (!editCategory) {
+    if (editCategory) {
+      await updateCategory({ ...data, id: editCategory.id, user_id: editCategory.user_id });
+    } else {
+      await addCategory(data);
       setName("");
       setParentId("");
       setCurrency("THB");
