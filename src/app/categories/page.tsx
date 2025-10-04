@@ -44,6 +44,7 @@ export default function CategoriesPage() {
 
   return (
     <Fade in timeout={FADE_TIMEOUT}>
+      <Box>
       <Stack spacing={3}>
         <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
           <Box display="flex" alignItems="center" gap={2}>
@@ -60,6 +61,7 @@ export default function CategoriesPage() {
           <CategoryForm />
         </Box>
 
+        <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
         <Grid container spacing={3}>
           {CATEGORY_TYPES.map(type => {
             const typeCategories = mainCategories.filter(c => c.type === type);
@@ -142,7 +144,9 @@ export default function CategoriesPage() {
             );
           })}
         </Grid>
+        </Box>
       </Stack>
+      </Box>
     </Fade>
   );
 }

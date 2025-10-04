@@ -67,6 +67,7 @@ export default function SettingsPage(){
         </Box>
       </Box>
 
+      <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Card elevation={3}>
@@ -260,6 +261,7 @@ export default function SettingsPage(){
           </Paper>
         </Grid>
       </Grid>
+      </Box>
     </Stack>
     </Fade>
     </AuthGuard>

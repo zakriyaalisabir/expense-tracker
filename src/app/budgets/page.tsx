@@ -49,6 +49,7 @@ export default function BudgetsPage(){
         <BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />
       </Box>
       <Divider />
+      <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
       <Grid container spacing={3}>
         {budgets.map(budget => {
           const monthTx = transactions.filter(t => t.type === "expense" && t.date.slice(0,7) === budget.month);
@@ -135,6 +136,7 @@ export default function BudgetsPage(){
           );
         })}
       </Grid>
+      </Box>
     </Stack>
     </Box>
     </Fade>
