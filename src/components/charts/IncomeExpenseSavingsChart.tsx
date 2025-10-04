@@ -11,7 +11,7 @@ export default function IncomeExpenseSavingsChart() {
     if (!ref.current) return;
     const svg = d3.select(ref.current);
     svg.selectAll("*").remove();
-    const width = 720, height = 320, margin = { top: 20, right: 20, bottom: 40, left: 50 };
+    const width = 720, height = 320, margin = { top: 20, right: 120, bottom: 40, left: 60 };
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
 
@@ -40,8 +40,12 @@ export default function IncomeExpenseSavingsChart() {
         .attr("width", barWidth)
         .attr("height", innerH - y(data.income))
         .attr("fill", "#4caf50")
+        .attr("rx", 4)
+        .style("cursor", "pointer")
+        .on("mouseover", function() { d3.select(this).attr("opacity", 0.8); })
+        .on("mouseout", function() { d3.select(this).attr("opacity", 1); })
         .append("title")
-        .text(`${month} Income: ${d3.format("$.2f")(data.income)}`);
+        .text(`${month} Income: ${d3.format("$,.2f")(data.income)}`);
 
       g.append("rect")
         .attr("x", xPos + barWidth)
@@ -49,8 +53,12 @@ export default function IncomeExpenseSavingsChart() {
         .attr("width", barWidth)
         .attr("height", innerH - y(data.expense))
         .attr("fill", "#ef5350")
+        .attr("rx", 4)
+        .style("cursor", "pointer")
+        .on("mouseover", function() { d3.select(this).attr("opacity", 0.8); })
+        .on("mouseout", function() { d3.select(this).attr("opacity", 1); })
         .append("title")
-        .text(`${month} Expense: ${d3.format("$.2f")(data.expense)}`);
+        .text(`${month} Expense: ${d3.format("$,.2f")(data.expense)}`);
 
       g.append("rect")
         .attr("x", xPos + barWidth * 2)
@@ -58,18 +66,23 @@ export default function IncomeExpenseSavingsChart() {
         .attr("width", barWidth)
         .attr("height", innerH - y(data.savings))
         .attr("fill", "#2196f3")
+        .attr("rx", 4)
+        .style("cursor", "pointer")
+        .on("mouseover", function() { d3.select(this).attr("opacity", 0.8); })
+        .on("mouseout", function() { d3.select(this).attr("opacity", 1); })
         .append("title")
-        .text(`${month} Savings: ${d3.format("$.2f")(data.savings)}`);
+        .text(`${month} Savings: ${d3.format("$,.2f")(data.savings)}`);
     });
 
-    g.append("g").attr("transform", `translate(0,${innerH})`).call(d3.axisBottom(x));
-    g.append("g").call(d3.axisLeft(y));
+    g.append("g").attr("transform", `translate(0,${innerH})`).call(d3.axisBottom(x)).selectAll("text").style("font-size", "11px");
+    g.append("g").call(d3.axisLeft(y).tickFormat(d => d3.format("$,.0f")(d as number))).selectAll("text").style("font-size", "11px");
 
-    const legend = svg.append("g").attr("transform", `translate(${width - 100}, 30)`);
+    const legend = svg.append("g").attr("transform", `translate(${width - 110}, 20)`);
+    legend.append("rect").attr("width", 100).attr("height", 70).attr("fill", "white").attr("stroke", "#ddd").attr("rx", 4);
     [["Income", "#4caf50"], ["Expense", "#ef5350"], ["Savings", "#2196f3"]].forEach(([label, color], i) => {
-      const row = legend.append("g").attr("transform", `translate(0, ${i * 20})`);
-      row.append("rect").attr("width", 15).attr("height", 15).attr("fill", color);
-      row.append("text").attr("x", 20).attr("y", 12).attr("font-size", "12px").text(label);
+      const row = legend.append("g").attr("transform", `translate(8, ${i * 20 + 15})`);
+      row.append("rect").attr("width", 12).attr("height", 12).attr("fill", color).attr("rx", 2);
+      row.append("text").attr("x", 18).attr("y", 10).attr("font-size", "11px").attr("font-weight", "500").text(label);
     });
   }, [transactions]);
 

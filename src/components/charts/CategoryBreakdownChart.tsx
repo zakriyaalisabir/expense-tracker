@@ -30,17 +30,24 @@ export default function CategoryBreakdownChart(){
     const arcs = g.selectAll("path").data(pie(data)).enter().append("path").attr("d", arc as any);
     arcs
       .attr("stroke", "#fff")
-      .attr("stroke-width", 1)
+      .attr("stroke-width", 2)
       .attr("fill", d => color(d.data.label))
+      .style("cursor", "pointer")
+      .on("mouseover", function(event, d) {
+        d3.select(this).attr("opacity", 0.8).attr("stroke-width", 3);
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("opacity", 1).attr("stroke-width", 2);
+      })
       .append("title")
-      .text(d => `${d.data.label}: ${d3.format("$.2f")(d.data.value)}`);
+      .text(d => `${d.data.label}: ${d3.format("$,.2f")(d.data.value)} (${((d.endAngle - d.startAngle) / (2 * Math.PI) * 100).toFixed(1)}%)`);
 
-    const labelArc = d3.arc<any>().innerRadius(radius*0.95).outerRadius(radius*0.95);
-    g.selectAll("text").data(pie(data)).enter().append("text")
-      .attr("transform", d => `translate(${labelArc.centroid(d)})`)
-      .attr("text-anchor", "middle")
-      .attr("font-size", "10px")
-      .text(d => d.data.label);
+    const legend = svg.append("g").attr("transform", `translate(10, 10)`);
+    data.forEach((d, i) => {
+      const row = legend.append("g").attr("transform", `translate(0, ${i * 18})`);
+      row.append("rect").attr("width", 12).attr("height", 12).attr("fill", color(d.label)).attr("rx", 2);
+      row.append("text").attr("x", 16).attr("y", 10).attr("font-size", "10px").attr("font-weight", "500").text(d.label);
+    });
   }, [transactions, categories]);
 
   return <svg ref={ref} width={360} height={360} role="img" aria-label="Category breakdown pie chart" />;

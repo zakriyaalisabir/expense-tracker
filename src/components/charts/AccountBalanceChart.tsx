@@ -34,19 +34,19 @@ export default function AccountBalanceChart() {
       .attr("d", arc as any)
       .attr("fill", d => color(d.data.name))
       .attr("stroke", "#fff")
-      .attr("stroke-width", 2)
+      .attr("stroke-width", 3)
+      .style("cursor", "pointer")
+      .on("mouseover", function() { d3.select(this).attr("opacity", 0.8).attr("stroke-width", 4); })
+      .on("mouseout", function() { d3.select(this).attr("opacity", 1).attr("stroke-width", 3); })
       .append("title")
       .text(d => `${d.data.name}: ${d.data.balance.toFixed(2)} ${d.data.currency}`);
 
-    const labelArc = d3.arc<any>().innerRadius(radius * 0.85).outerRadius(radius * 0.85);
-    g.selectAll("text")
-      .data(pie(balances))
-      .enter()
-      .append("text")
-      .attr("transform", d => `translate(${labelArc.centroid(d)})`)
-      .attr("text-anchor", "middle")
-      .attr("font-size", "11px")
-      .text(d => d.data.name);
+    const legend = svg.append("g").attr("transform", `translate(10, 10)`);
+    balances.forEach((d, i) => {
+      const row = legend.append("g").attr("transform", `translate(0, ${i * 18})`);
+      row.append("rect").attr("width", 12).attr("height", 12).attr("fill", color(d.name)).attr("rx", 2);
+      row.append("text").attr("x", 16).attr("y", 10).attr("font-size", "10px").attr("font-weight", "500").text(d.name);
+    });
   }, [accounts, transactions]);
 
   return <svg ref={ref} width={360} height={360} role="img" aria-label="Account balance distribution" />;

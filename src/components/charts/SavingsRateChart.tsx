@@ -45,15 +45,22 @@ export default function SavingsRateChart() {
       .append("circle")
       .attr("cx", d => (x(d[0]) ?? 0) + x.bandwidth() / 2)
       .attr("cy", d => y(d[1].rate))
-      .attr("r", 4)
+      .attr("r", 5)
       .attr("fill", d => d[1].rate >= 0 ? "#4caf50" : "#ef5350")
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 2)
+      .style("cursor", "pointer")
+      .on("mouseover", function() { d3.select(this).attr("r", 7); })
+      .on("mouseout", function() { d3.select(this).attr("r", 5); })
       .append("title")
       .text(d => `${d[0]}: ${d[1].rate.toFixed(1)}%`);
 
-    g.append("g").attr("transform", `translate(0,${innerH})`).call(d3.axisBottom(x));
-    g.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}%`));
+    g.append("g").attr("transform", `translate(0,${innerH})`).call(d3.axisBottom(x)).selectAll("text").style("font-size", "11px");
+    g.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}%`)).selectAll("text").style("font-size", "11px");
     g.append("line").attr("x1", 0).attr("x2", innerW).attr("y1", y(0)).attr("y2", y(0))
-      .attr("stroke", "#999").attr("stroke-dasharray", "2,2");
+      .attr("stroke", "#999").attr("stroke-dasharray", "3,3").attr("stroke-width", 1.5);
+
+    svg.append("text").attr("x", width / 2).attr("y", 15).attr("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "600").text("Savings Rate Trend");
   }, [transactions]);
 
   return <svg ref={ref} width={720} height={280} role="img" aria-label="Savings rate trend" />;

@@ -41,11 +41,17 @@ export default function WeekdaySpendingChart() {
       .attr("width", x.bandwidth())
       .attr("height", d => innerH - y(d.amount))
       .attr("fill", "#ff9800")
+      .attr("rx", 4)
+      .style("cursor", "pointer")
+      .on("mouseover", function() { d3.select(this).attr("opacity", 0.8); })
+      .on("mouseout", function() { d3.select(this).attr("opacity", 1); })
       .append("title")
-      .text(d => `${d.day}: ${d3.format("$.2f")(d.amount)}`);
+      .text(d => `${d.day}: ${d3.format("$,.2f")(d.amount)}`);
 
-    g.append("g").attr("transform", `translate(0,${innerH})`).call(d3.axisBottom(x));
-    g.append("g").call(d3.axisLeft(y));
+    g.append("g").attr("transform", `translate(0,${innerH})`).call(d3.axisBottom(x)).selectAll("text").style("font-size", "11px");
+    g.append("g").call(d3.axisLeft(y).tickFormat(d => d3.format("$,.0f")(d as number))).selectAll("text").style("font-size", "11px");
+
+    svg.append("text").attr("x", width / 2).attr("y", 15).attr("text-anchor", "middle").attr("font-size", "12px").attr("font-weight", "600").text("Spending by Weekday");
   }, [transactions]);
 
   return <svg ref={ref} width={360} height={280} role="img" aria-label="Spending by weekday" />;
