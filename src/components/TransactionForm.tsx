@@ -80,8 +80,8 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
   }
 
   return (<>
-    <Button variant="contained" onClick={()=>setOpen(true)} startIcon={<ReceiptIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Transaction</Button>
-    <Button variant="contained" onClick={()=>setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
+    <Button variant="contained" onClick={()=>setOpen(true)} startIcon={<ReceiptIcon />} fullWidth sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Transaction</Button>
+    <Button variant="contained" onClick={()=>setOpen(true)} fullWidth sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
       <ReceiptIcon fontSize="small" />
     </Button>
     <Dialog open={open} onClose={()=>{setOpen(false); onClose?.();}} fullWidth maxWidth="sm" TransitionComponent={Transition}>

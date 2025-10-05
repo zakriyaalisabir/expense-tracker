@@ -61,8 +61,8 @@ export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budge
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<BarChartIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Budget</Button>
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
+      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<BarChartIcon />} fullWidth sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Budget</Button>
+      <Button variant="contained" onClick={() => setOpen(true)} fullWidth sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
         <BarChartIcon fontSize="small" />
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" TransitionComponent={Transition}>

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Stack, Typography, Chip, Grid, Box, IconButton, CircularProgress, Divider, Badge, Tooltip, Paper, Avatar, Alert } from "@mui/material";
+import { Card, CardContent, Stack, Typography, Chip, Box, IconButton, CircularProgress, Divider, Badge, Tooltip, Paper, Avatar, Alert } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -57,11 +57,11 @@ export default function CategoriesPage() {
         </Typography>
       </Alert>
       <Divider sx={{ mb: 3 }} />
-      <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
           {CATEGORY_TYPES.map(type => {
             const typeCategories = mainCategories.filter(c => c.type === type);
             return (
-              <Grid item xs={12} md={4} key={type}>
+              <Box key={type} sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(33.333% - 16px)' } }}>
                 <Card elevation={3} sx={{ height: '100%' }}>
                   <CardContent>
                     <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
@@ -135,10 +135,10 @@ export default function CategoriesPage() {
                     </Stack>
                   </CardContent>
                 </Card>
-              </Grid>
+              </Box>
             );
           })}
-        </Grid>
+        </Box>
     </PageLayout>
   );
 }

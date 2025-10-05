@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Typography, Grid, Stack, Chip } from "@mui/material";
+import { Card, CardContent, Typography, Stack, Chip, Box } from "@mui/material";
 import { useAppStore } from "@lib/store";
 import { groupByCurrency } from "@lib/currency";
 
@@ -12,9 +12,9 @@ export default function CurrencySummary() {
     <Card>
       <CardContent>
         <Typography variant="h6" gutterBottom>Currency Summary</Typography>
-        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
           {Object.entries(currencyData).map(([currency, totals]: [string, any]) => (
-            <Grid item xs={12} sm={6} md={3} key={currency}>
+            <Box key={currency} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 8px)', md: '1 1 calc(25% - 12px)' } }}>
               <Card variant="outlined">
                 <CardContent>
                   <Stack spacing={1}>
@@ -42,9 +42,9 @@ export default function CurrencySummary() {
                   </Stack>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </CardContent>
     </Card>
   );

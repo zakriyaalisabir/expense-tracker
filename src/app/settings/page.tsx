@@ -85,7 +85,7 @@ export default function SettingsPage(){
         </Typography>
       </Alert>
       <Divider sx={{ mb: 3 }} />
-      <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
+      <Grid container spacing={0} sx={{ gap: 3 }}>
         <Grid item xs={12} sm={12} md={12} lg={12}>
           <Card elevation={3}>
             <CardContent>

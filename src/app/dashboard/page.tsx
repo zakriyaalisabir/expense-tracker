@@ -44,7 +44,7 @@ export default function Dashboard(){
     return (
       <Stack spacing={2}>
         <Skeleton variant="rectangular" height={100} />
-        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
+        <Grid container spacing={0} sx={{ gap: 3 }}>
           {[1,2,3,4].map(i => (
             <Grid item xs={12} md={6} key={i}>
               <Skeleton variant="rectangular" height={320} />
@@ -64,47 +64,47 @@ export default function Dashboard(){
         </Typography>
       </Alert>
       <Divider sx={{ mb: 3 }} />
-        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
+        <Grid container spacing={0} sx={{ gap: 3 }}>
           <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Stack spacing={2}>
-                <Typography variant="h6">Date Range Filter</Typography>
-                <ToggleButtonGroup exclusive value={period} onChange={(_, v) => v && setPeriod(v)} fullWidth size="small">
-                  <ToggleButton value="month">Month</ToggleButton>
-                  <ToggleButton value="year">Year</ToggleButton>
-                  <ToggleButton value="custom">Custom</ToggleButton>
-                </ToggleButtonGroup>
-                {period === "custom" && (
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                    <TextField
-                      label="Start Date"
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      size="small"
-                    />
-                    <TextField
-                      label="End Date"
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      size="small"
-                    />
-                  </Stack>
-                )}
-                {period !== "custom" && (
-                  <Typography variant="body2" color="text.secondary">
-                    Showing data from {startDate} to {endDate}
-                  </Typography>
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardContent>
+                <Stack spacing={2}>
+                  <Typography variant="h6">Date Range Filter</Typography>
+                  <ToggleButtonGroup exclusive value={period} onChange={(_, v) => v && setPeriod(v)} fullWidth size="small">
+                    <ToggleButton value="month">Month</ToggleButton>
+                    <ToggleButton value="year">Year</ToggleButton>
+                    <ToggleButton value="custom">Custom</ToggleButton>
+                  </ToggleButtonGroup>
+                  {period === "custom" && (
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                      <TextField
+                        label="Start Date"
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                        fullWidth
+                        size="small"
+                      />
+                      <TextField
+                        label="End Date"
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                        fullWidth
+                        size="small"
+                      />
+                    </Stack>
+                  )}
+                  {period !== "custom" && (
+                    <Typography variant="body2" color="text.secondary">
+                      Showing data from {startDate} to {endDate}
+                    </Typography>
+                  )}
+                </Stack>
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
 

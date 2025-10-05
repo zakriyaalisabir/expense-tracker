@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { Grid, Stack, Skeleton, Alert, Typography, Divider } from "@mui/material";
+import { Stack, Skeleton, Alert, Typography, Divider, Box } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import MoneyCard from "@components/MoneyCard";
 import TransactionForm from "@components/TransactionForm";
@@ -29,13 +29,13 @@ export default function Home(){
     return (
       <Stack spacing={2}>
         <Skeleton variant="rectangular" height={100} />
-        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
           {[1,2,3,4].map(i => (
-            <Grid item xs={12} sm={6} md={3} key={i}>
+            <Box key={i} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
               <Skeleton variant="rectangular" height={80} />
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </Stack>
     );
   }
@@ -50,22 +50,40 @@ export default function Home(){
         </Typography>
       </Alert>
       <Divider sx={{ mb: 3 }} />
-        <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
-          <Grid item xs={12}>
-            <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-              <TransactionForm/>
-              <CategoryForm/>
-              <AccountForm/>
-              <BudgetForm/>
-              <GoalForm/>
-            </Stack>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}><MoneyCard title="Total Income" value={income} color="success" /></Grid>
-          <Grid item xs={12} sm={6} md={3}><MoneyCard title="Total Expenses" value={expense} color="error" /></Grid>
-          <Grid item xs={12} sm={6} md={3}><MoneyCard title="Saved" value={saved} color="info" /></Grid>
-          <Grid item xs={12} sm={6} md={3}><MoneyCard title="Net Savings" value={savings} /></Grid>
-          <Grid item xs={12}><CurrencySummary/></Grid>
-        </Grid>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
+          <Box sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '1 1 calc(33.333% - 6px)', md: '1 1 calc(20% - 8px)' } }}>
+            <TransactionForm/>
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '1 1 calc(33.333% - 6px)', md: '1 1 calc(20% - 8px)' } }}>
+            <CategoryForm/>
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '1 1 calc(33.333% - 6px)', md: '1 1 calc(20% - 8px)' } }}>
+            <AccountForm/>
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '1 1 calc(33.333% - 6px)', md: '1 1 calc(20% - 8px)' } }}>
+            <BudgetForm/>
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '1 1 calc(33.333% - 6px)', md: '1 1 calc(20% - 8px)' } }}>
+            <GoalForm/>
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+          <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
+            <MoneyCard title="Total Income" value={income} color="success" />
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
+            <MoneyCard title="Total Expenses" value={expense} color="error" />
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
+            <MoneyCard title="Saved" value={saved} color="info" />
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
+            <MoneyCard title="Net Savings" value={savings} />
+          </Box>
+          <Box sx={{ flex: '1 1 100%' }}>
+            <CurrencySummary/>
+          </Box>
+        </Box>
     </PageLayout>
     </AuthGuard>
   );

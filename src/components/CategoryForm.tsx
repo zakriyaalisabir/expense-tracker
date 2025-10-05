@@ -78,10 +78,10 @@ export default function CategoryForm({ editCategory, onClose, autoOpen = false }
         </IconButton>
       ) : (
         <>
-          <Button variant="contained" onClick={() => setOpen(true)} startIcon={<CategoryIcon />} size="small" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+          <Button variant="contained" onClick={() => setOpen(true)} startIcon={<CategoryIcon />} size="small" fullWidth sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
             Add Category
           </Button>
-          <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
+          <Button variant="contained" onClick={() => setOpen(true)} fullWidth sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
             <CategoryIcon fontSize="small" />
           </Button>
         </>

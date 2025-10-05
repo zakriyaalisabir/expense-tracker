@@ -72,8 +72,8 @@ export default function GoalForm({ editGoal, onClose }: { editGoal?: Goal; onClo
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<FlagIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Goal</Button>
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
+      <Button variant="contained" onClick={() => setOpen(true)} startIcon={<FlagIcon />} fullWidth sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Goal</Button>
+      <Button variant="contained" onClick={() => setOpen(true)} fullWidth sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
         <FlagIcon fontSize="small" />
       </Button>
       <Dialog open={open} onClose={() => { setOpen(false); onClose?.(); }} fullWidth maxWidth="sm" TransitionComponent={Transition}>

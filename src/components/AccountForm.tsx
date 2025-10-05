@@ -58,8 +58,8 @@ export default function AccountForm({ editAccount, onClose }: Props = {}) {
 
   return (
     <>
-      {!editAccount && <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AccountBalanceWalletIcon />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Account</Button>}
-      {!editAccount && <Button variant="contained" onClick={() => setOpen(true)} sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}><AccountBalanceWalletIcon fontSize="small" /></Button>}
+      {!editAccount && <Button variant="contained" onClick={() => setOpen(true)} startIcon={<AccountBalanceWalletIcon />} fullWidth sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Add Account</Button>}
+      {!editAccount && <Button variant="contained" onClick={() => setOpen(true)} fullWidth sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}><AccountBalanceWalletIcon fontSize="small" /></Button>}
       {editAccount && <IconButton size="small" onClick={() => setOpen(true)}><EditIcon fontSize="small" /></IconButton>}
       <Dialog open={open} onClose={() => { setOpen(false); onClose?.(); }} fullWidth maxWidth="sm" TransitionComponent={Transition}>
         <DialogTitle>{editAccount ? "Edit" : "New"} Account</DialogTitle>

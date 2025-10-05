@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Grid, CircularProgress, Box, Alert, Typography, Divider } from "@mui/material";
+import { CircularProgress, Box, Alert, Typography, Divider } from "@mui/material";
 import FlagIcon from "@mui/icons-material/Flag";
 import GoalForm from "@components/GoalForm";
 import GoalCard from "@components/GoalCard";
@@ -39,13 +39,13 @@ export default function GoalsPage(){
         </Typography>
       </Alert>
       <Divider sx={{ mb: 3 }} />
-      <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         {goals.map(g => (
-          <Grid item xs={12} md={6} key={g.id}>
+          <Box key={g.id} sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
             <GoalCard goal={g} />
-          </Grid>
+          </Box>
         ))}
-      </Grid>
+      </Box>
     </PageLayout>
   );
 }

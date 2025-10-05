@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Grid, Stack, Typography, CircularProgress, Box, LinearProgress, Chip, IconButton, Tooltip, Divider, Alert } from "@mui/material";
+import { Card, CardContent, Stack, Typography, CircularProgress, Box, LinearProgress, Chip, IconButton, Tooltip, Divider, Alert } from "@mui/material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -45,7 +45,7 @@ export default function BudgetsPage(){
         </Typography>
       </Alert>
       <Divider sx={{ mb: 3 }} />
-      <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         {budgets.map(budget => {
           const monthTx = transactions.filter(t => t.type === "expense" && t.date.slice(0,7) === budget.month);
           const spent = monthTx.reduce((a,b) => a + b.base_amount, 0);
@@ -53,7 +53,7 @@ export default function BudgetsPage(){
           const isOverBudget = spent > (budget.total || 0);
           const hasCategoryBudgets = budget.byCategory && Object.keys(budget.byCategory).length > 0;
           return (
-            <Grid item xs={12} md={6} key={budget.id}>
+            <Box key={budget.id} sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
               <Card elevation={3}>
                 <CardContent>
                   <Stack spacing={2}>
@@ -127,10 +127,10 @@ export default function BudgetsPage(){
                   </Stack>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           );
         })}
-      </Grid>
+      </Box>
     </PageLayout>
   );
 }
