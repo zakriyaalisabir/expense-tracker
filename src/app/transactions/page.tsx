@@ -119,12 +119,24 @@ export default function TransactionsPage(){
   const [totalCount, setTotalCount] = React.useState(0);
   const [error, setError] = React.useState("");
   const [columnAnchor, setColumnAnchor] = React.useState<HTMLButtonElement | null>(null);
-  const [visibleColumns, setVisibleColumns] = React.useState({
-    currency: true,
-    account: true,
-    category: true,
-    tags: true,
-    description: true
+  const [visibleColumns, setVisibleColumns] = React.useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('transactions-visible-columns');
+      return saved ? JSON.parse(saved) : {
+        currency: true,
+        account: true,
+        category: true,
+        tags: true,
+        description: true
+      };
+    }
+    return {
+      currency: true,
+      account: true,
+      category: true,
+      tags: true,
+      description: true
+    };
   });
   const [showFilters, setShowFilters] = React.useState(false);
   
@@ -308,8 +320,12 @@ export default function TransactionsPage(){
                     key={key}
                     control={
                       <Checkbox
-                        checked={value}
-                        onChange={(e) => setVisibleColumns(prev => ({ ...prev, [key]: e.target.checked }))}
+                        checked={value as boolean}
+                        onChange={(e) => {
+                          const newColumns = { ...visibleColumns, [key]: e.target.checked };
+                          setVisibleColumns(newColumns);
+                          localStorage.setItem('transactions-visible-columns', JSON.stringify(newColumns));
+                        }}
                         size="small"
                       />
                     }
