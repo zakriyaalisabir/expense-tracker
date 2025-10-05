@@ -1,28 +1,31 @@
 "use client";
 import * as React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, TableContainer, Paper, Chip, CircularProgress, Box, TablePagination, IconButton, Tooltip, Alert, Typography, Divider, TextField, FormControl, InputLabel, Select, MenuItem, Stack, TableSortLabel, Snackbar } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, TableContainer, Paper, Chip, CircularProgress, Box, TablePagination, IconButton, Tooltip, Alert, Typography, Divider, TextField, FormControl, InputLabel, Select, MenuItem, Stack, TableSortLabel, Snackbar, FormControlLabel, Checkbox, Popover, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore } from "@lib/store";
 import { LOADING_DELAY } from "@lib/constants";
 import PageLayout from "@components/PageLayout";
 
-const TransactionRow = React.memo(({ t, accountName, categoryName, onEdit, onDelete }: any) => {
+const TransactionRow = React.memo(({ t, accountName, categoryName, onEdit, onDelete, visibleColumns }: any) => {
   const typeColor = t.type === "income" ? "success" : t.type === "savings" ? "info" : "error";
   return (
   <TableRow hover>
     <TableCell>{new Date(t.date).toLocaleDateString()}</TableCell>
     <TableCell><Chip label={t.type} color={typeColor} size="small" /></TableCell>
     <TableCell align="right"><strong>{t.amount.toFixed(2)}</strong></TableCell>
-    <TableCell><Chip label={t.currency} size="small" variant="outlined" /></TableCell>
-    <TableCell>{accountName}</TableCell>
-    <TableCell>{categoryName}</TableCell>
-    <TableCell>{t.tags.map((tag: string) => <Chip key={tag} label={tag} size="small" sx={{ mr: 0.5 }} />)}</TableCell>
-    <TableCell>{t.description ?? ""}</TableCell>
+    {visibleColumns.currency && <TableCell><Chip label={t.currency} size="small" variant="outlined" /></TableCell>}
+    {visibleColumns.account && <TableCell>{accountName}</TableCell>}
+    {visibleColumns.category && <TableCell>{categoryName}</TableCell>}
+    {visibleColumns.tags && <TableCell>{t.tags.map((tag: string) => <Chip key={tag} label={tag} size="small" sx={{ mr: 0.5 }} />)}</TableCell>}
+    {visibleColumns.description && <TableCell>{t.description ?? ""}</TableCell>}
     <TableCell>
       <Box display="flex" gap={0.5}>
         <Tooltip title="Edit">
@@ -61,6 +64,15 @@ export default function TransactionsPage(){
   const [paginatedTransactions, setPaginatedTransactions] = React.useState<any[]>([]);
   const [totalCount, setTotalCount] = React.useState(0);
   const [error, setError] = React.useState("");
+  const [columnAnchor, setColumnAnchor] = React.useState<HTMLButtonElement | null>(null);
+  const [visibleColumns, setVisibleColumns] = React.useState({
+    currency: true,
+    account: true,
+    category: true,
+    tags: true,
+    description: true
+  });
+  const [showFilters, setShowFilters] = React.useState(true);
   
   const fetchTransactions = React.useCallback(async () => {
     setLoading(true);
@@ -156,18 +168,37 @@ export default function TransactionsPage(){
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Stack spacing={2}>
-            <TextField
-              fullWidth
-              placeholder="Search transactions..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              InputProps={{
-                startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />
-              }}
-              size="small"
-            />
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <TextField
+                fullWidth
+                placeholder="Search transactions..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                }}
+                size="small"
+              />
+              <Button
+                startIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                onClick={() => setShowFilters(!showFilters)}
+                variant="outlined"
+                size="small"
+              >
+                Filters
+              </Button>
+            </Stack>
             
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            {showFilters && (
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
+                <Button
+                  startIcon={<ViewColumnIcon />}
+                  onClick={(e) => setColumnAnchor(e.currentTarget)}
+                  variant="outlined"
+                  size="small"
+                >
+                  Columns
+                </Button>
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>Type</InputLabel>
                 <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} label="Type">
@@ -207,16 +238,42 @@ export default function TransactionsPage(){
                   ))}
                 </Select>
               </FormControl>
-            </Stack>
+              </Stack>
+            )}
+            
+            <Popover
+              open={Boolean(columnAnchor)}
+              anchorEl={columnAnchor}
+              onClose={() => setColumnAnchor(null)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            >
+              <Box sx={{ p: 2, minWidth: 200 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>Show Columns</Typography>
+                {Object.entries(visibleColumns).map(([key, value]) => (
+                  <FormControlLabel
+                    key={key}
+                    control={
+                      <Checkbox
+                        checked={value}
+                        onChange={(e) => setVisibleColumns(prev => ({ ...prev, [key]: e.target.checked }))}
+                        size="small"
+                      />
+                    }
+                    label={key.charAt(0).toUpperCase() + key.slice(1)}
+                    sx={{ display: 'block' }}
+                  />
+                ))}
+              </Box>
+            </Popover>
           </Stack>
         </CardContent>
       </Card>
       <Card><CardContent>
         <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
-        <Table size="small" stickyHeader sx={{ minWidth: 800 }}>
+        <Table size="small" stickyHeader sx={{ minWidth: 800, tableLayout: 'fixed' }}>
           <TableHead>
             <TableRow>
-              <TableCell>
+              <TableCell sx={{ width: '12%' }}>
                 <TableSortLabel
                   active={sortBy === "date"}
                   direction={sortBy === "date" ? sortOrder : "asc"}
@@ -225,7 +282,7 @@ export default function TransactionsPage(){
                   <strong>Date</strong>
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ width: '10%' }}>
                 <TableSortLabel
                   active={sortBy === "type"}
                   direction={sortBy === "type" ? sortOrder : "asc"}
@@ -234,7 +291,7 @@ export default function TransactionsPage(){
                   <strong>Type</strong>
                 </TableSortLabel>
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="right" sx={{ width: '12%' }}>
                 <TableSortLabel
                   active={sortBy === "amount"}
                   direction={sortBy === "amount" ? sortOrder : "asc"}
@@ -243,44 +300,52 @@ export default function TransactionsPage(){
                   <strong>Amount</strong>
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === "currency"}
-                  direction={sortBy === "currency" ? sortOrder : "asc"}
-                  onClick={() => handleSort("currency")}
-                >
-                  <strong>Currency</strong>
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === "account"}
-                  direction={sortBy === "account" ? sortOrder : "asc"}
-                  onClick={() => handleSort("account")}
-                >
-                  <strong>Account</strong>
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === "category"}
-                  direction={sortBy === "category" ? sortOrder : "asc"}
-                  onClick={() => handleSort("category")}
-                >
-                  <strong>Category</strong>
-                </TableSortLabel>
-              </TableCell>
-              <TableCell><strong>Tags</strong></TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === "description"}
-                  direction={sortBy === "description" ? sortOrder : "asc"}
-                  onClick={() => handleSort("description")}
-                >
-                  <strong>Description</strong>
-                </TableSortLabel>
-              </TableCell>
-              <TableCell><strong>Actions</strong></TableCell>
+              {visibleColumns.currency && (
+                <TableCell sx={{ width: '10%' }}>
+                  <TableSortLabel
+                    active={sortBy === "currency"}
+                    direction={sortBy === "currency" ? sortOrder : "asc"}
+                    onClick={() => handleSort("currency")}
+                  >
+                    <strong>Currency</strong>
+                  </TableSortLabel>
+                </TableCell>
+              )}
+              {visibleColumns.account && (
+                <TableCell sx={{ width: '15%' }}>
+                  <TableSortLabel
+                    active={sortBy === "account"}
+                    direction={sortBy === "account" ? sortOrder : "asc"}
+                    onClick={() => handleSort("account")}
+                  >
+                    <strong>Account</strong>
+                  </TableSortLabel>
+                </TableCell>
+              )}
+              {visibleColumns.category && (
+                <TableCell sx={{ width: '15%' }}>
+                  <TableSortLabel
+                    active={sortBy === "category"}
+                    direction={sortBy === "category" ? sortOrder : "asc"}
+                    onClick={() => handleSort("category")}
+                  >
+                    <strong>Category</strong>
+                  </TableSortLabel>
+                </TableCell>
+              )}
+              {visibleColumns.tags && <TableCell sx={{ width: '15%' }}><strong>Tags</strong></TableCell>}
+              {visibleColumns.description && (
+                <TableCell sx={{ width: '20%' }}>
+                  <TableSortLabel
+                    active={sortBy === "description"}
+                    direction={sortBy === "description" ? sortOrder : "asc"}
+                    onClick={() => handleSort("description")}
+                  >
+                    <strong>Description</strong>
+                  </TableSortLabel>
+                </TableCell>
+              )}
+              <TableCell sx={{ width: '11%' }}><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -292,6 +357,7 @@ export default function TransactionsPage(){
                 categoryName={categoryMap[t.category_id] ?? t.category_id}
                 onEdit={setEditTransaction}
                 onDelete={deleteTransaction}
+                visibleColumns={visibleColumns}
               />
             ))}
           </TableBody>
