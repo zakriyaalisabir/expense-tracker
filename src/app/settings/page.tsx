@@ -23,6 +23,7 @@ export default function SettingsPage(){
   const [currencySuccess, setCurrencySuccess] = React.useState("");
   const [newCurrency, setNewCurrency] = React.useState("");
   const [newRate, setNewRate] = React.useState("1");
+  const [imageError, setImageError] = React.useState(false);
 
   const allCurrencies = [...CURRENCIES, ...(settings.customCurrencies || [])];
 
@@ -39,6 +40,12 @@ export default function SettingsPage(){
       setName(user.email.split('@')[0]);
     }
   }, [user]);
+
+  // Generate Gravatar URL as fallback
+  const getGravatarUrl = (email: string) => {
+    const hash = btoa(email.toLowerCase().trim()).replace(/=/g, '');
+    return `https://www.gravatar.com/avatar/${hash}?d=identicon&s=80`;
+  };
 
   async function updateProfile() {
     if (!name.trim()) return;
@@ -81,6 +88,30 @@ export default function SettingsPage(){
               </Box>
               <Divider sx={{ mb: 2 }} />
               <Stack spacing={2}>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <Avatar
+                    sx={{ 
+                      width: 80, 
+                      height: 80,
+                      bgcolor: 'grey.400',
+                      color: 'white',
+                      fontSize: '2rem',
+                      fontWeight: 'bold'
+                    }}
+                    src={!imageError ? (user?.user_metadata?.picture || user?.user_metadata?.avatar_url) : undefined}
+                    onError={() => setImageError(true)}
+                  >
+                    {name ? name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || 'U'}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {name || user?.email?.split('@')[0] || 'User'}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {user?.email || 'demo@example.com'}
+                    </Typography>
+                  </Box>
+                </Box>
                 <TextField
                   fullWidth
                   label="Email"
