@@ -38,6 +38,7 @@ type Actions = {
   setExchangeRate: (currency: string, rate: number) => Promise<void>;
   addCustomCurrency: (code: string, rate: number) => Promise<void>;
   clearError: () => void;
+  resetStore: () => void;
 };
 
 const initial: State = {
@@ -57,6 +58,7 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     if (id) get().loadData();
   },
   clearError: () => set({ error: null }),
+  resetStore: () => set(initial),
   loadData: async () => {
     const { userId } = get();
     if (!userId) return;

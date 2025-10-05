@@ -2,6 +2,7 @@
 import { createClient } from "@lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { useAppStore } from "@lib/store";
 
 type AuthContextType = {
   user: User | null;
@@ -62,18 +63,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    if (typeof window !== 'undefined' && (localStorage.getItem('demo-mode') === 'true' || (typeof document !== 'undefined' && document.cookie.includes('demo-mode=true')))) {
-      localStorage.removeItem('demo-mode');
-      if (typeof document !== 'undefined') {
-        // Expire the cookie immediately
-        document.cookie = 'demo-mode=; path=/; max-age=0; samesite=lax';
+    try {
+      // Clear Zustand store
+      useAppStore.getState().resetStore();
+      
+      // Clear all localStorage data
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
       }
+      
+      // Clear all cookies
+      if (typeof document !== 'undefined') {
+        document.cookie.split(";").forEach(cookie => {
+          const eqPos = cookie.indexOf("=");
+          const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+          document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+        });
+      }
+      
+      // Sign out from Supabase if not in demo mode
+      const isDemoMode = localStorage.getItem('demo-mode') === 'true' || 
+                        (typeof document !== 'undefined' && document.cookie.includes('demo-mode=true'));
+      
+      if (!isDemoMode) {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+      }
+      
+      // Clear user state
       setUser(null);
-      return;
+      
+      // Redirect to auth page
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth';
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+      // Force redirect even if there's an error
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth';
+      }
     }
-    const supabase = createClient();
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
   };
 
   return (

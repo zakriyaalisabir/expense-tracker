@@ -79,7 +79,13 @@ export default function LayoutContent({ children, mode, setMode }: any) {
             variant="outlined" 
             size="small" 
             startIcon={<LogoutIcon />}
-            onClick={() => user ? signOut() : router.push('/auth')}
+            onClick={async () => {
+              if (user) {
+                await signOut();
+              } else {
+                router.push('/auth');
+              }
+            }}
             sx={{ display: { xs: "none", sm: "flex" } }}
           >
             {user ? 'Sign Out' : 'Sign In'}
@@ -93,7 +99,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
             severity="info"
             onClose={() => setShowDemoBanner(false)}
             action={
-              <Button color="inherit" size="small" onClick={() => signOut()}>
+              <Button color="inherit" size="small" onClick={async () => await signOut()}>
                 Exit Demo
               </Button>
             }
@@ -120,7 +126,10 @@ export default function LayoutContent({ children, mode, setMode }: any) {
             ))}
             {user && (
               <ListItem disablePadding>
-                <ListItemButton onClick={() => signOut()}>
+                <ListItemButton onClick={async () => {
+                  setDrawerOpen(false);
+                  await signOut();
+                }}>
                   <LogoutIcon sx={{ mr: 2 }} />
                   <ListItemText primary="Sign Out" />
                 </ListItemButton>
