@@ -33,3 +33,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .codacy/codacy.yaml
+
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md

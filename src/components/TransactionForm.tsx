@@ -1,12 +1,13 @@
 "use client";
 import * as React from "react";
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide, Box } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide } from "@mui/material";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore } from "@lib/store";
 import { toBase, FX } from "@lib/currency";
-import { Transaction } from "@lib/types";
+
 import { CURRENCIES, TRANSACTION_TYPES } from "@lib/constants";
+import { CurrencyCode } from "@lib/types";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement<any, any> },
@@ -15,30 +16,30 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-type Props = { editTransaction?: any; onClose?: () => void };
+type Props = { editTransaction?: { id: string; user_id: string; type: "income"|"expense"|"savings"; date: string; amount: number; currency: CurrencyCode; account_id: string; category_id: string; subcategory_id?: string; description?: string; tags: string[] }; onClose?: () => void };
 
 export default function TransactionForm({ editTransaction, onClose }: Props = {}){
   const { accounts, categories, addTransaction, updateTransaction, settings } = useAppStore();
   const allCurrencies = [...CURRENCIES, ...(settings.customCurrencies || [])];
   const [open,setOpen] = React.useState(false);
   const [type,setType] = React.useState<"income"|"expense"|"savings">("expense");
-  const [form,setForm] = React.useState<any>({
+  const [form,setForm] = React.useState({
     date: new Date().toISOString().slice(0,16),
     amount: 0, currency: accounts[0]?.currency || settings.baseCurrency, account_id: accounts[0]?.id ?? "",
     category_id: categories.find(c=>c.type==="expense")?.id ?? "", subcategory_id: "", description: "", tags: ""
   });
   React.useEffect(()=>{
     if (!accounts.length || !categories.length) return;
-    setForm((f:any)=>({...f, account_id: accounts[0].id, currency: accounts[0].currency, category_id: categories.find(c=>c.type==="expense")?.id}));
+    setForm((f)=>({...f, account_id: accounts[0].id, currency: accounts[0].currency, category_id: categories.find(c=>c.type==="expense")?.id || ""}));
   },[accounts.length, categories.length]);
 
   React.useEffect(() => {
-    setForm((f:any) => ({...f, category_id: categories.find(c=>c.type===type)?.id ?? "", subcategory_id: ""}));
+    setForm((f) => ({...f, category_id: categories.find(c=>c.type===type)?.id || "", subcategory_id: ""}));
   }, [type, categories]);
 
   React.useEffect(() => {
     if (editTransaction) {
-      setType(editTransaction.type);
+      setType(editTransaction.type as "income"|"expense"|"savings");
       setForm({
         date: new Date(editTransaction.date).toISOString().slice(0,16),
         amount: editTransaction.amount,
@@ -93,14 +94,14 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
             ))}
           </ToggleButtonGroup>
           <TextField label="Date & Time" type="datetime-local" value={form.date} onChange={e=>setForm({...form, date:e.target.value})}/>
-          <TextField label="Amount" type="number" value={form.amount} onChange={e=>setForm({...form, amount:e.target.value})}/>
+          <TextField label="Amount" type="number" value={form.amount} onChange={e=>setForm({...form, amount:Number(e.target.value)})}/>
           <TextField select label="Account" value={form.account_id} onChange={e=>{
             const selectedAccount = accounts.find(a => a.id === e.target.value);
             setForm({...form, account_id:e.target.value, currency: selectedAccount?.currency || form.currency});
           }}>
             {accounts.map(a=>(<MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>))}
           </TextField>
-          <TextField select label="Currency" value={form.currency} onChange={e=>setForm({...form, currency:e.target.value})}>
+          <TextField select label="Currency" value={form.currency} onChange={e=>setForm({...form, currency:e.target.value as CurrencyCode})}>
             {allCurrencies.map(c=>(<MenuItem key={c} value={c}>{c}</MenuItem>))}
           </TextField>
           <TextField select label="Category" value={form.category_id} onChange={e=>setForm({...form, category_id:e.target.value, subcategory_id:""})} required>

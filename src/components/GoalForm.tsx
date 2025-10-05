@@ -3,7 +3,7 @@ import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, Slide } from "@mui/material";
 import FlagIcon from "@mui/icons-material/Flag";
 import { TransitionProps } from "@mui/material/transitions";
-import { useAppStore, uid } from "@lib/store";
+import { useAppStore } from "@lib/store";
 import { Goal } from "@lib/types";
 
 const Transition = React.forwardRef(function Transition(

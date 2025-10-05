@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
-import { THEME_MODE, THEME_MODE_KEY, COLORS, BORDER_RADIUS, ELEVATION } from "@lib/constants";
+import { THEME_MODE, THEME_MODE_KEY, COLORS } from "@lib/constants";
 import LayoutContent from "@components/LayoutContent";
 import { AuthProvider } from "@components/AuthProvider";
 import StoreProvider from "@components/StoreProvider";
