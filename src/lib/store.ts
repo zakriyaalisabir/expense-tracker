@@ -52,7 +52,10 @@ export { uid };
 
 export const useAppStore = create<State & Actions>()((set, get) => ({
   ...initial,
-  setUserId: (id) => set({ userId: id }),
+  setUserId: (id) => {
+    set({ userId: id });
+    if (id) get().loadData();
+  },
   clearError: () => set({ error: null }),
   loadData: async () => {
     const { userId } = get();

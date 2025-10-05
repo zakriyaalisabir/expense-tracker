@@ -16,13 +16,17 @@ import PageLayout from "@components/PageLayout";
 const CurrencySummary = dynamic(() => import("@components/CurrencySummary"), { ssr: false });
 
 export default function Home(){
-  const { transactions, isLoading } = useAppStore(s => ({ transactions: s.transactions, isLoading: s.isLoading }));
+  const { transactions, isLoading, userId } = useAppStore(s => ({ 
+    transactions: s.transactions, 
+    isLoading: s.isLoading, 
+    userId: s.userId 
+  }));
   const [hydrated, setHydrated] = React.useState(false);
   
   const totals = React.useMemo(() => {
-    if (!hydrated || transactions.length === 0) return { income: 0, expense: 0, saved: 0, savings: 0 };
+    if (!hydrated) return { income: 0, expense: 0, saved: 0, savings: 0 };
     return totalsForRange();
-  }, [hydrated, transactions]);
+  }, [hydrated]);
   
   const { income, expense, saved, savings } = totals;
 
@@ -30,7 +34,7 @@ export default function Home(){
     setHydrated(true);
   }, []);
 
-  if (!hydrated || isLoading) {
+  if (!hydrated || !userId || isLoading) {
     return (
       <AuthGuard>
         <PageLayout icon={HomeIcon} title="Home" subtitle="Quick overview and actions">
