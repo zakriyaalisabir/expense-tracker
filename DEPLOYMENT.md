@@ -44,6 +44,8 @@
    ```
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_DEMO_ENABLED=true     # if you want demo UI and client logic enabled
+   PUBLIC_DEMO_ENABLED=true          # if you want middleware to honor demo cookie
    ```
 
 4. **Deploy**

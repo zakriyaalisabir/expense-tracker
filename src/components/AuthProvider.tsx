@@ -17,13 +17,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const initialized = useRef(false);
+  const demoEnabled = process.env.NEXT_PUBLIC_DEMO_ENABLED === 'true';
 
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
     
-    const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
-    if (demoMode) {
+    const demoModeLocal = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
+    const demoModeCookie = typeof document !== 'undefined' && document.cookie.includes('demo-mode=true');
+    if (demoEnabled && (demoModeLocal || demoModeCookie)) {
       setUser({ id: 'demo', email: 'demo@example.com' } as User);
       setLoading(false);
       return;
@@ -60,8 +62,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    if (typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true') {
+    if (typeof window !== 'undefined' && (localStorage.getItem('demo-mode') === 'true' || (typeof document !== 'undefined' && document.cookie.includes('demo-mode=true')))) {
       localStorage.removeItem('demo-mode');
+      if (typeof document !== 'undefined') {
+        // Expire the cookie immediately
+        document.cookie = 'demo-mode=; path=/; max-age=0; samesite=lax';
+      }
       setUser(null);
       return;
     }

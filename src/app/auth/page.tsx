@@ -8,6 +8,7 @@ import { useState } from "react";
 import { createClient } from "@lib/supabase/client";
 
 export default function AuthPage() {
+  const demoEnabled = process.env.NEXT_PUBLIC_DEMO_ENABLED === 'true';
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -105,17 +106,26 @@ export default function AuthPage() {
           >
             {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
           </Button>
-          <Button
-            fullWidth
-            variant="text"
-            sx={{ mt: 1 }}
-            onClick={() => {
-              localStorage.setItem('demo-mode', 'true');
-              router.push('/');
-            }}
-          >
-            Continue as Demo
-          </Button>
+          {demoEnabled && (
+            <Button
+              fullWidth
+              variant="text"
+              sx={{ mt: 1 }}
+              onClick={() => {
+                // Persist demo mode in both localStorage and a cookie so the
+                // middleware (server-side) can honor it as well.
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('demo-mode', 'true');
+                  const secure = window.location.protocol === 'https:' ? '; secure' : '';
+                  const oneWeek = 60 * 60 * 24 * 7;
+                  document.cookie = `demo-mode=true; path=/; max-age=${oneWeek}; samesite=lax${secure}`;
+                }
+                router.push('/');
+              }}
+            >
+              Continue as Demo
+            </Button>
+          )}
         </Box>
       </Paper>
     </Container>

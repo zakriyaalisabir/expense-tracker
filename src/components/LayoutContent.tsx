@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useAuth } from "@components/AuthProvider";
-import { AppBar, Toolbar, Typography, IconButton, Box, Container, Tabs, Tab, LinearProgress, Drawer, List, ListItem, ListItemButton, ListItemText, useMediaQuery, Avatar, Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Box, Container, Tabs, Tab, LinearProgress, Drawer, List, ListItem, ListItemButton, ListItemText, useMediaQuery, Avatar, Button, Alert } from "@mui/material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -18,12 +18,26 @@ export default function LayoutContent({ children, mode, setMode }: any) {
   const router = useRouter();
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
   const { user, signOut } = useAuth();
+  const demoEnabled = process.env.NEXT_PUBLIC_DEMO_ENABLED === 'true';
+  const [demoMode, setDemoMode] = React.useState(false);
+  const [showDemoBanner, setShowDemoBanner] = React.useState(true);
 
   React.useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
     return () => clearTimeout(timer);
   }, [pathname]);
+
+  React.useEffect(() => {
+    // Detect demo mode via cookie or localStorage
+    if (!demoEnabled) {
+      setDemoMode(false);
+      return;
+    }
+    const hasLocal = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
+    const hasCookie = typeof document !== 'undefined' && document.cookie.includes('demo-mode=true');
+    setDemoMode(hasLocal || hasCookie);
+  }, [demoEnabled, pathname]);
 
   const current = TABS.findIndex(t => t.href === pathname);
 
@@ -73,6 +87,21 @@ export default function LayoutContent({ children, mode, setMode }: any) {
         </Toolbar>
         {loading && <LinearProgress />}
       </AppBar>
+      {demoEnabled && demoMode && showDemoBanner && (
+        <Box sx={{ maxWidth: 'lg', mx: 'auto', px: { xs: 2, md: 3 }, pt: 2 }}>
+          <Alert
+            severity="info"
+            onClose={() => setShowDemoBanner(false)}
+            action={
+              <Button color="inherit" size="small" onClick={() => signOut()}>
+                Exit Demo
+              </Button>
+            }
+          >
+            You are in Demo Mode. Data is temporary and stored locally. Sign in for your own account.
+          </Alert>
+        </Box>
+      )}
       <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <Box sx={{ width: DRAWER_WIDTH }} role="presentation">
           <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1.5 }}>

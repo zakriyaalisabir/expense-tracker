@@ -308,6 +308,8 @@ npm run test:watch   # Run tests in watch mode
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_DEMO_ENABLED=true           # Enable client-side demo mode UI/logic
+PUBLIC_DEMO_ENABLED=true                # Enable server-side (middleware) demo cookie
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 

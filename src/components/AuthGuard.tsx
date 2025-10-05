@@ -7,9 +7,12 @@ import { CircularProgress, Box } from "@mui/material";
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const demoEnabled = process.env.NEXT_PUBLIC_DEMO_ENABLED === 'true';
 
   useEffect(() => {
-    const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
+    const demoMode = demoEnabled && typeof window !== 'undefined'
+      && (localStorage.getItem('demo-mode') === 'true'
+        || (typeof document !== 'undefined' && document.cookie.includes('demo-mode=true')));
     if (!loading && !user && !demoMode) {
       console.log('AuthGuard: Redirecting to /auth, user:', user, 'loading:', loading);
       router.push("/auth");
@@ -24,7 +27,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
+  const demoMode = demoEnabled && typeof window !== 'undefined'
+    && (localStorage.getItem('demo-mode') === 'true'
+      || (typeof document !== 'undefined' && document.cookie.includes('demo-mode=true')));
   if (!user && !demoMode) return null;
 
   return <>{children}</>;
