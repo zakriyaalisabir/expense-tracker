@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, TableContainer, Paper, Chip, CircularProgress, Box, TablePagination, IconButton, Tooltip, Alert, Typography, Divider, TextField, FormControl, InputLabel, Select, MenuItem, Stack, TableSortLabel } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Card, CardContent, TableContainer, Paper, Chip, CircularProgress, Box, TablePagination, IconButton, Tooltip, Alert, Typography, Divider, TextField, FormControl, InputLabel, Select, MenuItem, Stack, TableSortLabel, Snackbar } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReceiptIcon from "@mui/icons-material/Receipt";
@@ -58,11 +58,52 @@ export default function TransactionsPage(){
   const [tagFilter, setTagFilter] = React.useState("");
   const [sortBy, setSortBy] = React.useState<"date" | "amount" | "type" | "currency" | "account" | "category" | "description">("date");
   const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
+  const [paginatedTransactions, setPaginatedTransactions] = React.useState<any[]>([]);
+  const [totalCount, setTotalCount] = React.useState(0);
+  const [error, setError] = React.useState("");
   
+  const fetchTransactions = React.useCallback(async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      const response = await fetch('/api/transactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          page,
+          limit: rowsPerPage,
+          search,
+          type: typeFilter,
+          account: accountFilter,
+          category: categoryFilter,
+          tag: tagFilter,
+          sortBy,
+          sortOrder,
+          transactions,
+          accounts,
+          categories
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setPaginatedTransactions(data.transactions);
+      setTotalCount(data.total);
+    } catch (error) {
+      console.error('Failed to fetch transactions:', error);
+      setError('Failed to load transactions. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [page, rowsPerPage, search, typeFilter, accountFilter, categoryFilter, tagFilter, sortBy, sortOrder, transactions, accounts, categories]);
+
   React.useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), LOADING_DELAY);
-    return () => clearTimeout(timer);
-  }, []);
+    fetchTransactions();
+  }, [fetchTransactions]);
 
   const accountMap = React.useMemo(() => 
     Object.fromEntries(accounts.map(a => [a.id, a.name])), [accounts]
@@ -76,48 +117,6 @@ export default function TransactionsPage(){
     transactions.forEach(t => t.tags.forEach(tag => tagSet.add(tag)));
     return Array.from(tagSet).sort();
   }, [transactions]);
-
-  const filteredAndSortedTransactions = React.useMemo(() => {
-    let filtered = transactions.filter(t => {
-      const matchesSearch = search === "" || 
-        t.description?.toLowerCase().includes(search.toLowerCase()) ||
-        t.tags.some(tag => tag.toLowerCase().includes(search.toLowerCase())) ||
-        accountMap[t.account_id]?.toLowerCase().includes(search.toLowerCase()) ||
-        categoryMap[t.category_id]?.toLowerCase().includes(search.toLowerCase());
-      
-      const matchesType = typeFilter === "" || t.type === typeFilter;
-      const matchesAccount = accountFilter === "" || t.account_id === accountFilter;
-      const matchesCategory = categoryFilter === "" || t.category_id === categoryFilter;
-      const matchesTag = tagFilter === "" || t.tags.includes(tagFilter);
-      
-      return matchesSearch && matchesType && matchesAccount && matchesCategory && matchesTag;
-    });
-
-    return filtered.sort((a, b) => {
-      let comparison = 0;
-      if (sortBy === "date") {
-        comparison = new Date(a.date).valueOf() - new Date(b.date).valueOf();
-      } else if (sortBy === "amount") {
-        comparison = a.amount - b.amount;
-      } else if (sortBy === "type") {
-        comparison = a.type.localeCompare(b.type);
-      } else if (sortBy === "currency") {
-        comparison = a.currency.localeCompare(b.currency);
-      } else if (sortBy === "account") {
-        comparison = (accountMap[a.account_id] || "").localeCompare(accountMap[b.account_id] || "");
-      } else if (sortBy === "category") {
-        comparison = (categoryMap[a.category_id] || "").localeCompare(categoryMap[b.category_id] || "");
-      } else if (sortBy === "description") {
-        comparison = (a.description || "").localeCompare(b.description || "");
-      }
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
-  }, [transactions, search, typeFilter, accountFilter, categoryFilter, tagFilter, sortBy, sortOrder, accountMap, categoryMap]);
-
-  const paginatedTransactions = React.useMemo(() =>
-    filteredAndSortedTransactions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [filteredAndSortedTransactions, page, rowsPerPage]
-  );
 
   const handleSort = (column: "date" | "amount" | "type" | "currency" | "account" | "category" | "description") => {
     if (sortBy === column) {
@@ -144,7 +143,7 @@ export default function TransactionsPage(){
     <PageLayout
       icon={ReceiptIcon}
       title="Transactions"
-      subtitle={`${transactions.length} total transactions`}
+      subtitle={`${totalCount} total transactions`}
       actions={<TransactionForm editTransaction={editTransaction} onClose={() => setEditTransaction(null)} />}
     >
       <Alert severity="info" sx={{ mb: 3 }}>
@@ -300,7 +299,7 @@ export default function TransactionsPage(){
         </TableContainer>
         <TablePagination
           component="div"
-          count={filteredAndSortedTransactions.length}
+          count={totalCount}
           page={page}
           onPageChange={(_, newPage) => setPage(newPage)}
           rowsPerPage={rowsPerPage}
@@ -310,10 +309,16 @@ export default function TransactionsPage(){
           }}
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           labelDisplayedRows={({ from, to, count }) => 
-            `${from}-${to} of ${count} ${count === filteredAndSortedTransactions.length && filteredAndSortedTransactions.length !== transactions.length ? `(filtered from ${transactions.length})` : ''}`
+            `${from}-${to} of ${count} ${count !== transactions.length ? `(filtered from ${transactions.length})` : ''}`
           }
         />
       </CardContent></Card>
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={() => setError("")}
+        message={error}
+      />
     </PageLayout>
   );
 }
