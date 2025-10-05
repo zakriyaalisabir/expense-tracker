@@ -9,6 +9,9 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import SavingsIcon from "@mui/icons-material/Savings";
 import TransactionForm from "@components/TransactionForm";
 import { useAppStore } from "@lib/store";
 import { LOADING_DELAY } from "@lib/constants";
@@ -16,10 +19,11 @@ import PageLayout from "@components/PageLayout";
 
 const TransactionRow = React.memo(({ t, accountName, categoryName, onEdit, onDelete, visibleColumns }: any) => {
   const typeColor = t.type === "income" ? "success" : t.type === "savings" ? "info" : "error";
+  const typeIcon = t.type === "income" ? <TrendingUpIcon fontSize="small" /> : t.type === "savings" ? <SavingsIcon fontSize="small" /> : <TrendingDownIcon fontSize="small" />;
   return (
   <TableRow hover>
     <TableCell>{new Date(t.date).toLocaleDateString()}</TableCell>
-    <TableCell><Chip label={t.type} color={typeColor} size="small" /></TableCell>
+    <TableCell><Chip icon={typeIcon} label="" color={typeColor} size="small" /></TableCell>
     <TableCell align="right"><strong>{t.amount.toFixed(2)}</strong></TableCell>
     {visibleColumns.currency && <TableCell><Chip label={t.currency} size="small" variant="outlined" /></TableCell>}
     {visibleColumns.account && <TableCell>{accountName}</TableCell>}

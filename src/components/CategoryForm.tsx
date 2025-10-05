@@ -3,6 +3,9 @@ import * as React from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, MenuItem, ToggleButtonGroup, ToggleButton, Slide, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import CategoryIcon from "@mui/icons-material/Category";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import SavingsIcon from "@mui/icons-material/Savings";
 import { TransitionProps } from "@mui/material/transitions";
 
 const Transition = React.forwardRef(function Transition(
@@ -91,9 +94,15 @@ export default function CategoryForm({ editCategory, onClose, autoOpen = false }
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <ToggleButtonGroup exclusive value={type} onChange={(_, v) => v && setType(v)} disabled={!!editCategory}>
-              {CATEGORY_TYPES.map(t => (
-                <ToggleButton key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</ToggleButton>
-              ))}
+              {CATEGORY_TYPES.map(t => {
+                const icon = t === "income" ? <TrendingUpIcon fontSize="small" /> : t === "savings" ? <SavingsIcon fontSize="small" /> : <TrendingDownIcon fontSize="small" />;
+                return (
+                  <ToggleButton key={t} value={t}>
+                    {icon}
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </ToggleButton>
+                );
+              })}
             </ToggleButtonGroup>
             <TextField label="Category Name" value={name} onChange={e => setName(e.target.value)} />
             <TextField select label="Currency" value={currency} onChange={e => setCurrency(e.target.value as CurrencyCode)}>

@@ -32,9 +32,9 @@ export default function CategoriesPage() {
   }
 
   const typeIcons = {
-    income: <TrendingUpIcon />,
-    expense: <TrendingDownIcon />,
-    savings: <SavingsIcon />
+    income: <TrendingUpIcon sx={{ color: 'white' }} />,
+    expense: <TrendingDownIcon sx={{ color: 'white' }} />,
+    savings: <SavingsIcon sx={{ color: 'white' }} />
   };
 
   const typeColors = {
@@ -88,7 +88,7 @@ export default function CategoriesPage() {
                                 <Stack spacing={1.5}>
                                   <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
                                     <Box display="flex" alignItems="center" gap={1} flex={1}>
-                                      <Chip label={cat.name} color="primary" sx={{ fontWeight: 600 }} />
+                                      <Chip icon={typeIcons[cat.type as keyof typeof typeIcons]} label={cat.name} color="primary" sx={{ fontWeight: 600 }} />
                                       <Chip label={cat.currency || "THB"} size="small" variant="outlined" />
                                       {subs.length > 0 && (
                                         <Chip label={`${subs.length} sub`} size="small" color="default" sx={{ ml: 'auto' }} />
@@ -110,7 +110,7 @@ export default function CategoriesPage() {
                                           <Box key={sub.id} display="flex" alignItems="center" justifyContent="space-between" gap={1}>
                                             <Box display="flex" alignItems="center" gap={1}>
                                               <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'primary.main' }} />
-                                              <Chip label={sub.name} size="small" variant="outlined" />
+                                              <Chip icon={typeIcons[sub.type as keyof typeof typeIcons]} label={sub.name} size="small" variant="outlined" />
                                               <Chip label={sub.currency || "THB"} size="small" variant="outlined" />
                                             </Box>
                                             <Box display="flex" gap={0.5}>
