@@ -32,6 +32,7 @@ type Actions = {
   deleteBudget: (id: string) => Promise<void>;
   addGoal: (g: Omit<Goal, "id" | "user_id">) => Promise<void>;
   updateGoal: (g: Goal) => Promise<void>;
+  deleteGoal: (id: string) => Promise<void>;
   setBaseCurrency: (c: CurrencyCode) => Promise<void>;
   setExchangeRate: (currency: string, rate: number) => Promise<void>;
   addCustomCurrency: (code: string, rate: number) => Promise<void>;
@@ -165,6 +166,11 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     const supabase = createClient();
     const { error } = await supabase.from("goals").update(g).eq("id", g.id);
     if (!error) set({ goals: get().goals.map(x => x.id === g.id ? g : x) });
+  },
+  deleteGoal: async (id) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("goals").delete().eq("id", id);
+    if (!error) set({ goals: get().goals.filter(x => x.id !== id) });
   },
   setBaseCurrency: async (c) => {
     const { userId } = get();

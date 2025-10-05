@@ -24,13 +24,17 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
   const [type,setType] = React.useState<"income"|"expense"|"savings">("expense");
   const [form,setForm] = React.useState<any>({
     date: new Date().toISOString().slice(0,16),
-    amount: 0, currency: settings.baseCurrency, account_id: accounts[0]?.id ?? "",
+    amount: 0, currency: accounts[0]?.currency || settings.baseCurrency, account_id: accounts[0]?.id ?? "",
     category_id: categories.find(c=>c.type==="expense")?.id ?? "", subcategory_id: "", description: "", tags: ""
   });
   React.useEffect(()=>{
     if (!accounts.length || !categories.length) return;
-    setForm((f:any)=>({...f, account_id: accounts[0].id, category_id: categories.find(c=>c.type==="expense")?.id}));
+    setForm((f:any)=>({...f, account_id: accounts[0].id, currency: accounts[0].currency, category_id: categories.find(c=>c.type==="expense")?.id}));
   },[accounts.length, categories.length]);
+
+  React.useEffect(() => {
+    setForm((f:any) => ({...f, category_id: categories.find(c=>c.type===type)?.id ?? "", subcategory_id: ""}));
+  }, [type, categories]);
 
   React.useEffect(() => {
     if (editTransaction) {
@@ -66,7 +70,7 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
       await addTransaction(data);
       setForm({
         date: new Date().toISOString().slice(0,16),
-        amount: 0, currency: settings.baseCurrency, account_id: accounts[0]?.id ?? "",
+        amount: 0, currency: accounts[0]?.currency || settings.baseCurrency, account_id: accounts[0]?.id ?? "",
         category_id: categories.find(c=>c.type===type)?.id ?? "", subcategory_id: "", description: "", tags: ""
       });
     }
@@ -90,13 +94,16 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
           </ToggleButtonGroup>
           <TextField label="Date & Time" type="datetime-local" value={form.date} onChange={e=>setForm({...form, date:e.target.value})}/>
           <TextField label="Amount" type="number" value={form.amount} onChange={e=>setForm({...form, amount:e.target.value})}/>
+          <TextField select label="Account" value={form.account_id} onChange={e=>{
+            const selectedAccount = accounts.find(a => a.id === e.target.value);
+            setForm({...form, account_id:e.target.value, currency: selectedAccount?.currency || form.currency});
+          }}>
+            {accounts.map(a=>(<MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>))}
+          </TextField>
           <TextField select label="Currency" value={form.currency} onChange={e=>setForm({...form, currency:e.target.value})}>
             {allCurrencies.map(c=>(<MenuItem key={c} value={c}>{c}</MenuItem>))}
           </TextField>
-          <TextField select label="Account" value={form.account_id} onChange={e=>setForm({...form, account_id:e.target.value})}>
-            {useAppStore.getState().accounts.map(a=>(<MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>))}
-          </TextField>
-          <TextField select label="Category" value={form.category_id} onChange={e=>setForm({...form, category_id:e.target.value, subcategory_id:""})}>
+          <TextField select label="Category" value={form.category_id} onChange={e=>setForm({...form, category_id:e.target.value, subcategory_id:""})} required>
             {useAppStore.getState().categories.filter(c=>c.type===type && !c.parent_id).map(c=>(<MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>))}
           </TextField>
           {form.category_id && useAppStore.getState().categories.some(c=>c.parent_id===form.category_id) && (
@@ -111,7 +118,7 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
       </DialogContent>
       <DialogActions>
         <Button onClick={()=>{setOpen(false); onClose?.();}}>Cancel</Button>
-        <Button variant="contained" onClick={submit}>{editTransaction ? "Update" : "Save"}</Button>
+        <Button variant="contained" onClick={submit} disabled={!form.category_id}>{editTransaction ? "Update" : "Save"}</Button>
       </DialogActions>
     </Dialog> 
   </>);

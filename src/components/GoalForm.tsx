@@ -39,6 +39,11 @@ export default function GoalForm({ editGoal, onClose }: { editGoal?: Goal; onClo
 
   async function submit() {
     if (!name.trim()) return;
+    const { userId } = useAppStore.getState();
+    if (!userId) {
+      console.error('No user ID found. Please ensure you are authenticated.');
+      return;
+    }
     const data = {
       name: name.trim(),
       target_amount: Number(targetAmount),
@@ -47,18 +52,22 @@ export default function GoalForm({ editGoal, onClose }: { editGoal?: Goal; onClo
       source_account_id: accountId,
       progress_cached: editGoal?.progress_cached ?? 0
     };
-    if (editGoal) {
-      await updateGoal({ ...data, id: editGoal.id, user_id: editGoal.user_id });
-    } else {
-      await addGoal(data);
-      setName("");
-      setTargetAmount("0");
-      setTargetDate(new Date(new Date().getFullYear() + 1, 0, 1).toISOString().slice(0, 10));
-      setMonthlyContribution("0");
-      setAccountId(accounts[0]?.id || "");
+    try {
+      if (editGoal) {
+        await updateGoal({ ...data, id: editGoal.id, user_id: editGoal.user_id });
+      } else {
+        await addGoal(data);
+        setName("");
+        setTargetAmount("0");
+        setTargetDate(new Date(new Date().getFullYear() + 1, 0, 1).toISOString().slice(0, 10));
+        setMonthlyContribution("0");
+        setAccountId(accounts[0]?.id || "");
+      }
+      setOpen(false);
+      onClose?.();
+    } catch (error) {
+      console.error('Error saving goal:', error);
     }
-    setOpen(false);
-    onClose?.();
   }
 
   return (
