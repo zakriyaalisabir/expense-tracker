@@ -17,6 +17,56 @@ import { useAppStore } from "@lib/store";
 import { LOADING_DELAY } from "@lib/constants";
 import PageLayout from "@components/PageLayout";
 
+const TagsCell = React.memo(({ tags }: { tags: string[] }) => {
+  const [expanded, setExpanded] = React.useState(false);
+  
+  if (tags.length <= 1) {
+    return <>{tags.map((tag: string) => <Chip key={tag} label={tag} size="small" sx={{ mr: 0.5 }} />)}</>;
+  }
+  
+  return (
+    <Box>
+      <Chip label={tags[0]} size="small" sx={{ mr: 0.5 }} />
+      {!expanded && (
+        <Chip 
+          label={`+${tags.length - 1}`} 
+          size="small" 
+          variant="outlined" 
+          onClick={() => setExpanded(true)}
+          sx={{ cursor: 'pointer' }}
+        />
+      )}
+      {expanded && (
+        <>
+          {tags.slice(1).map((tag: string) => <Chip key={tag} label={tag} size="small" sx={{ mr: 0.5 }} />)}
+          <IconButton size="small" onClick={() => setExpanded(false)}>
+            <ExpandLessIcon fontSize="small" />
+          </IconButton>
+        </>
+      )}
+    </Box>
+  );
+});
+TagsCell.displayName = "TagsCell";
+
+const DescriptionCell = React.memo(({ description }: { description: string }) => {
+  const [expanded, setExpanded] = React.useState(false);
+  
+  if (!description || description.length <= 10) {
+    return <>{description}</>;
+  }
+  
+  return (
+    <Box display="flex" alignItems="center" gap={0.5}>
+      {expanded ? description : `${description.slice(0, 10)}...`}
+      <IconButton size="small" onClick={() => setExpanded(!expanded)}>
+        {expanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+      </IconButton>
+    </Box>
+  );
+});
+DescriptionCell.displayName = "DescriptionCell";
+
 const TransactionRow = React.memo(({ t, accountName, categoryName, onEdit, onDelete, visibleColumns }: any) => {
   const typeColor = t.type === "income" ? "success" : t.type === "savings" ? "info" : "error";
   const typeIcon = t.type === "income" ? <TrendingUpIcon fontSize="small" /> : t.type === "savings" ? <SavingsIcon fontSize="small" /> : <TrendingDownIcon fontSize="small" />;
@@ -28,8 +78,8 @@ const TransactionRow = React.memo(({ t, accountName, categoryName, onEdit, onDel
     {visibleColumns.currency && <TableCell><Chip label={t.currency} size="small" variant="outlined" /></TableCell>}
     {visibleColumns.account && <TableCell>{accountName}</TableCell>}
     {visibleColumns.category && <TableCell>{categoryName}</TableCell>}
-    {visibleColumns.tags && <TableCell>{t.tags.map((tag: string) => <Chip key={tag} label={tag} size="small" sx={{ mr: 0.5 }} />)}</TableCell>}
-    {visibleColumns.description && <TableCell>{t.description ?? ""}</TableCell>}
+    {visibleColumns.tags && <TableCell><TagsCell tags={t.tags} /></TableCell>}
+    {visibleColumns.description && <TableCell><DescriptionCell description={t.description ?? ""} /></TableCell>}
     <TableCell>
       <Box display="flex" gap={0.5}>
         <Tooltip title="Edit">
@@ -76,7 +126,7 @@ export default function TransactionsPage(){
     tags: true,
     description: true
   });
-  const [showFilters, setShowFilters] = React.useState(true);
+  const [showFilters, setShowFilters] = React.useState(false);
   
   const fetchTransactions = React.useCallback(async () => {
     setLoading(true);
@@ -274,10 +324,10 @@ export default function TransactionsPage(){
       </Card>
       <Card><CardContent>
         <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
-        <Table size="small" stickyHeader sx={{ minWidth: 800, tableLayout: 'fixed' }}>
+        <Table size="small" stickyHeader sx={{ tableLayout: 'auto' }}>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ width: '12%' }}>
+              <TableCell>
                 <TableSortLabel
                   active={sortBy === "date"}
                   direction={sortBy === "date" ? sortOrder : "asc"}
@@ -286,7 +336,7 @@ export default function TransactionsPage(){
                   <strong>Date</strong>
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ width: '10%' }}>
+              <TableCell>
                 <TableSortLabel
                   active={sortBy === "type"}
                   direction={sortBy === "type" ? sortOrder : "asc"}
@@ -295,7 +345,7 @@ export default function TransactionsPage(){
                   <strong>Type</strong>
                 </TableSortLabel>
               </TableCell>
-              <TableCell align="right" sx={{ width: '12%' }}>
+              <TableCell align="right">
                 <TableSortLabel
                   active={sortBy === "amount"}
                   direction={sortBy === "amount" ? sortOrder : "asc"}
@@ -305,7 +355,7 @@ export default function TransactionsPage(){
                 </TableSortLabel>
               </TableCell>
               {visibleColumns.currency && (
-                <TableCell sx={{ width: '10%' }}>
+                <TableCell>
                   <TableSortLabel
                     active={sortBy === "currency"}
                     direction={sortBy === "currency" ? sortOrder : "asc"}
@@ -316,7 +366,7 @@ export default function TransactionsPage(){
                 </TableCell>
               )}
               {visibleColumns.account && (
-                <TableCell sx={{ width: '15%' }}>
+                <TableCell>
                   <TableSortLabel
                     active={sortBy === "account"}
                     direction={sortBy === "account" ? sortOrder : "asc"}
@@ -327,7 +377,7 @@ export default function TransactionsPage(){
                 </TableCell>
               )}
               {visibleColumns.category && (
-                <TableCell sx={{ width: '15%' }}>
+                <TableCell>
                   <TableSortLabel
                     active={sortBy === "category"}
                     direction={sortBy === "category" ? sortOrder : "asc"}
@@ -337,9 +387,9 @@ export default function TransactionsPage(){
                   </TableSortLabel>
                 </TableCell>
               )}
-              {visibleColumns.tags && <TableCell sx={{ width: '15%' }}><strong>Tags</strong></TableCell>}
+              {visibleColumns.tags && <TableCell><strong>Tags</strong></TableCell>}
               {visibleColumns.description && (
-                <TableCell sx={{ width: '20%' }}>
+                <TableCell>
                   <TableSortLabel
                     active={sortBy === "description"}
                     direction={sortBy === "description" ? sortOrder : "asc"}
@@ -349,7 +399,7 @@ export default function TransactionsPage(){
                   </TableSortLabel>
                 </TableCell>
               )}
-              <TableCell sx={{ width: '11%' }}><strong>Actions</strong></TableCell>
+              <TableCell><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
