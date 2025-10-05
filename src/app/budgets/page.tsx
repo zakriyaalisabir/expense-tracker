@@ -39,7 +39,7 @@ export default function BudgetsPage(){
     >
       <Alert severity="info" sx={{ mb: 3 }}>
         <Typography variant="body2">
-          <strong>How to use:</strong> Click "Add Budget" to set monthly spending limits. 
+          <strong>How to use:</strong> Click `Add Budget` to set monthly spending limits. 
           Set total budget and optional category-specific limits. 
           Track progress with visual indicators - green means on track, red means over budget.
         </Typography>

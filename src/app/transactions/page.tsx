@@ -90,7 +90,7 @@ export default function TransactionsPage(){
       <Alert severity="info" sx={{ mb: 3 }}>
         <Typography variant="body2">
           <strong>Transaction Management:</strong> View all your transactions in a sortable table. 
-          Click "Add Transaction" to record new entries. Use edit/delete icons for existing transactions.
+          Click `Add Transaction` to record new entries. Use edit/delete icons for existing transactions.
         </Typography>
       </Alert>
       <Divider sx={{ mb: 3 }} />
