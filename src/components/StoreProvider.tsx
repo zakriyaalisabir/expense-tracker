@@ -13,7 +13,7 @@ export default function StoreProvider({ children }: { children: React.ReactNode 
     const supabase = createClient();
     
     const initStore = async () => {
-      const demoMode = localStorage.getItem('demo-mode') === 'true';
+      const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo-mode') === 'true';
       if (demoMode) {
         useAppStore.getState().setUserId('demo');
         return;
@@ -23,7 +23,7 @@ export default function StoreProvider({ children }: { children: React.ReactNode 
       if (session?.user?.id) {
         useAppStore.getState().setUserId(session.user.id);
         
-        if (localStorage.getItem('new-user') === 'true') {
+        if (typeof window !== 'undefined' && localStorage.getItem('new-user') === 'true') {
           await supabase.rpc('seed_user_data', { p_user_id: session.user.id });
           localStorage.removeItem('new-user');
         }

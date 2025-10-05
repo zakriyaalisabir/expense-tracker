@@ -16,40 +16,49 @@ import PageLayout from "@components/PageLayout";
 const CurrencySummary = dynamic(() => import("@components/CurrencySummary"), { ssr: false });
 
 export default function Home(){
-  const transactions = useAppStore(s => s.transactions);
+  const { transactions, isLoading } = useAppStore(s => ({ transactions: s.transactions, isLoading: s.isLoading }));
   const [hydrated, setHydrated] = React.useState(false);
-  const totals = React.useMemo(() => totalsForRange(), []);
+  
+  const totals = React.useMemo(() => {
+    if (!hydrated || transactions.length === 0) return { income: 0, expense: 0, saved: 0, savings: 0 };
+    return totalsForRange();
+  }, [hydrated, transactions]);
+  
   const { income, expense, saved, savings } = totals;
 
   React.useEffect(() => {
     setHydrated(true);
   }, []);
 
-  if (!hydrated) {
+  if (!hydrated || isLoading) {
     return (
-      <Stack spacing={2}>
-        <Skeleton variant="rectangular" height={100} />
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-          {[1,2,3,4].map(i => (
-            <Box key={i} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
-              <Skeleton variant="rectangular" height={80} />
+      <AuthGuard>
+        <PageLayout icon={HomeIcon} title="Home" subtitle="Quick overview and actions">
+          <Stack spacing={2}>
+            <Skeleton variant="rectangular" height={100} />
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+              {[1,2,3,4].map(i => (
+                <Box key={i} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
+                  <Skeleton variant="rectangular" height={80} />
+                </Box>
+              ))}
             </Box>
-          ))}
-        </Box>
-      </Stack>
+          </Stack>
+        </PageLayout>
+      </AuthGuard>
     );
   }
 
   return (
     <AuthGuard>
-    <PageLayout icon={HomeIcon} title="Home" subtitle="Quick overview and actions">
-      <Alert severity="info" sx={{ mb: 3 }}>
-        <Typography variant="body2">
-          <strong>Quick Start:</strong> Use the action buttons to add transactions, accounts, categories, budgets, and goals. 
-          View your financial summary in the cards below and detailed currency breakdown at the bottom.
-        </Typography>
-      </Alert>
-      <Divider sx={{ mb: 3 }} />
+      <PageLayout icon={HomeIcon} title="Home" subtitle="Quick overview and actions">
+        <Alert severity="info" sx={{ mb: 3 }}>
+          <Typography variant="body2">
+            <strong>Quick Start:</strong> Use the action buttons to add transactions, accounts, categories, budgets, and goals. 
+            View your financial summary in the cards below and detailed currency breakdown at the bottom.
+          </Typography>
+        </Alert>
+        <Divider sx={{ mb: 3 }} />
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
           <Box sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '1 1 calc(33.333% - 6px)', md: '1 1 calc(20% - 8px)' } }}>
             <TransactionForm/>
@@ -84,7 +93,7 @@ export default function Home(){
             <CurrencySummary/>
           </Box>
         </Box>
-    </PageLayout>
+      </PageLayout>
     </AuthGuard>
   );
 }
