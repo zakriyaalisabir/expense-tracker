@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Grid, Stack, Typography, CircularProgress, Box, LinearProgress, Chip, IconButton, Tooltip } from "@mui/material";
+import { Card, CardContent, Grid, Stack, Typography, CircularProgress, Box, LinearProgress, Chip, IconButton, Tooltip, Divider, Alert } from "@mui/material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -37,6 +37,14 @@ export default function BudgetsPage(){
       subtitle={`${budgets.length} active budgets`}
       actions={<BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />}
     >
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          <strong>How to use:</strong> Click "Add Budget" to set monthly spending limits. 
+          Set total budget and optional category-specific limits. 
+          Track progress with visual indicators - green means on track, red means over budget.
+        </Typography>
+      </Alert>
+      <Divider sx={{ mb: 3 }} />
       <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
         {budgets.map(budget => {
           const monthTx = transactions.filter(t => t.type === "expense" && t.date.slice(0,7) === budget.month);

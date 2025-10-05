@@ -78,8 +78,15 @@ export default function SettingsPage(){
   return (
     <AuthGuard>
     <PageLayout icon={SettingsIcon} title="Settings" subtitle="Manage your preferences">
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          <strong>Configuration:</strong> Update your profile, set base currency and exchange rates, 
+          add custom currencies, and configure app preferences. Changes are saved automatically.
+        </Typography>
+      </Alert>
+      <Divider sx={{ mb: 3 }} />
       <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
           <Card elevation={3}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
@@ -135,7 +142,7 @@ export default function SettingsPage(){
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
           <Card elevation={3}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
@@ -216,7 +223,7 @@ export default function SettingsPage(){
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
           <Card elevation={3}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
@@ -255,7 +262,7 @@ export default function SettingsPage(){
           </Card>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
           <Paper elevation={2} sx={{ p: 3, bgcolor: 'background.default' }}>
             <Typography variant="h6" gutterBottom>About Expense Tracker</Typography>
             <Divider sx={{ mb: 2 }} />
@@ -269,23 +276,6 @@ export default function SettingsPage(){
                 <Typography variant="body2" color="text.secondary">
                   A comprehensive personal finance management application with multi-currency support, 
                   budgeting tools, goal tracking, and interactive data visualizations.
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" fontWeight="bold" gutterBottom>Features</Typography>
-                <Typography variant="body2" color="text.secondary" component="div">
-                  • Multi-currency transaction management<br/>
-                  • Budget tracking and goal setting<br/>
-                  • Interactive charts and reports (D3.js)<br/>
-                  • Category and subcategory organization<br/>
-                  • Account management (Cash, Bank, Credit, E-wallet, Savings)<br/>
-                  • User authentication and data privacy
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" fontWeight="bold" gutterBottom>Technology Stack</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Next.js 14 • TypeScript • Material-UI 6 • D3.js 7 • Zustand 4 • NextAuth.js
                 </Typography>
               </Box>
               <Box>

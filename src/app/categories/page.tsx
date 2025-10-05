@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Stack, Typography, Chip, Grid, Box, IconButton, CircularProgress, Divider, Badge, Tooltip, Paper, Avatar } from "@mui/material";
+import { Card, CardContent, Stack, Typography, Chip, Grid, Box, IconButton, CircularProgress, Divider, Badge, Tooltip, Paper, Avatar, Alert } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -50,6 +50,13 @@ export default function CategoriesPage() {
       subtitle={`${categories.length} total categories`}
       actions={<CategoryForm />}
     >
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          <strong>Category Organization:</strong> Create income, expense, and savings categories with optional subcategories. 
+          Each category can have its own currency. Use these to organize and analyze your transactions.
+        </Typography>
+      </Alert>
+      <Divider sx={{ mb: 3 }} />
       <Grid container spacing={0} sx={{ columnGap: 3, rowGap: 3 }}>
           {CATEGORY_TYPES.map(type => {
             const typeCategories = mainCategories.filter(c => c.type === type);

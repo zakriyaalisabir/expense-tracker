@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Card, CardContent, Button, Stack, TextField, Typography } from "@mui/material";
+import { Card, CardContent, Button, Stack, TextField, Typography, Alert, Divider } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import { useAppStore } from "@lib/store";
 import PageLayout from "@components/PageLayout";
@@ -33,6 +33,13 @@ export default function ReportsPage(){
   }
   return (
     <PageLayout icon={AssessmentIcon} title="Reports" subtitle="Export and print reports">
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          <strong>Export & Print:</strong> Generate CSV reports for specific date ranges or print clean summaries. 
+          Perfect for tax preparation, expense tracking, and financial analysis.
+        </Typography>
+      </Alert>
+      <Divider sx={{ mb: 3 }} />
       <Card><CardContent>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ my: 2 }}>
           <TextField type="date" label="From" value={from} onChange={e=>setFrom(e.target.value)} InputLabelProps={{ shrink: true }} />

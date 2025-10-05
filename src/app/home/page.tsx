@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { Grid, Stack, Skeleton } from "@mui/material";
+import { Grid, Stack, Skeleton, Alert, Typography, Divider } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import MoneyCard from "@components/MoneyCard";
 import TransactionForm from "@components/TransactionForm";
@@ -43,6 +43,13 @@ export default function Home(){
   return (
     <AuthGuard>
     <PageLayout icon={HomeIcon} title="Home" subtitle="Quick overview and actions">
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          <strong>Quick Start:</strong> Use the action buttons to add transactions, accounts, categories, budgets, and goals. 
+          View your financial summary in the cards below and detailed currency breakdown at the bottom.
+        </Typography>
+      </Alert>
+      <Divider sx={{ mb: 3 }} />
         <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
           <Grid item xs={12}>
             <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>

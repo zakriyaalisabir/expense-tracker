@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { CircularProgress, Box } from "@mui/material";
+import { CircularProgress, Box, Alert, Typography, Divider } from "@mui/material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AccountForm from "@components/AccountForm";
 import AccountList from "@components/AccountList";
@@ -32,6 +32,13 @@ export default function AccountsPage(){
       subtitle={`${accounts.length} total accounts`}
       actions={<AccountForm />}
     >
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          <strong>Account Management:</strong> Create and manage your financial accounts (cash, bank, credit, e-wallet). 
+          Each account supports different currencies and tracks balances automatically.
+        </Typography>
+      </Alert>
+      <Divider sx={{ mb: 3 }} />
       <AccountList />
     </PageLayout>
   );

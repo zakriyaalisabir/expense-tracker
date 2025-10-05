@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { Grid, Card, CardContent, Typography, Divider, Skeleton, Stack, ToggleButtonGroup, ToggleButton, TextField, Box } from "@mui/material";
+import { Grid, Card, CardContent, Typography, Divider, Skeleton, Stack, ToggleButtonGroup, ToggleButton, TextField, Box, Alert } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PageLayout from "@components/PageLayout";
 
@@ -57,6 +57,13 @@ export default function Dashboard(){
 
   return (
     <PageLayout icon={DashboardIcon} title="Dashboard" subtitle="Analytics and insights">
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          <strong>Analytics Hub:</strong> View comprehensive charts and insights about your finances. 
+          Use date filters to analyze specific periods. Charts are interactive and responsive.
+        </Typography>
+      </Alert>
+      <Divider sx={{ mb: 3 }} />
         <Grid container spacing={0} sx={{ columnGap: 2, rowGap: 2 }}>
           <Grid item xs={12}>
           <Card>
