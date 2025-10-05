@@ -21,6 +21,19 @@ export default function AuthPage() {
   const router = useRouter();
   const supabase = createClient();
 
+  const validation = useMemo(() => {
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const passwordValid = password.length >= 6;
+    const confirmValid = !isSignUp || password === confirmPassword;
+    
+    return {
+      email: { valid: emailValid, message: emailValid ? "" : "Please enter a valid email" },
+      password: { valid: passwordValid, message: passwordValid ? "" : "Password must be at least 6 characters" },
+      confirmPassword: { valid: confirmValid, message: confirmValid ? "" : "Passwords do not match" },
+      isValid: emailValid && passwordValid && confirmValid
+    };
+  }, [email, password, confirmPassword, isSignUp]);
+
   // Redirect if already logged in
   if (user && user.id !== 'demo') {
     router.replace('/');
@@ -34,19 +47,6 @@ export default function AuthPage() {
     setError("");
     setTouched({ email: false, password: false, confirmPassword: false });
   };
-
-  const validation = useMemo(() => {
-    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const passwordValid = password.length >= 6;
-    const confirmValid = !isSignUp || password === confirmPassword;
-    
-    return {
-      email: { valid: emailValid, message: emailValid ? "" : "Please enter a valid email" },
-      password: { valid: passwordValid, message: passwordValid ? "" : "Password must be at least 6 characters" },
-      confirmPassword: { valid: confirmValid, message: confirmValid ? "" : "Passwords do not match" },
-      isValid: emailValid && passwordValid && confirmValid
-    };
-  }, [email, password, confirmPassword, isSignUp]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

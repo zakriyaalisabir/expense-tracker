@@ -17,7 +17,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       console.log('AuthGuard: Redirecting to /auth, user:', user, 'loading:', loading);
       router.push("/auth");
     }
-  }, [router, loading, user]);
+  }, [router, loading, user, demoEnabled]);
 
   if (loading) {
     return (
