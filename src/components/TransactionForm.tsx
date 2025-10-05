@@ -31,7 +31,7 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
   React.useEffect(()=>{
     if (!accounts.length || !categories.length) return;
     setForm((f)=>({...f, account_id: accounts[0].id, currency: accounts[0].currency, category_id: categories.find(c=>c.type==="expense")?.id || ""}));
-  },[accounts.length, categories.length]);
+  },[accounts, categories]);
 
   React.useEffect(() => {
     setForm((f) => ({...f, category_id: categories.find(c=>c.type===type)?.id || "", subcategory_id: ""}));

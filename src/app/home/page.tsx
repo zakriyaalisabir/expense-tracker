@@ -18,7 +18,7 @@ const CurrencySummary = dynamic(() => import("@components/CurrencySummary"), { s
 export default function Home(){
   const transactions = useAppStore(s => s.transactions);
   const [hydrated, setHydrated] = React.useState(false);
-  const totals = React.useMemo(() => totalsForRange(), [transactions]);
+  const totals = React.useMemo(() => totalsForRange(), []);
   const { income, expense, saved, savings } = totals;
 
   React.useEffect(() => {

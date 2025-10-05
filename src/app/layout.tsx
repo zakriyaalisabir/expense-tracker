@@ -153,7 +153,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   if (!mounted) {
     return (
       <html lang="en">
-        <body style={{ margin: 0, minHeight: '100vh' }}>
+        <body suppressHydrationWarning style={{ margin: 0, minHeight: '100vh' }}>
           <div style={{ display: 'none' }} />
         </body>
       </html>
@@ -162,7 +162,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
-      <body style={{
+      <body suppressHydrationWarning style={{
         margin: 0,
         background: mode === 'dark'
           ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)'
