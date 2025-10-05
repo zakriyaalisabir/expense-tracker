@@ -5,6 +5,7 @@ import { THEME_MODE, THEME_MODE_KEY, COLORS } from "@lib/constants";
 import LayoutContent from "@components/LayoutContent";
 import { AuthProvider } from "@components/AuthProvider";
 import StoreProvider from "@components/StoreProvider";
+import ErrorNotification from "@components/ErrorNotification";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = React.useState<"light" | "dark">(THEME_MODE.LIGHT);
@@ -177,6 +178,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <LayoutContent mode={mode} setMode={setMode}>
                 {children}
               </LayoutContent>
+              <ErrorNotification />
             </ThemeProvider>
           </StoreProvider>
         </AuthProvider>

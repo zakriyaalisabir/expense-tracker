@@ -13,6 +13,7 @@ type State = {
   budgets: Budget[];
   isLoading: boolean;
   userId: string | null;
+  error: string | null;
 };
 
 type Actions = {
@@ -36,12 +37,13 @@ type Actions = {
   setBaseCurrency: (c: CurrencyCode) => Promise<void>;
   setExchangeRate: (currency: string, rate: number) => Promise<void>;
   addCustomCurrency: (code: string, rate: number) => Promise<void>;
+  clearError: () => void;
 };
 
 const initial: State = {
   settings: { baseCurrency: "THB", exchangeRates: { THB: 1, USD: 36, EUR: 39, JPY: 0.25 } },
   accounts: [], categories: [], transactions: [], goals: [], budgets: [],
-  isLoading: false, userId: null
+  isLoading: false, userId: null, error: null
 };
 
 function uid(prefix: string) { return `${prefix}_${Math.random().toString(36).slice(2,10)}`; }
@@ -51,6 +53,7 @@ export { uid };
 export const useAppStore = create<State & Actions>()((set, get) => ({
   ...initial,
   setUserId: (id) => set({ userId: id }),
+  clearError: () => set({ error: null }),
   loadData: async () => {
     const { userId } = get();
     if (!userId) return;
@@ -80,7 +83,7 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
       });
     } catch (e) {
       console.error("Load error:", e);
-      set({ isLoading: false });
+      set({ isLoading: false, error: `Failed to load data: ${e instanceof Error ? e.message : 'Unknown error'}` });
     }
   },
   addTransaction: async (t) => {
@@ -88,51 +91,60 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     if (!userId) return;
     const supabase = createClient();
     const { data, error } = await supabase.from("transactions").insert({ ...t, user_id: userId }).select().single();
-    if (!error && data) set({ transactions: [...get().transactions, data] });
+    if (error) set({ error: `Failed to add transaction: ${error.message}` });
+    else if (data) set({ transactions: [...get().transactions, data] });
   },
   updateTransaction: async (t) => {
     const supabase = createClient();
     const { error } = await supabase.from("transactions").update(t).eq("id", t.id);
-    if (!error) set({ transactions: get().transactions.map(x => x.id === t.id ? t : x) });
+    if (error) set({ error: `Failed to update transaction: ${error.message}` });
+    else set({ transactions: get().transactions.map(x => x.id === t.id ? t : x) });
   },
   deleteTransaction: async (id) => {
     const supabase = createClient();
     const { error } = await supabase.from("transactions").delete().eq("id", id);
-    if (!error) set({ transactions: get().transactions.filter(x => x.id !== id) });
+    if (error) set({ error: `Failed to delete transaction: ${error.message}` });
+    else set({ transactions: get().transactions.filter(x => x.id !== id) });
   },
   addAccount: async (a) => {
     const { userId } = get();
     if (!userId) return;
     const supabase = createClient();
     const { data, error } = await supabase.from("accounts").insert({ ...a, user_id: userId }).select().single();
-    if (!error && data) set({ accounts: [...get().accounts, data] });
+    if (error) set({ error: `Failed to add account: ${error.message}` });
+    else if (data) set({ accounts: [...get().accounts, data] });
   },
   updateAccount: async (a) => {
     const supabase = createClient();
     const { error } = await supabase.from("accounts").update(a).eq("id", a.id);
-    if (!error) set({ accounts: get().accounts.map(x => x.id === a.id ? a : x) });
+    if (error) set({ error: `Failed to update account: ${error.message}` });
+    else set({ accounts: get().accounts.map(x => x.id === a.id ? a : x) });
   },
   deleteAccount: async (id) => {
     const supabase = createClient();
     const { error } = await supabase.from("accounts").delete().eq("id", id);
-    if (!error) set({ accounts: get().accounts.filter(x => x.id !== id) });
+    if (error) set({ error: `Failed to delete account: ${error.message}` });
+    else set({ accounts: get().accounts.filter(x => x.id !== id) });
   },
   addCategory: async (c) => {
     const { userId } = get();
     if (!userId) return;
     const supabase = createClient();
     const { data, error } = await supabase.from("categories").insert({ ...c, user_id: userId }).select().single();
-    if (!error && data) set({ categories: [...get().categories, data] });
+    if (error) set({ error: `Failed to add category: ${error.message}` });
+    else if (data) set({ categories: [...get().categories, data] });
   },
   updateCategory: async (c) => {
     const supabase = createClient();
     const { error } = await supabase.from("categories").update(c).eq("id", c.id);
-    if (!error) set({ categories: get().categories.map(x => x.id === c.id ? c : x) });
+    if (error) set({ error: `Failed to update category: ${error.message}` });
+    else set({ categories: get().categories.map(x => x.id === c.id ? c : x) });
   },
   deleteCategory: async (id) => {
     const supabase = createClient();
     const { error } = await supabase.from("categories").delete().eq("id", id);
-    if (!error) set({ categories: get().categories.filter(x => x.id !== id) });
+    if (error) set({ error: `Failed to delete category: ${error.message}` });
+    else set({ categories: get().categories.filter(x => x.id !== id) });
   },
   addBudget: async (b) => {
     const { userId } = get();
@@ -141,43 +153,50 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     const { byCategory, ...rest } = b;
     const payload = { ...rest, by_category: byCategory, user_id: userId };
     const { data, error } = await supabase.from("budgets").insert(payload).select().single();
-    if (!error && data) set({ budgets: [...get().budgets, { ...data, byCategory: data.by_category }] });
+    if (error) set({ error: `Failed to add budget: ${error.message}` });
+    else if (data) set({ budgets: [...get().budgets, { ...data, byCategory: data.by_category }] });
   },
   updateBudget: async (b) => {
     const supabase = createClient();
     const { byCategory, id, user_id: _userId, ...rest } = b;
     const payload = { ...rest, by_category: byCategory };
     const { error } = await supabase.from("budgets").update(payload).eq("id", id);
-    if (!error) set({ budgets: get().budgets.map(x => x.id === b.id ? b : x) });
+    if (error) set({ error: `Failed to update budget: ${error.message}` });
+    else set({ budgets: get().budgets.map(x => x.id === b.id ? b : x) });
   },
   deleteBudget: async (id) => {
     const supabase = createClient();
     const { error } = await supabase.from("budgets").delete().eq("id", id);
-    if (!error) set({ budgets: get().budgets.filter(x => x.id !== id) });
+    if (error) set({ error: `Failed to delete budget: ${error.message}` });
+    else set({ budgets: get().budgets.filter(x => x.id !== id) });
   },
   addGoal: async (g) => {
     const { userId } = get();
     if (!userId) return;
     const supabase = createClient();
     const { data, error } = await supabase.from("goals").insert({ ...g, user_id: userId }).select().single();
-    if (!error && data) set({ goals: [...get().goals, data] });
+    if (error) set({ error: `Failed to add goal: ${error.message}` });
+    else if (data) set({ goals: [...get().goals, data] });
   },
   updateGoal: async (g) => {
     const supabase = createClient();
     const { error } = await supabase.from("goals").update(g).eq("id", g.id);
-    if (!error) set({ goals: get().goals.map(x => x.id === g.id ? g : x) });
+    if (error) set({ error: `Failed to update goal: ${error.message}` });
+    else set({ goals: get().goals.map(x => x.id === g.id ? g : x) });
   },
   deleteGoal: async (id) => {
     const supabase = createClient();
     const { error } = await supabase.from("goals").delete().eq("id", id);
-    if (!error) set({ goals: get().goals.filter(x => x.id !== id) });
+    if (error) set({ error: `Failed to delete goal: ${error.message}` });
+    else set({ goals: get().goals.filter(x => x.id !== id) });
   },
   setBaseCurrency: async (c) => {
     const { userId } = get();
     if (!userId) return;
     const supabase = createClient();
     const { error } = await supabase.from("user_settings").update({ base_currency: c }).eq("user_id", userId);
-    if (!error) set({ settings: { ...get().settings, baseCurrency: c } });
+    if (error) set({ error: `Failed to update base currency: ${error.message}` });
+    else set({ settings: { ...get().settings, baseCurrency: c } });
   },
   setExchangeRate: async (currency, rate) => {
     const { userId, settings } = get();
@@ -185,7 +204,8 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     const newRates = { ...settings.exchangeRates, [currency]: rate };
     const supabase = createClient();
     const { error } = await supabase.from("user_settings").update({ exchange_rates: newRates }).eq("user_id", userId);
-    if (!error) set({ settings: { ...settings, exchangeRates: newRates } });
+    if (error) set({ error: `Failed to update exchange rate: ${error.message}` });
+    else set({ settings: { ...settings, exchangeRates: newRates } });
   },
   addCustomCurrency: async (code, rate) => {
     const { userId, settings } = get();
@@ -194,7 +214,8 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     const newRates = { ...settings.exchangeRates, [code]: rate };
     const supabase = createClient();
     const { error } = await supabase.from("user_settings").update({ custom_currencies: newCurrencies, exchange_rates: newRates }).eq("user_id", userId);
-    if (!error) set({ settings: { ...settings, customCurrencies: newCurrencies, exchangeRates: newRates } });
+    if (error) set({ error: `Failed to add custom currency: ${error.message}` });
+    else set({ settings: { ...settings, customCurrencies: newCurrencies, exchangeRates: newRates } });
   }
 }));
 
