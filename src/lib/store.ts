@@ -87,7 +87,7 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
         categories: categoriesRes.data || [],
         transactions: transactionsRes.data || [],
         goals: goalsRes.data || [],
-        budgets: (budgetsRes.data || []).map(b => ({ ...b, byCategory: b.by_category })),
+        budgets: (budgetsRes.data || []).map((b: any) => ({ ...b, byCategory: b.by_category })),
         isLoading: false
       });
     } catch (e) {

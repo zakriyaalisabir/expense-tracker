@@ -1,6 +1,6 @@
 "use client";
 import { createClient } from "@lib/supabase/client";
-import { User } from "@supabase/supabase-js";
+import { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { useAppStore } from "@lib/store";
 
@@ -34,18 +34,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const supabase = createClient();
 
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }: { data: { session: Session | null }, error: any }) => {
       if (error) console.error('Session error:', error);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
       setUser(session?.user ?? null);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [demoEnabled]);
 
   const signIn = async (email: string, password: string) => {
     const supabase = createClient();

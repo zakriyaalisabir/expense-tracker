@@ -145,7 +145,7 @@ export class SupabaseBudgetRepository implements IBudgetRepository {
       .select("*")
       .eq("user_id", userId);
     if (error) throw new Error(`Failed to fetch budgets: ${error.message}`);
-    return (data || []).map(b => ({ ...b, byCategory: b.by_category }));
+    return (data || []).map((b: any) => ({ ...b, byCategory: b.by_category }));
   }
 
   async update(budget: Budget): Promise<void> {

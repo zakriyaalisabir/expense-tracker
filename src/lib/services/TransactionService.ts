@@ -24,6 +24,7 @@ export class TransactionService {
     
     return this.repository.create({
       ...validatedData,
+      tags: validatedData.tags || [],
       fx_rate,
       base_amount
     }, userId);

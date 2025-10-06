@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import { useAppStore } from "@lib/store";
 import { createClient } from "@lib/supabase/client";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 
 export default function StoreProvider({ children }: { children: React.ReactNode }) {
   const initialized = useRef(false);
@@ -38,7 +39,7 @@ export default function StoreProvider({ children }: { children: React.ReactNode 
 
     initStore();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: AuthChangeEvent, session: Session | null) => {
       useAppStore.getState().setUserId(session?.user?.id || null);
     });
 
