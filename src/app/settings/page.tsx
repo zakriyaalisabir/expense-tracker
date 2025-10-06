@@ -9,8 +9,9 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useAuth } from "@components/AuthProvider";
 import AuthGuard from "@components/AuthGuard";
 import { useAppStore } from "@lib/store";
-import { CURRENCIES, LOADING_DELAY } from "@lib/constants";
+import { LOADING_DELAY } from "@lib/constants";
 import PageLayout from "@components/PageLayout";
+import { getAllCurrencies } from "@lib/utils/currency";
 
 export default function SettingsPage(){
   const { user } = useAuth();
@@ -25,7 +26,7 @@ export default function SettingsPage(){
   const [newRate, setNewRate] = React.useState("1");
   const [imageError, setImageError] = React.useState(false);
 
-  const allCurrencies = [...CURRENCIES, ...(settings.customCurrencies || [])];
+  const allCurrencies = getAllCurrencies(settings);
 
   async function handleRateChange(currency: string, rate: number) {
     await useAppStore.getState().setExchangeRate(currency, rate);

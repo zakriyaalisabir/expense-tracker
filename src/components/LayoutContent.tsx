@@ -59,15 +59,13 @@ export default function LayoutContent({ children, mode, setMode }: any) {
             <AccountBalanceWalletIcon sx={{ fontSize: 22, color: "inherit" }} />
           </Avatar>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: '-0.02em' }}>Expense Tracker</Typography>
-          {user && (
-            <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
-              <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
-                {TABS.map((t) => (
-                  <Tab key={t.href} label={t.label} component={Link} href={t.href} />
-                ))}
-              </Tabs>
-            </Box>
-          )}
+          <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
+            <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
+              {TABS.map((t) => (
+                <Tab key={t.href} label={t.label} component={Link} href={t.href} />
+              ))}
+            </Tabs>
+          </Box>
           <IconButton onClick={() => {
             const next = mode === THEME_MODE.LIGHT ? THEME_MODE.DARK : THEME_MODE.LIGHT;
             setMode(next);

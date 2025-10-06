@@ -17,6 +17,7 @@ const Transition = React.forwardRef(function Transition(
 
 export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budget; onClose?: () => void }) {
   const { addBudget, updateBudget, categories, error, clearError } = useAppStore();
+  const get = useAppStore.getState;
   const [open, setOpen] = React.useState(false);
   const [month, setMonth] = React.useState(new Date().toISOString().slice(0, 7));
   const [total, setTotal] = React.useState("0");
@@ -51,7 +52,7 @@ export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budge
     }
     
     // Only close and reset if no error occurred
-    const currentError = useAppStore.getState().error;
+    const { error: currentError } = get();
     if (!currentError) {
       if (!editBudget) {
         setMonth(new Date().toISOString().slice(0, 7));

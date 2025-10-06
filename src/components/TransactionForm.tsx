@@ -6,12 +6,13 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import SavingsIcon from "@mui/icons-material/Savings";
 import { TransitionProps } from "@mui/material/transitions";
-import { useTransactionStore, useAccountStore, useSettingsStore, useCategoryStore } from "@lib/stores";
+import { useAppStore } from "@lib/store";
 import { toBase, FX } from "@lib/currency";
 import { useAuth } from "@lib/hooks/useAuth";
 
-import { CURRENCIES, TRANSACTION_TYPES } from "@lib/constants";
+import { TRANSACTION_TYPES } from "@lib/constants";
 import { CurrencyCode } from "@lib/types";
+import { getAllCurrencies } from "@lib/utils/currency";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement<any, any> },
@@ -23,12 +24,9 @@ const Transition = React.forwardRef(function Transition(
 type Props = { editTransaction?: { id: string; user_id: string; type: "income"|"expense"|"savings"; date: string; amount: number; currency: CurrencyCode; account_id: string; category_id: string; subcategory_id?: string; description?: string; tags: string[] }; onClose?: () => void };
 
 export default function TransactionForm({ editTransaction, onClose }: Props = {}){
-  const { addTransaction, updateTransaction } = useTransactionStore();
-  const { accounts } = useAccountStore();
-  const { settings } = useSettingsStore();
-  const { categories } = useCategoryStore();
+  const { addTransaction, updateTransaction, accounts, settings, categories } = useAppStore();
   const { userId } = useAuth();
-  const allCurrencies = [...CURRENCIES, ...(settings.customCurrencies || [])];
+  const allCurrencies = getAllCurrencies(settings);
   const [open,setOpen] = React.useState(false);
   const [type,setType] = React.useState<"income"|"expense"|"savings">("expense");
   const [form,setForm] = React.useState({
@@ -38,7 +36,8 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
   });
   React.useEffect(()=>{
     if (!accounts.length || !categories.length) return;
-    setForm((f)=>({...f, account_id: accounts[0].id, currency: accounts[0].currency, category_id: categories.find(c=>c.type==="expense")?.id || ""}));
+    const defaultAccount = accounts[0];
+    setForm((f)=>({...f, account_id: defaultAccount.id, currency: defaultAccount.currency, category_id: categories.find(c=>c.type==="expense")?.id || ""}));
   },[accounts, categories]);
 
   React.useEffect(() => {
@@ -78,10 +77,16 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
       await updateTransaction({ ...data, id: editTransaction.id, user_id: editTransaction.user_id, fx_rate, base_amount });
     } else {
       if (!userId) return;
-      await addTransaction(data, userId, settings.baseCurrency, settings.exchangeRates || {});
+      const transactionData = {
+        ...data,
+        fx_rate,
+        base_amount
+      };
+      await addTransaction(transactionData);
+      const defaultAccount = accounts[0];
       setForm({
         date: new Date().toISOString().slice(0,16),
-        amount: 0, currency: accounts[0]?.currency || settings.baseCurrency, account_id: accounts[0]?.id ?? "",
+        amount: 0, currency: defaultAccount?.currency || settings.baseCurrency, account_id: defaultAccount?.id ?? "",
         category_id: categories.find(c=>c.type===type)?.id ?? "", subcategory_id: "", description: "", tags: ""
       });
     }

@@ -96,10 +96,16 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     }
   },
   addTransaction: async (t) => {
-    const { userId } = get();
+    const { userId, settings } = get();
     if (!userId) return;
+    
+    // Calculate fx_rate and base_amount if not provided
+    const fx_rate = t.fx_rate || (settings.exchangeRates?.[t.currency] || 1);
+    const base_amount = t.base_amount || (t.amount * fx_rate);
+    
     const supabase = createClient();
-    const { data, error } = await supabase.from("transactions").insert({ ...t, user_id: userId }).select().single();
+    const transactionData = { ...t, fx_rate, base_amount, user_id: userId };
+    const { data, error } = await supabase.from("transactions").insert(transactionData).select().single();
     if (error) set({ error: `Failed to add transaction: ${error.message}` });
     else if (data) set({ transactions: [...get().transactions, data] });
   },
@@ -322,11 +328,9 @@ export function goalProgress(g: Goal) {
   if (g.enabled === false) {
     return { months: 0, neededMonthly: 0, pct: 0 };
   }
-  const transactions = useAppStore.getState().transactions;
-  const savingsTransactions = transactions.filter(t => 
-    t.account_id === g.source_account_id && t.type === 'savings'
-  );
-  const actualProgress = savingsTransactions.reduce((sum, t) => sum + t.base_amount, 0);
+  
+  // Use cached progress if available, otherwise calculate from transactions
+  const actualProgress = g.progress_cached || 0;
   const months = Math.max(1, differenceInMonths(parseISO(g.target_date), new Date()));
   const neededMonthly = Math.max(0, (g.target_amount - actualProgress) / months);
   const pct = Math.min(100, (actualProgress / g.target_amount) * 100);

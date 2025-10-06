@@ -6,7 +6,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { TransitionProps } from "@mui/material/transitions";
 import { useAppStore, uid } from "@lib/store";
 import { Account, AccountType, CurrencyCode } from "@lib/types";
-import { CURRENCIES, ACCOUNT_TYPES } from "@lib/constants";
+import { ACCOUNT_TYPES } from "@lib/constants";
+import { getAllCurrencies } from "@lib/utils/currency";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement<any, any> },
@@ -18,7 +19,8 @@ const Transition = React.forwardRef(function Transition(
 type Props = { editAccount?: Account; onClose?: () => void };
 
 export default function AccountForm({ editAccount, onClose }: Props = {}) {
-  const { addAccount, updateAccount } = useAppStore();
+  const { addAccount, updateAccount, settings } = useAppStore();
+  const allCurrencies = getAllCurrencies(settings);
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState("");
   const [type, setType] = React.useState<AccountType>("bank");
@@ -72,7 +74,7 @@ export default function AccountForm({ editAccount, onClose }: Props = {}) {
               ))}
             </TextField>
             <TextField select label="Currency" value={currency} onChange={e => setCurrency(e.target.value as CurrencyCode)}>
-              {CURRENCIES.map(c => (
+              {allCurrencies.map(c => (
                 <MenuItem key={c} value={c}>{c}</MenuItem>
               ))}
             </TextField>

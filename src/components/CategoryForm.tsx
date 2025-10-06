@@ -16,7 +16,8 @@ const Transition = React.forwardRef(function Transition(
 });
 import { useAppStore, uid } from "@lib/store";
 import { Category, CategoryType, CurrencyCode } from "@lib/types";
-import { CURRENCIES, CATEGORY_TYPES } from "@lib/constants";
+import { CATEGORY_TYPES } from "@lib/constants";
+import { getAllCurrencies } from "@lib/utils/currency";
 
 type Props = {
   editCategory?: Category;
@@ -25,7 +26,8 @@ type Props = {
 };
 
 export default function CategoryForm({ editCategory, onClose, autoOpen = false }: Props) {
-  const { categories, addCategory, updateCategory } = useAppStore();
+  const { categories, addCategory, updateCategory, settings } = useAppStore();
+  const allCurrencies = getAllCurrencies(settings);
   const [open, setOpen] = React.useState(autoOpen && !editCategory);
   const [type, setType] = React.useState<CategoryType>(editCategory?.type || "expense");
   const [name, setName] = React.useState(editCategory?.name || "");
@@ -106,7 +108,7 @@ export default function CategoryForm({ editCategory, onClose, autoOpen = false }
             </ToggleButtonGroup>
             <TextField label="Category Name" value={name} onChange={e => setName(e.target.value)} />
             <TextField select label="Currency" value={currency} onChange={e => setCurrency(e.target.value as CurrencyCode)}>
-              {CURRENCIES.map(c => (
+              {allCurrencies.map(c => (
                 <MenuItem key={c} value={c}>{c}</MenuItem>
               ))}
             </TextField>
