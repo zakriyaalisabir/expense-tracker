@@ -102,16 +102,18 @@ export default function GamificationPage() {
                 onClick={async () => {
                   const startDate = new Date().toISOString();
                   const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+                  const existingChallenges = challenges.filter(c => c.challenge_type === "monthly_savings");
+                  const nextAmount = 500 + (existingChallenges.length * 500);
                   await addChallenge({
-                    title: "Monthly Savings Challenge",
-                    description: "Save $500 this month by reducing unnecessary expenses",
+                    title: `Monthly Savings Challenge - $${nextAmount}`,
+                    description: `Save $${nextAmount} this month by reducing unnecessary expenses`,
                     challenge_type: "monthly_savings",
-                    target_amount: 500,
+                    target_amount: nextAmount,
                     start_date: startDate,
                     end_date: endDate,
                     current_progress: 0,
                     is_completed: false,
-                    reward_points: 100
+                    reward_points: 100 + (existingChallenges.length * 50)
                   });
                 }}
               >

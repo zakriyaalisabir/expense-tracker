@@ -34,6 +34,10 @@ export type Transaction = {
   description?: string;
   fx_rate: number;
   base_amount: number;
+  debt_id?: string;
+  investment_id?: string;
+  is_debt_payment?: boolean;
+  is_investment?: boolean;
 };
 
 export type Goal = {

@@ -24,7 +24,7 @@ const Transition = React.forwardRef(function Transition(
 type Props = { editTransaction?: { id: string; user_id: string; type: "income"|"expense"|"savings"; date: string; amount: number; currency: CurrencyCode; account_id: string; category_id: string; subcategory_id?: string; description?: string; tags: string[] }; onClose?: () => void };
 
 export default function TransactionForm({ editTransaction, onClose }: Props = {}){
-  const { addTransaction, updateTransaction, accounts, settings, categories } = useAppStore();
+  const { addTransaction, updateTransaction, accounts, settings, categories, debts, investments } = useAppStore();
   const { userId } = useAuth();
   const allCurrencies = getAllCurrencies(settings);
   const [open,setOpen] = React.useState(false);
@@ -32,7 +32,8 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
   const [form,setForm] = React.useState({
     date: new Date().toISOString().slice(0,16),
     amount: 0, currency: accounts[0]?.currency || settings.baseCurrency, account_id: accounts[0]?.id ?? "",
-    category_id: categories.find(c=>c.type==="expense")?.id ?? "", subcategory_id: "", description: "", tags: ""
+    category_id: categories.find(c=>c.type==="expense")?.id ?? "", subcategory_id: "", description: "", tags: "",
+    debt_id: "", investment_id: "", is_debt_payment: false, is_investment: false
   });
   React.useEffect(()=>{
     if (!accounts.length || !categories.length) return;
@@ -71,7 +72,11 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
       account_id: form.account_id, category_id: form.category_id,
       subcategory_id: form.subcategory_id || undefined,
       tags: form.tags ? form.tags.split(",").map((s:string)=>s.trim()).filter(Boolean):[],
-      description: form.description
+      description: form.description,
+      debt_id: form.debt_id || undefined,
+      investment_id: form.investment_id || undefined,
+      is_debt_payment: form.is_debt_payment,
+      is_investment: form.is_investment
     };
     if (editTransaction) {
       await updateTransaction({ ...data, id: editTransaction.id, user_id: editTransaction.user_id, fx_rate, base_amount });
@@ -136,6 +141,26 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
           )}
           <TextField label="Tags (comma separated)" value={form.tags} onChange={e=>setForm({...form, tags:e.target.value})}/>
           <TextField label="Description" value={form.description} onChange={e=>setForm({...form, description:e.target.value})}/>
+          
+          {type === "expense" && (
+            <TextField select label="Debt Payment (Optional)" value={form.debt_id} onChange={e=>{
+              const hasDebt = e.target.value !== "";
+              setForm({...form, debt_id:e.target.value, is_debt_payment: hasDebt});
+            }}>
+              <MenuItem value="">Not a debt payment</MenuItem>
+              {debts.filter(d => d.is_active).map(d=>(<MenuItem key={d.id} value={d.id}>Pay: {d.name}</MenuItem>))}
+            </TextField>
+          )}
+          
+          {type === "savings" && (
+            <TextField select label="Investment (Optional)" value={form.investment_id} onChange={e=>{
+              const hasInvestment = e.target.value !== "";
+              setForm({...form, investment_id:e.target.value, is_investment: hasInvestment});
+            }}>
+              <MenuItem value="">Not an investment</MenuItem>
+              {investments.filter(i => i.is_active).map(i=>(<MenuItem key={i.id} value={i.id}>Buy: {i.name}</MenuItem>))}
+            </TextField>
+          )}
         </Stack>
       </DialogContent>
       <DialogActions>

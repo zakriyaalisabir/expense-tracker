@@ -147,7 +147,7 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     }
   },
   addTransaction: async (t) => {
-    const { userId, settings } = get();
+    const { userId, settings, transactions, achievements } = get();
     if (!userId) return;
     
     // Calculate fx_rate and base_amount if not provided
@@ -158,7 +158,49 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     const transactionData = { ...t, fx_rate, base_amount, user_id: userId };
     const { data, error } = await supabase.from("transactions").insert(transactionData).select().single();
     if (error) set({ error: `Failed to add transaction: ${error.message}` });
-    else if (data) set({ transactions: [...get().transactions, data] });
+    else if (data) {
+      set({ transactions: [...transactions, data] });
+      
+      // Auto-earn achievements
+      const newTransactions = [...transactions, data];
+      
+      // First transaction badge
+      if (newTransactions.length === 1 && !achievements.find(a => a.badge_type === 'first_transaction')) {
+        await get().addAchievement({
+          badge_type: 'first_transaction',
+          title: 'First Steps',
+          description: 'Added your first transaction',
+          earned_at: new Date().toISOString(),
+          progress: 100
+        });
+      }
+      
+      // Consistent tracker badge (30+ transactions)
+      if (newTransactions.length >= 30 && !achievements.find(a => a.badge_type === 'consistent_tracker')) {
+        await get().addAchievement({
+          badge_type: 'consistent_tracker',
+          title: 'Consistent Tracker',
+          description: 'Tracked 30+ transactions',
+          earned_at: new Date().toISOString(),
+          progress: 100
+        });
+      }
+      
+      // Big saver badge (saved $1000+ in one transaction)
+      if (t.type === 'savings' && t.amount >= 1000 && !achievements.find(a => a.badge_type === 'big_saver')) {
+        await get().addAchievement({
+          badge_type: 'big_saver',
+          title: 'Big Saver',
+          description: 'Saved $1000+ in a single transaction',
+          earned_at: new Date().toISOString(),
+          progress: 100
+        });
+      }
+      
+      // Update streaks
+      await get().updateStreak('daily_tracking', true);
+      await get().updateStreak('expense_logging', true);
+    }
   },
   updateTransaction: async (t) => {
     const supabase = createClient();
@@ -213,7 +255,7 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     else set({ categories: get().categories.filter(x => x.id !== id) });
   },
   addBudget: async (b) => {
-    const { userId, budgets } = get();
+    const { userId, budgets, achievements } = get();
     if (!userId) return;
     
     // Check if budget already exists for this month
@@ -228,7 +270,20 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     const payload = { ...rest, by_category: byCategory, user_id: userId };
     const { data, error } = await supabase.from("budgets").insert(payload).select().single();
     if (error) set({ error: `Failed to add budget: ${error.message}` });
-    else if (data) set({ budgets: [...get().budgets, { ...data, byCategory: data.by_category }] });
+    else if (data) {
+      set({ budgets: [...budgets, { ...data, byCategory: data.by_category }] });
+      
+      // First budget badge
+      if (budgets.length === 0 && !achievements.find(a => a.badge_type === 'first_budget')) {
+        await get().addAchievement({
+          badge_type: 'first_budget',
+          title: 'Budget Planner',
+          description: 'Created your first budget',
+          earned_at: new Date().toISOString(),
+          progress: 100
+        });
+      }
+    }
   },
   updateBudget: async (b) => {
     const { budgets } = get();
@@ -254,12 +309,25 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     else set({ budgets: get().budgets.filter(x => x.id !== id) });
   },
   addGoal: async (g) => {
-    const { userId } = get();
+    const { userId, goals, achievements } = get();
     if (!userId) return;
     const supabase = createClient();
     const { data, error } = await supabase.from("goals").insert({ ...g, user_id: userId }).select().single();
     if (error) set({ error: `Failed to add goal: ${error.message}` });
-    else if (data) set({ goals: [...get().goals, data] });
+    else if (data) {
+      set({ goals: [...goals, data] });
+      
+      // First goal badge
+      if (goals.length === 0 && !achievements.find(a => a.badge_type === 'first_goal')) {
+        await get().addAchievement({
+          badge_type: 'first_goal',
+          title: 'Goal Setter',
+          description: 'Set your first financial goal',
+          earned_at: new Date().toISOString(),
+          progress: 100
+        });
+      }
+    }
   },
   updateGoal: async (g) => {
     const supabase = createClient();
@@ -346,7 +414,7 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
   },
   
   updateStreak: async (type, increment) => {
-    const { userId, streaks } = get();
+    const { userId, streaks, achievements } = get();
     if (!userId) return;
     const supabase = createClient();
     const existing = streaks.find(s => s.streak_type === type);
@@ -360,7 +428,20 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
         last_activity_date: new Date().toISOString().split('T')[0]
       }).eq("id", existing.id);
       if (error) set({ error: `Failed to update streak: ${error.message}` });
-      else set({ streaks: streaks.map(s => s.id === existing.id ? { ...s, current_count: newCount, best_count: newBest } : s) });
+      else {
+        set({ streaks: streaks.map(s => s.id === existing.id ? { ...s, current_count: newCount, best_count: newBest } : s) });
+        
+        // Streak master badge (7+ day streak)
+        if (newCount >= 7 && !achievements.find(a => a.badge_type === 'streak_master')) {
+          await get().addAchievement({
+            badge_type: 'streak_master',
+            title: 'Streak Master',
+            description: 'Maintained a 7+ day tracking streak',
+            earned_at: new Date().toISOString(),
+            progress: 100
+          });
+        }
+      }
     } else {
       const { data, error } = await supabase.from("streaks").insert({ 
         user_id: userId, 
@@ -375,7 +456,7 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
   },
   
   calculateHealthScore: async (month) => {
-    const { userId, transactions, budgets, goals, debts } = get();
+    const { userId, transactions, budgets, goals, debts, achievements } = get();
     if (!userId) return;
     
     // Simple health score calculation
@@ -393,6 +474,17 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
       const totalExpenses = monthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.base_amount, 0);
       const budgetTotal = monthBudget.total || 0;
       budgetScore = budgetTotal > 0 ? Math.max(0, Math.min(100, ((budgetTotal - totalExpenses) / budgetTotal) * 100)) : 50;
+      
+      // Budget keeper badge (stayed within budget)
+      if (budgetScore >= 90 && !achievements.find(a => a.badge_type === 'budget_keeper')) {
+        await get().addAchievement({
+          badge_type: 'budget_keeper',
+          title: 'Budget Keeper',
+          description: 'Stayed within budget for a full month',
+          earned_at: new Date().toISOString(),
+          progress: 100
+        });
+      }
     }
     
     const overallScore = Math.round((budgetScore + savingsScore + expenseScore + goalScore + debtScore) / 5);
