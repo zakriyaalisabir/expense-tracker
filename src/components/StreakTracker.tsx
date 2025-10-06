@@ -1,7 +1,9 @@
 "use client";
-import { Card, CardContent, Typography, Box, Grid, Chip } from "@mui/material";
+import React from "react";
+import { Card, CardContent, Typography, Box, Grid, Chip, Button } from "@mui/material";
 import { LocalFireDepartment, Timeline, TrendingUp, Savings } from "@mui/icons-material";
 import { Streak, StreakType } from "../lib/types";
+import { useAppStore } from "../lib/store";
 
 const streakIcons: Record<StreakType, React.ReactNode> = {
   daily_tracking: <Timeline />,
@@ -73,6 +75,7 @@ const StreakCard = ({ streak }: { streak: Streak }) => {
 };
 
 export default function StreakTracker({ streaks }: StreakTrackerProps) {
+  const { updateStreak } = useAppStore();
   const activeStreaks = streaks.filter(s => s.is_active && s.current_count > 0);
   const totalDays = activeStreaks.reduce((sum, s) => sum + s.current_count, 0);
 
@@ -103,9 +106,19 @@ export default function StreakTracker({ streaks }: StreakTrackerProps) {
 
         {activeStreaks.length === 0 && (
           <Box textAlign="center" py={4}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" gutterBottom>
               Start tracking your expenses to build streaks!
             </Typography>
+            <Button 
+              variant="contained" 
+              onClick={async () => {
+                await updateStreak('daily_tracking', true);
+                await updateStreak('expense_logging', true);
+                await updateStreak('budget_adherence', true);
+              }}
+            >
+              Initialize Streaks
+            </Button>
           </Box>
         )}
       </CardContent>

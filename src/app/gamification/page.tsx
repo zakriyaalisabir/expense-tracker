@@ -1,5 +1,5 @@
 "use client";
-import { Container, Typography, Grid, Box, Tabs, Tab } from "@mui/material";
+import { Container, Typography, Grid, Box, Tabs, Tab, Button } from "@mui/material";
 import { useState } from "react";
 import { useAppStore } from "../../lib/store";
 import AchievementBadge from "../../components/AchievementBadge";
@@ -9,7 +9,7 @@ import StreakTracker from "../../components/StreakTracker";
 
 export default function GamificationPage() {
   const [tabValue, setTabValue] = useState(0);
-  const { achievements, challenges, healthScores, streaks } = useAppStore();
+  const { achievements, challenges, healthScores, streaks, calculateHealthScore, addChallenge, addAchievement } = useAppStore();
 
   const latestHealthScore = healthScores[healthScores.length - 1];
 
@@ -50,9 +50,30 @@ export default function GamificationPage() {
             </Grid>
           ) : (
             <Box textAlign="center" py={8}>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="body1" color="text.secondary" gutterBottom>
                 No achievements yet. Start tracking your expenses to earn your first badge! 🏆
               </Typography>
+              <Button 
+                variant="contained" 
+                onClick={async () => {
+                  await addAchievement({
+                    badge_type: "first_transaction",
+                    title: "First Steps",
+                    description: "Added your first transaction",
+                    earned_at: new Date().toISOString(),
+                    progress: 100
+                  });
+                  await addAchievement({
+                    badge_type: "saver",
+                    title: "Smart Saver",
+                    description: "Saved money for 7 consecutive days",
+                    earned_at: new Date().toISOString(),
+                    progress: 100
+                  });
+                }}
+              >
+                Earn Sample Badges
+              </Button>
             </Box>
           )}
         </Box>
@@ -73,9 +94,29 @@ export default function GamificationPage() {
             </Grid>
           ) : (
             <Box textAlign="center" py={8}>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="body1" color="text.secondary" gutterBottom>
                 No active challenges. Create your first challenge to stay motivated! 💪
               </Typography>
+              <Button 
+                variant="contained" 
+                onClick={async () => {
+                  const startDate = new Date().toISOString();
+                  const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+                  await addChallenge({
+                    title: "Monthly Savings Challenge",
+                    description: "Save $500 this month by reducing unnecessary expenses",
+                    challenge_type: "monthly_savings",
+                    target_amount: 500,
+                    start_date: startDate,
+                    end_date: endDate,
+                    current_progress: 0,
+                    is_completed: false,
+                    reward_points: 100
+                  });
+                }}
+              >
+                Create Sample Challenge
+              </Button>
             </Box>
           )}
         </Box>
@@ -97,9 +138,18 @@ export default function GamificationPage() {
             </Grid>
           ) : (
             <Box textAlign="center" py={8}>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="body1" color="text.secondary" gutterBottom>
                 No health score data available. Add some transactions and budgets to calculate your financial health! 📊
               </Typography>
+              <Button 
+                variant="contained" 
+                onClick={() => {
+                  const currentMonth = new Date().toISOString().slice(0, 7);
+                  calculateHealthScore(currentMonth);
+                }}
+              >
+                Calculate Health Score
+              </Button>
             </Box>
           )}
         </Box>

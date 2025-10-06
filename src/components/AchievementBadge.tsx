@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Card, CardContent, Typography, Box, Chip } from "@mui/material";
 import { EmojiEvents, TrendingUp, Savings, Timeline } from "@mui/icons-material";
 import { Achievement, BadgeType } from "../lib/types";
