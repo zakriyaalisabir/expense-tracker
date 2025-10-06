@@ -156,8 +156,16 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     else set({ categories: get().categories.filter(x => x.id !== id) });
   },
   addBudget: async (b) => {
-    const { userId } = get();
+    const { userId, budgets } = get();
     if (!userId) return;
+    
+    // Check if budget already exists for this month
+    const existingBudget = budgets.find(budget => budget.month === b.month);
+    if (existingBudget) {
+      set({ error: `Budget for ${b.month} already exists. Please edit the existing budget instead.` });
+      return;
+    }
+    
     const supabase = createClient();
     const { byCategory, ...rest } = b;
     const payload = { ...rest, by_category: byCategory, user_id: userId };
@@ -166,6 +174,15 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     else if (data) set({ budgets: [...get().budgets, { ...data, byCategory: data.by_category }] });
   },
   updateBudget: async (b) => {
+    const { budgets } = get();
+    
+    // Check if another budget exists for this month (excluding current one)
+    const existingBudget = budgets.find(budget => budget.month === b.month && budget.id !== b.id);
+    if (existingBudget) {
+      set({ error: `Budget for ${b.month} already exists. Cannot change month to one that already has a budget.` });
+      return;
+    }
+    
     const supabase = createClient();
     const { byCategory, id, user_id: _userId, ...rest } = b;
     const payload = { ...rest, by_category: byCategory };

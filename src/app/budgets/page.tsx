@@ -13,7 +13,7 @@ import { LOADING_DELAY } from "@lib/constants";
 import PageLayout from "@components/PageLayout";
 
 export default function BudgetsPage(){
-  const { budgets, transactions, deleteBudget } = useAppStore();
+  const { budgets, transactions, deleteBudget, error, clearError } = useAppStore();
   const [editBudget, setEditBudget] = React.useState<Budget | undefined>();
   const [loading, setLoading] = React.useState(true);
 
@@ -37,6 +37,11 @@ export default function BudgetsPage(){
       subtitle={`${budgets.length} active budgets`}
       actions={<BudgetForm editBudget={editBudget} onClose={() => setEditBudget(undefined)} />}
     >
+      {error && (
+        <Alert severity="error" onClose={clearError} sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
       <Alert severity="info" sx={{ mb: 3 }}>
         <Typography variant="body2">
           <strong>How to use:</strong> Click `Add Budget` to set monthly spending limits. 

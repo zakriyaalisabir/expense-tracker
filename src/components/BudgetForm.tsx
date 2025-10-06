@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, Slide, FormControl, InputLabel, Select, MenuItem, Box, IconButton, Typography } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, TextField, Slide, FormControl, InputLabel, Select, MenuItem, Box, IconButton, Typography, Alert } from "@mui/material";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -16,7 +16,7 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budget; onClose?: () => void }) {
-  const { addBudget, updateBudget, categories } = useAppStore();
+  const { addBudget, updateBudget, categories, error, clearError } = useAppStore();
   const [open, setOpen] = React.useState(false);
   const [month, setMonth] = React.useState(new Date().toISOString().slice(0, 7));
   const [total, setTotal] = React.useState("0");
@@ -33,10 +33,12 @@ export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budge
 
   const handleClose = () => {
     setOpen(false);
+    clearError();
     if (onClose) onClose();
   };
 
   async function submit() {
+    clearError();
     const data = {
       month,
       total: Number(total),
@@ -46,11 +48,18 @@ export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budge
       await updateBudget({ ...data, id: editBudget.id, user_id: editBudget.user_id });
     } else {
       await addBudget(data);
-      setMonth(new Date().toISOString().slice(0, 7));
-      setTotal("0");
-      setByCategory({});
     }
-    handleClose();
+    
+    // Only close and reset if no error occurred
+    const currentError = useAppStore.getState().error;
+    if (!currentError) {
+      if (!editBudget) {
+        setMonth(new Date().toISOString().slice(0, 7));
+        setTotal("0");
+        setByCategory({});
+      }
+      handleClose();
+    }
   }
 
   const expenseCategories = categories.filter(c => c.type === "expense" && !c.parent_id);
@@ -65,10 +74,22 @@ export default function BudgetForm({ editBudget, onClose }: { editBudget?: Budge
       <Button variant="contained" onClick={() => setOpen(true)} fullWidth sx={{ display: { xs: 'inline-flex', sm: 'none' }, minWidth: 'auto', px: 1 }}>
         <BarChartIcon fontSize="small" />
       </Button>
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" TransitionComponent={Transition}>
+      <Dialog 
+        open={open} 
+        onClose={handleClose} 
+        fullWidth 
+        maxWidth="sm" 
+        TransitionComponent={Transition}
+        disableRestoreFocus
+      >
         <DialogTitle>{editBudget ? "Edit Budget" : "New Budget"}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
+            {error && (
+              <Alert severity="error" onClose={clearError}>
+                {error}
+              </Alert>
+            )}
             <TextField label="Month" type="month" value={month} onChange={e => setMonth(e.target.value)} fullWidth />
             <TextField label="Total Budget" type="number" value={total} onChange={e => setTotal(e.target.value)} fullWidth />
             <Box>
