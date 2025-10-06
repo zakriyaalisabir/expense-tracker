@@ -55,7 +55,6 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
   ...initial,
   setUserId: (id) => {
     set({ userId: id });
-    if (id) get().loadData();
   },
   clearError: () => set({ error: null }),
   resetStore: () => set(initial),
@@ -64,6 +63,10 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     if (!userId) return;
     set({ isLoading: true });
     const supabase = createClient();
+    if (!supabase) {
+      set({ isLoading: false });
+      return;
+    }
     try {
       const [settingsRes, accountsRes, categoriesRes, transactionsRes, goalsRes, budgetsRes] = await Promise.all([
         supabase.from("user_settings").select("*").eq("user_id", userId).single(),

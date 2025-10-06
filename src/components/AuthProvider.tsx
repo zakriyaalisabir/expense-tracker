@@ -64,27 +64,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      // Check demo mode before clearing localStorage
+      const isDemoMode = typeof window !== 'undefined' && 
+        (localStorage.getItem('demo-mode') === 'true' || 
+         (typeof document !== 'undefined' && document.cookie.includes('demo-mode=true')));
+      
       // Clear Zustand store
       useAppStore.getState().resetStore();
       
-      // Clear all localStorage data
-      if (typeof window !== 'undefined') {
-        localStorage.clear();
-      }
-      
-      // Clear all cookies
-      if (typeof document !== 'undefined') {
-        document.cookie.split(";").forEach(cookie => {
-          const eqPos = cookie.indexOf("=");
-          const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-          document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-        });
-      }
-      
       // Sign out from Supabase if not in demo mode
-      const isDemoMode = localStorage.getItem('demo-mode') === 'true' || 
-                        (typeof document !== 'undefined' && document.cookie.includes('demo-mode=true'));
-      
       if (!isDemoMode) {
         const supabase = createClient();
         await supabase.auth.signOut();
@@ -92,6 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Clear user state
       setUser(null);
+      
+      // Clear localStorage (after checking demo mode)
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+      }
       
       // Redirect to auth page
       if (typeof window !== 'undefined') {
