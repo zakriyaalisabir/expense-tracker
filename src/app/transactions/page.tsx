@@ -256,55 +256,53 @@ export default function TransactionsPage(){
             </Stack>
             
             {showFilters && (
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap', pb: 1 }}>
                 <Button
                   startIcon={<ViewColumnIcon />}
                   onClick={(e) => setColumnAnchor(e.currentTarget)}
                   variant="outlined"
                   size="small"
+                  sx={{ flex: 1, minWidth: 80 }}
                 >
                   Columns
                 </Button>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Type</InputLabel>
-                <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} label="Type">
-                  <MenuItem value="">All Types</MenuItem>
-                  <MenuItem value="income">Income</MenuItem>
-                  <MenuItem value="expense">Expense</MenuItem>
-                  <MenuItem value="savings">Savings</MenuItem>
-                </Select>
-              </FormControl>
-              
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Account</InputLabel>
-                <Select value={accountFilter} onChange={(e) => setAccountFilter(e.target.value)} label="Account">
-                  <MenuItem value="">All Accounts</MenuItem>
-                  {accounts.map(acc => (
-                    <MenuItem key={acc.id} value={acc.id}>{acc.name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Category</InputLabel>
-                <Select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} label="Category">
-                  <MenuItem value="">All Categories</MenuItem>
-                  {categories.map(cat => (
-                    <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Tag</InputLabel>
-                <Select value={tagFilter} onChange={(e) => setTagFilter(e.target.value)} label="Tag">
-                  <MenuItem value="">All Tags</MenuItem>
-                  {allTags.map(tag => (
-                    <MenuItem key={tag} value={tag}>{tag}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              </Stack>
+                <FormControl size="small" sx={{ flex: 1, minWidth: 80 }}>
+                  <InputLabel>Type</InputLabel>
+                  <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} label="Type">
+                    <MenuItem value="">All</MenuItem>
+                    <MenuItem value="income">Income</MenuItem>
+                    <MenuItem value="expense">Expense</MenuItem>
+                    <MenuItem value="savings">Savings</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl size="small" sx={{ flex: 1, minWidth: 80 }}>
+                  <InputLabel>Account</InputLabel>
+                  <Select value={accountFilter} onChange={(e) => setAccountFilter(e.target.value)} label="Account">
+                    <MenuItem value="">All</MenuItem>
+                    {accounts.map(acc => (
+                      <MenuItem key={acc.id} value={acc.id}>{acc.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl size="small" sx={{ flex: 1, minWidth: 80 }}>
+                  <InputLabel>Category</InputLabel>
+                  <Select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} label="Category">
+                    <MenuItem value="">All</MenuItem>
+                    {categories.map(cat => (
+                      <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl size="small" sx={{ flex: 1, minWidth: 80 }}>
+                  <InputLabel>Tag</InputLabel>
+                  <Select value={tagFilter} onChange={(e) => setTagFilter(e.target.value)} label="Tag">
+                    <MenuItem value="">All</MenuItem>
+                    {allTags.map(tag => (
+                      <MenuItem key={tag} value={tag}>{tag}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
             )}
             
             <Popover
