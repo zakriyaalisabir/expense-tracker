@@ -8,6 +8,7 @@ export type Account = {
   type: AccountType;
   currency: CurrencyCode;
   opening_balance: number;
+  current_balance?: number;
 };
 
 export type CategoryType = "income" | "expense" | "savings";
@@ -64,6 +65,7 @@ export type BaseSettings = {
   baseCurrency: CurrencyCode;
   exchangeRates?: Record<string, number>;
   customCurrencies?: string[];
+  visiblePages?: Record<string, boolean>;
 };
 
 // Gamification & Motivation Types

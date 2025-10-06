@@ -1,5 +1,7 @@
 "use client";
 import { Container, Typography, Grid, Box, Tabs, Tab } from "@mui/material";
+import { useEffect } from "react";
+import { usePriceUpdater } from "../../lib/priceUpdater";
 import { useState } from "react";
 import { useAppStore } from "../../lib/store";
 import DebtTracker from "../../components/DebtTracker";
@@ -9,6 +11,12 @@ import NetWorthCalculator from "../../components/NetWorthCalculator";
 export default function FinancialPage() {
   const [tabValue, setTabValue] = useState(0);
   const { debts, investments, assets, accounts } = useAppStore();
+  const { startAutoUpdate, stopAutoUpdate } = usePriceUpdater();
+  
+  useEffect(() => {
+    startAutoUpdate();
+    return () => stopAutoUpdate();
+  }, []);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);

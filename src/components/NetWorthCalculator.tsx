@@ -16,7 +16,7 @@ export default function NetWorthCalculator({ accounts, assets, debts, investment
   const { settings } = useAppStore();
   
   // Calculate total assets
-  const accountsValue = accounts.reduce((sum, account) => sum + account.opening_balance, 0);
+  const accountsValue = accounts.reduce((sum, account) => sum + (account.current_balance || account.opening_balance), 0);
   const assetsValue = assets.filter(a => a.is_active).reduce((sum, asset) => sum + asset.current_value, 0);
   const investmentsValue = investments.filter(i => i.is_active).reduce((sum, investment) => 
     sum + ((investment.current_price || investment.purchase_price) * investment.quantity), 0

@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { useAuth } from "@components/AuthProvider";
+import { useAppStore } from "@lib/store";
 import { AppBar, Toolbar, Typography, IconButton, Box, Container, Tabs, Tab, LinearProgress, Drawer, List, ListItem, ListItemButton, ListItemText, useMediaQuery, Avatar, Button, Alert } from "@mui/material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
@@ -42,7 +43,13 @@ export default function LayoutContent({ children, mode, setMode }: any) {
     setDemoMode(hasLocal || hasCookie);
   }, [demoEnabled, pathname]);
 
-  const current = TABS.findIndex(t => t.href === pathname);
+  const { settings } = useAppStore();
+  const visibleTabs = TABS.filter(tab => {
+    const pageName = tab.href.replace('/', '') || 'home';
+    const mappedName = pageName.replace('-', '_'); // Convert dashboard-custom to dashboard_custom
+    return settings.visiblePages?.[mappedName] !== false;
+  });
+  const current = visibleTabs.findIndex(t => t.href === pathname);
 
   const handleNavigation = (href: string) => {
     setDrawerOpen(false);
@@ -65,7 +72,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
           {shouldShowNavLinks && (
             <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
               <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
-                {TABS.map((t) => (
+                {visibleTabs.map((t) => (
                   <Tab key={t.href} label={t.label} component={Link} href={t.href} />
                 ))}
               </Tabs>
@@ -121,7 +128,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
             <Typography variant="h6" fontWeight="bold">Expense Tracker</Typography>
           </Box>
           <List>
-            {TABS.map((t) => (
+            {visibleTabs.map((t) => (
               <ListItem key={t.href} disablePadding>
                 <ListItemButton selected={pathname === t.href} onClick={() => handleNavigation(t.href)}>
                   <ListItemText primary={t.label} />

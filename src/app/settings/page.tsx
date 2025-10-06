@@ -15,7 +15,7 @@ import { getAllCurrencies } from "@lib/utils/currency";
 
 export default function SettingsPage(){
   const { user } = useAuth();
-  const { settings, setBaseCurrency, addCustomCurrency } = useAppStore();
+  const { settings, setBaseCurrency, addCustomCurrency, togglePageVisibility } = useAppStore();
   const [loading, setLoading] = React.useState(true);
   const [notifications, setNotifications] = React.useState(true);
   const [autoBackup, setAutoBackup] = React.useState(false);
@@ -229,7 +229,40 @@ export default function SettingsPage(){
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <PaletteIcon color="primary" />
-                <Typography variant="h6">Appearance</Typography>
+                <Typography variant="h6">Page Visibility</Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Control which pages appear in your navigation menu
+              </Typography>
+              <List>
+                {[
+                  { key: 'gamification', label: 'Gamification', desc: 'Achievements, challenges, streaks' },
+                  { key: 'financial', label: 'Financial', desc: 'Debts, investments, net worth' },
+                  { key: 'dashboard_custom', label: 'Custom Dashboard', desc: 'Customizable widget dashboard' }
+                ].map(page => (
+                  <ListItem key={page.key}>
+                    <ListItemText 
+                      primary={page.label}
+                      secondary={page.desc}
+                    />
+                    <Switch 
+                      checked={settings.visiblePages?.[page.key] || false} 
+                      onChange={() => togglePageVisibility(page.key)} 
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          <Card elevation={3}>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={1} mb={2}>
+                <NotificationsIcon color="primary" />
+                <Typography variant="h6">Preferences</Typography>
               </Box>
               <Divider sx={{ mb: 2 }} />
               <List>

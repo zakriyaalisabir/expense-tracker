@@ -71,6 +71,8 @@ type Actions = {
   // Offline
   setOfflineMode: (offline: boolean) => void;
   syncOfflineData: () => Promise<void>;
+  // Settings
+  togglePageVisibility: (page: string) => Promise<void>;
   clearError: () => void;
   resetStore: () => void;
 };
@@ -124,7 +126,12 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
         settings: settingsRes.data ? {
           baseCurrency: settingsRes.data.base_currency as CurrencyCode,
           exchangeRates: settingsRes.data.exchange_rates || {},
-          customCurrencies: settingsRes.data.custom_currencies || []
+          customCurrencies: settingsRes.data.custom_currencies || [],
+          visiblePages: settingsRes.data.visible_pages || {
+            gamification: false, financial: false, dashboard_custom: false,
+            home: true, dashboard: true, transactions: true, accounts: true,
+            budgets: true, goals: true, reports: true, settings: true
+          }
         } : initial.settings,
         accounts: accountsRes.data || [],
         categories: categoriesRes.data || [],
@@ -393,6 +400,16 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     const { error } = await supabase.from("user_settings").update({ custom_currencies: newCurrencies, exchange_rates: newRates }).eq("user_id", userId);
     if (error) set({ error: `Failed to add custom currency: ${error.message}` });
     else set({ settings: { ...settings, customCurrencies: newCurrencies, exchangeRates: newRates } });
+  },
+  
+  togglePageVisibility: async (page: string) => {
+    const { userId, settings } = get();
+    if (!userId) return;
+    const newVisiblePages = { ...settings.visiblePages, [page]: !settings.visiblePages?.[page] };
+    const supabase = createClient();
+    const { error } = await supabase.from("user_settings").update({ visible_pages: newVisiblePages }).eq("user_id", userId);
+    if (error) set({ error: `Failed to update page visibility: ${error.message}` });
+    else set({ settings: { ...settings, visiblePages: newVisiblePages } });
   },
   
   // Gamification Actions
