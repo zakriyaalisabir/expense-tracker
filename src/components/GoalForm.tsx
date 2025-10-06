@@ -50,7 +50,8 @@ export default function GoalForm({ editGoal, onClose }: { editGoal?: Goal; onClo
       target_date: new Date(targetDate).toISOString(),
       monthly_contribution: Number(monthlyContribution),
       source_account_id: accountId,
-      progress_cached: editGoal?.progress_cached ?? 0
+      progress_cached: editGoal?.progress_cached ?? 0,
+      enabled: editGoal?.enabled ?? true
     };
     try {
       if (editGoal) {

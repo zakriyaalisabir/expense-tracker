@@ -29,7 +29,7 @@ export default function GoalsPage(){
     <PageLayout
       icon={FlagIcon}
       title="Goals"
-      subtitle={`${goals.length} active goals`}
+      subtitle={`${goals.filter(g => g.enabled !== false).length} active goals`}
       actions={<GoalForm />}
     >
       <Alert severity="info" sx={{ mb: 3 }}>

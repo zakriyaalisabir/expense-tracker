@@ -45,6 +45,7 @@ export type Goal = {
   monthly_contribution: number;
   source_account_id: string;
   progress_cached?: number;
+  enabled?: boolean;
 };
 
 export type Budget = {

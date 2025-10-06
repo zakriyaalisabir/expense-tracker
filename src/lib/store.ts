@@ -34,6 +34,7 @@ type Actions = {
   addGoal: (g: Omit<Goal, "id" | "user_id">) => Promise<void>;
   updateGoal: (g: Goal) => Promise<void>;
   deleteGoal: (id: string) => Promise<void>;
+  toggleGoal: (id: string) => Promise<void>;
   setBaseCurrency: (c: CurrencyCode) => Promise<void>;
   setExchangeRate: (currency: string, rate: number) => Promise<void>;
   addCustomCurrency: (code: string, rate: number) => Promise<void>;
@@ -198,6 +199,15 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
     if (error) set({ error: `Failed to delete goal: ${error.message}` });
     else set({ goals: get().goals.filter(x => x.id !== id) });
   },
+  toggleGoal: async (id) => {
+    const goal = get().goals.find(g => g.id === id);
+    if (!goal) return;
+    const supabase = createClient();
+    const newEnabled = !goal.enabled;
+    const { error } = await supabase.from("goals").update({ enabled: newEnabled }).eq("id", id);
+    if (error) set({ error: `Failed to toggle goal: ${error.message}` });
+    else set({ goals: get().goals.map(x => x.id === id ? { ...x, enabled: newEnabled } : x) });
+  },
   setBaseCurrency: async (c) => {
     const { userId } = get();
     if (!userId) return;
@@ -292,6 +302,9 @@ export function totalsForRangeByCurrency(startISO?: string, endISO?: string, cur
 }
 
 export function goalProgress(g: Goal) {
+  if (g.enabled === false) {
+    return { months: 0, neededMonthly: 0, pct: 0 };
+  }
   const months = Math.max(1, differenceInMonths(parseISO(g.target_date), new Date()));
   const neededMonthly = Math.max(0, (g.target_amount - (g.progress_cached ?? 0)) / months);
   const pct = Math.min(100, ((g.progress_cached ?? 0) / g.target_amount) * 100);
