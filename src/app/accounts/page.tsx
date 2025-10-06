@@ -3,7 +3,7 @@ import * as React from "react";
 import { CircularProgress, Box, Alert, Typography, Divider } from "@mui/material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AccountForm from "@components/AccountForm";
-import AccountList from "@components/AccountList";
+import AccountCard from "@components/AccountCard";
 import { useAppStore } from "@lib/store";
 import { LOADING_DELAY } from "@lib/constants";
 import PageLayout from "@components/PageLayout";
@@ -39,7 +39,13 @@ export default function AccountsPage(){
         </Typography>
       </Alert>
       <Divider sx={{ mb: 3 }} />
-      <AccountList />
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+        {accounts.map(account => (
+          <Box key={account.id} sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
+            <AccountCard account={account} />
+          </Box>
+        ))}
+      </Box>
     </PageLayout>
   );
 }

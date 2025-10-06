@@ -53,7 +53,7 @@ export default function BudgetsPage(){
           const isOverBudget = spent > (budget.total || 0);
           const hasCategoryBudgets = budget.byCategory && Object.keys(budget.byCategory).length > 0;
           return (
-            <Box key={budget.id} sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
+            <Box key={budget.id} sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
               <Card elevation={3}>
                 <CardContent>
                   <Stack spacing={2}>

@@ -41,7 +41,7 @@ export default function GoalsPage(){
       <Divider sx={{ mb: 3 }} />
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         {goals.map(g => (
-          <Box key={g.id} sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
+          <Box key={g.id} sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
             <GoalCard goal={g} />
           </Box>
         ))}

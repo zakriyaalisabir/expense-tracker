@@ -20,7 +20,7 @@ export default function GoalCard({ goal }:{ goal: Goal }){
 
   return (
     <>
-      <Card>
+      <Card elevation={3}>
         <CardContent>
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
             <Typography variant="h6">{goal.name}</Typography>
