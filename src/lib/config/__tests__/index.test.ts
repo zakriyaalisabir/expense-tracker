@@ -31,12 +31,12 @@ describe('Config', () => {
     expect(config.app.demoEnabled).toBe(false);
   });
 
-  it('should parse boolean flags correctly', () => {
+  it('should parse boolean flags correctly', async () => {
     process.env.NEXT_PUBLIC_FEATURE_MULTI_CURRENCY = 'false';
     process.env.NEXT_PUBLIC_FEATURE_REALTIME_SYNC = 'true';
     
     // Re-import config to get fresh instance
-    const { config: freshConfig } = require('../index');
+    const { config: freshConfig } = await import('../index');
     expect(freshConfig.features.multiCurrency).toBe(false);
     expect(freshConfig.features.realTimeSync).toBe(true);
   });
