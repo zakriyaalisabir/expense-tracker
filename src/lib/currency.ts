@@ -8,6 +8,23 @@ export const FX: Record<CurrencyCode, number> = {
   JPY: 0.25
 };
 
+export const SUPPORTED_CURRENCIES = {
+  THB: { symbol: '฿', name: 'Thai Baht' },
+  USD: { symbol: '$', name: 'US Dollar' },
+  EUR: { symbol: '€', name: 'Euro' },
+  JPY: { symbol: '¥', name: 'Japanese Yen' }
+};
+
+export function formatCurrency(amount: number, currency: CurrencyCode): string {
+  const currencyInfo = SUPPORTED_CURRENCIES[currency];
+  if (!currencyInfo) return `${amount.toFixed(2)} ${currency}`;
+  
+  return `${currencyInfo.symbol}${amount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}`;
+}
+
 export function toBase(amount: number, currency: CurrencyCode, base: CurrencyCode) {
   const rates = useAppStore.getState().settings.exchangeRates || FX;
   const thbVal = amount * (rates[currency] || FX[currency]);

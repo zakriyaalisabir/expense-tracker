@@ -29,6 +29,9 @@ export const ROUTES = {
   BUDGETS: "/budgets",
   GOALS: "/goals",
   REPORTS: "/reports",
+  GAMIFICATION: "/gamification",
+  FINANCIAL: "/financial",
+  DASHBOARD_CUSTOM: "/dashboard-custom",
   SETTINGS: "/settings",
 } as const;
 
@@ -36,10 +39,12 @@ export const TABS = [
   { label: "Home", href: ROUTES.HOME, icon: "Home" },
   { label: "Dashboard", href: ROUTES.DASHBOARD, icon: "Dashboard" },
   { label: "Transactions", href: ROUTES.TRANSACTIONS, icon: "Receipt" },
-  { label: "Categories", href: ROUTES.CATEGORIES, icon: "Category" },
   { label: "Accounts", href: ROUTES.ACCOUNTS, icon: "AccountBalance" },
   { label: "Budgets", href: ROUTES.BUDGETS, icon: "AccountBalanceWallet" },
   { label: "Goals", href: ROUTES.GOALS, icon: "EmojiEvents" },
+  { label: "Gamification", href: ROUTES.GAMIFICATION, icon: "EmojiEvents" },
+  { label: "Financial", href: ROUTES.FINANCIAL, icon: "TrendingUp" },
+  { label: "Custom", href: ROUTES.DASHBOARD_CUSTOM, icon: "Dashboard" },
   { label: "Reports", href: ROUTES.REPORTS, icon: "Assessment" },
   { label: "Settings", href: ROUTES.SETTINGS, icon: "Settings" },
 ] as const;
