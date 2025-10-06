@@ -16,57 +16,57 @@ const challengeTypes: { value: ChallengeType; label: string; description: string
   { value: "budget_adherence", label: "Budget Adherence", description: "Stay within budget for the entire month" },
   { value: "no_spend_days", label: "No Spend Days", description: "Have X number of days with no expenses" },
   { value: "category_limit", label: "Category Limit", description: "Limit spending in a specific category" },
-  { value: "streak_challenge", label: "Streak Challenge", description: "Maintain a habit for X consecutive days" }
+  { value: "streak_challenge", label: "Streak Challenge", description: "Maintain a habit for X consecutive days" },
 ];
 
 export default function ChallengeForm({ open, onClose, challenge }: ChallengeFormProps) {
   const { addChallenge, updateChallenge } = useAppStore();
-  
+
   const [formData, setFormData] = useState({
     title: challenge?.title || "",
     description: challenge?.description || "",
-    challenge_type: challenge?.challenge_type || "monthly_savings" as ChallengeType,
+    challenge_type: challenge?.challenge_type || ("monthly_savings" as ChallengeType),
     target_amount: challenge?.target_amount || 0,
     target_days: challenge?.target_days || 0,
-    start_date: challenge?.start_date || new Date().toISOString().split('T')[0],
-    end_date: challenge?.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    reward_points: challenge?.reward_points || 100
+    start_date: challenge?.start_date || new Date().toISOString().split("T")[0],
+    end_date: challenge?.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    reward_points: challenge?.reward_points || 100,
   });
 
-  const selectedType = challengeTypes.find(t => t.value === formData.challenge_type);
+  const selectedType = challengeTypes.find((t) => t.value === formData.challenge_type);
   const needsAmount = ["monthly_savings", "expense_reduction", "category_limit"].includes(formData.challenge_type);
   const needsDays = ["no_spend_days", "streak_challenge"].includes(formData.challenge_type);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const challengeData = {
       ...formData,
       target_amount: needsAmount ? formData.target_amount : undefined,
-      target_days: needsDays ? formData.target_days : undefined
+      target_days: needsDays ? formData.target_days : undefined,
+      current_progress: 0,
+      is_completed: false,
     };
-    
+
     if (challenge) {
       await updateChallenge({ ...challenge, ...challengeData });
     } else {
       await addChallenge(challengeData);
     }
-    
+
     onClose();
   };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
-    setFormData(prev => ({ ...prev, [field]: value }));
+    const value = e.target.type === "number" ? parseFloat(e.target.value) || 0 : e.target.value;
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>
-          {challenge ? "Edit Challenge" : "Create New Challenge"}
-        </DialogTitle>
-        
+        <DialogTitle>{challenge ? "Edit Challenge" : "Create New Challenge"}</DialogTitle>
+
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>
@@ -79,7 +79,7 @@ export default function ChallengeForm({ open, onClose, challenge }: ChallengeFor
                 placeholder="e.g., Save $500 this month"
               />
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 label="Description"
@@ -91,7 +91,7 @@ export default function ChallengeForm({ open, onClose, challenge }: ChallengeFor
                 placeholder="Describe your challenge goals and motivation"
               />
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 select
@@ -109,7 +109,7 @@ export default function ChallengeForm({ open, onClose, challenge }: ChallengeFor
                 ))}
               </TextField>
             </Grid>
-            
+
             {needsAmount && (
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -123,7 +123,7 @@ export default function ChallengeForm({ open, onClose, challenge }: ChallengeFor
                 />
               </Grid>
             )}
-            
+
             {needsDays && (
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -137,7 +137,7 @@ export default function ChallengeForm({ open, onClose, challenge }: ChallengeFor
                 />
               </Grid>
             )}
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Start Date"
@@ -149,7 +149,7 @@ export default function ChallengeForm({ open, onClose, challenge }: ChallengeFor
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="End Date"
@@ -161,7 +161,7 @@ export default function ChallengeForm({ open, onClose, challenge }: ChallengeFor
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Reward Points"
@@ -175,7 +175,7 @@ export default function ChallengeForm({ open, onClose, challenge }: ChallengeFor
             </Grid>
           </Grid>
         </DialogContent>
-        
+
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained">

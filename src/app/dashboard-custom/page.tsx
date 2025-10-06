@@ -12,7 +12,7 @@ export default function CustomDashboardPage() {
 
   const addWidget = async (widgetType: WidgetTypeEnum) => {
     if (!userId) return;
-    
+
     const newWidget: WidgetType = {
       id: crypto.randomUUID(),
       user_id: userId,
@@ -22,7 +22,7 @@ export default function CustomDashboardPage() {
       width: 2,
       height: 1,
       is_visible: true,
-      config: {}
+      config: {},
     };
 
     await updateDashboardWidget(newWidget);
@@ -30,17 +30,17 @@ export default function CustomDashboardPage() {
 
   const availableWidgets: WidgetTypeEnum[] = [
     "balance_summary",
-    "monthly_spending", 
+    "monthly_spending",
     "budget_progress",
     "goal_progress",
     "recent_transactions",
     "spending_by_category",
     "financial_health",
     "achievements",
-    "challenges", 
+    "challenges",
     "streaks",
     "net_worth",
-    "investment_summary"
+    "investment_summary",
   ];
 
   return (
@@ -79,44 +79,37 @@ export default function CustomDashboardPage() {
                 startIcon={<Add />}
                 onClick={() => addWidget(widgetType)}
               >
-                {widgetType.replace('_', ' ')}
+                {widgetType.replace("_", " ")}
               </Button>
             ))}
           </Box>
         </Box>
       )}
 
-      <Box 
-        sx={{ 
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
           gap: 2,
-          minHeight: '60vh'
+          minHeight: "60vh",
         }}
       >
         {dashboardWidgets
-          .filter(widget => widget.is_visible)
+          .filter((widget) => widget.is_visible)
           .map((widget) => (
-            <DashboardWidget
-              key={widget.id}
-              widget={widget}
-            />
+            <DashboardWidget key={widget.id} widget={widget} />
           ))}
       </Box>
 
-      {dashboardWidgets.filter(w => w.is_visible).length === 0 && (
+      {dashboardWidgets.filter((w) => w.is_visible).length === 0 && (
         <Box textAlign="center" py={8}>
           <Typography variant="h6" color="text.secondary" gutterBottom>
             No widgets to display
           </Typography>
           <Typography variant="body2" color="text.secondary" paragraph>
-            Click "Edit Layout" to add widgets to your dashboard
+            Click `Edit Layout` to add widgets to your dashboard
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Settings />}
-            onClick={() => setIsEditMode(true)}
-          >
+          <Button variant="contained" startIcon={<Settings />} onClick={() => setIsEditMode(true)}>
             Customize Dashboard
           </Button>
         </Box>

@@ -12,11 +12,11 @@ export default function FinancialPage() {
   const [tabValue, setTabValue] = useState(0);
   const { debts, investments, assets, accounts } = useAppStore();
   const { startAutoUpdate, stopAutoUpdate } = usePriceUpdater();
-  
+
   useEffect(() => {
     startAutoUpdate();
     return () => stopAutoUpdate();
-  }, []);
+  }, [startAutoUpdate, stopAutoUpdate]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -31,7 +31,7 @@ export default function FinancialPage() {
         Track your debts, investments, and calculate your net worth for complete financial visibility.
       </Typography>
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
         <Tabs value={tabValue} onChange={handleTabChange}>
           <Tab label="Net Worth" />
           <Tab label="Debts" />
@@ -41,12 +41,7 @@ export default function FinancialPage() {
 
       {tabValue === 0 && (
         <Box>
-          <NetWorthCalculator 
-            accounts={accounts}
-            assets={assets}
-            debts={debts}
-            investments={investments}
-          />
+          <NetWorthCalculator accounts={accounts} assets={assets} debts={debts} investments={investments} />
         </Box>
       )}
 

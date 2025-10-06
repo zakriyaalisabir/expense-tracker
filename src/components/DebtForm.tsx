@@ -1,6 +1,16 @@
 "use client";
 import { useState } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, Grid, Box } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  MenuItem,
+  Grid,
+  Box,
+} from "@mui/material";
 import { useAppStore } from "../lib/store";
 import { Debt, DebtType } from "../lib/types";
 
@@ -17,60 +27,52 @@ const debtTypes: { value: DebtType; label: string }[] = [
   { value: "student_loan", label: "Student Loan" },
   { value: "car_loan", label: "Car Loan" },
   { value: "business_loan", label: "Business Loan" },
-  { value: "other", label: "Other" }
+  { value: "other", label: "Other" },
 ];
 
 export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
   const { addDebt, updateDebt, accounts } = useAppStore();
-  
+
   const [formData, setFormData] = useState({
     name: debt?.name || "",
-    debt_type: debt?.debt_type || "credit_card" as DebtType,
+    debt_type: debt?.debt_type || ("credit_card" as DebtType),
     original_amount: debt?.original_amount || 0,
     current_balance: debt?.current_balance || 0,
     interest_rate: debt?.interest_rate || 0,
     minimum_payment: debt?.minimum_payment || 0,
     due_date: debt?.due_date || 1,
     account_id: debt?.account_id || "",
-    target_payoff_date: debt?.target_payoff_date || ""
+    target_payoff_date: debt?.target_payoff_date || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (debt) {
       await updateDebt({ ...debt, ...formData });
     } else {
-      await addDebt(formData);
+      await addDebt({ ...formData, is_active: true });
     }
-    
+
     onClose();
   };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
-    setFormData(prev => ({ ...prev, [field]: value }));
+    const value = e.target.type === "number" ? parseFloat(e.target.value) || 0 : e.target.value;
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>
-          {debt ? "Edit Debt" : "Add New Debt"}
-        </DialogTitle>
-        
+        <DialogTitle>{debt ? "Edit Debt" : "Add New Debt"}</DialogTitle>
+
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
-              <TextField
-                label="Debt Name"
-                value={formData.name}
-                onChange={handleChange("name")}
-                fullWidth
-                required
-              />
+              <TextField label="Debt Name" value={formData.name} onChange={handleChange("name")} fullWidth required />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 select
@@ -87,7 +89,7 @@ export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
                 ))}
               </TextField>
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Original Amount"
@@ -99,7 +101,7 @@ export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Current Balance"
@@ -111,7 +113,7 @@ export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Interest Rate (%)"
@@ -123,7 +125,7 @@ export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
                 inputProps={{ min: 0, max: 100, step: 0.01 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Minimum Payment"
@@ -135,7 +137,7 @@ export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Due Date (Day of Month)"
@@ -147,7 +149,7 @@ export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
                 inputProps={{ min: 1, max: 31 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 select
@@ -164,7 +166,7 @@ export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
                 ))}
               </TextField>
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 label="Target Payoff Date (Optional)"
@@ -177,7 +179,7 @@ export default function DebtForm({ open, onClose, debt }: DebtFormProps) {
             </Grid>
           </Grid>
         </DialogContent>
-        
+
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained">

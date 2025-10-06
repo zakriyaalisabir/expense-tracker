@@ -110,6 +110,10 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
         subcategory_id: editTransaction.subcategory_id || "",
         description: editTransaction.description || "",
         tags: editTransaction.tags.join(", "),
+        debt_id: "",
+        investment_id: "",
+        is_debt_payment: false,
+        is_investment: false,
       });
       setOpen(true);
     }

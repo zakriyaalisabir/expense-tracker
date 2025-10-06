@@ -19,39 +19,39 @@ const investmentTypes: { value: InvestmentType; label: string }[] = [
   { value: "etf", label: "ETF" },
   { value: "real_estate", label: "Real Estate" },
   { value: "commodity", label: "Commodity" },
-  { value: "other", label: "Other" }
+  { value: "other", label: "Other" },
 ];
 
 export default function InvestmentForm({ open, onClose, investment }: InvestmentFormProps) {
   const { addInvestment, updateInvestment, accounts, settings } = useAppStore();
-  
+
   const [formData, setFormData] = useState({
     symbol: investment?.symbol || "",
     name: investment?.name || "",
-    investment_type: investment?.investment_type || "stock" as InvestmentType,
+    investment_type: investment?.investment_type || ("stock" as InvestmentType),
     quantity: investment?.quantity || 0,
     purchase_price: investment?.purchase_price || 0,
     current_price: investment?.current_price || 0,
-    purchase_date: investment?.purchase_date || new Date().toISOString().split('T')[0],
+    purchase_date: investment?.purchase_date || new Date().toISOString().split("T")[0],
     account_id: investment?.account_id || "",
-    currency: investment?.currency || settings.baseCurrency
+    currency: investment?.currency || settings.baseCurrency,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (investment) {
       await updateInvestment({ ...investment, ...formData });
     } else {
-      await addInvestment(formData);
+      await addInvestment({ ...formData, is_active: true });
     }
-    
+
     onClose();
   };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
-    setFormData(prev => ({ ...prev, [field]: value }));
+    const value = e.target.type === "number" ? parseFloat(e.target.value) || 0 : e.target.value;
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const currencies = Object.keys(SUPPORTED_CURRENCIES) as CurrencyCode[];
@@ -59,10 +59,8 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>
-          {investment ? "Edit Investment" : "Add New Investment"}
-        </DialogTitle>
-        
+        <DialogTitle>{investment ? "Edit Investment" : "Add New Investment"}</DialogTitle>
+
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
@@ -75,7 +73,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
                 placeholder="e.g., AAPL, BTC, etc."
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Investment Name"
@@ -86,7 +84,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
                 placeholder="e.g., Apple Inc., Bitcoin"
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 select
@@ -103,7 +101,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
                 ))}
               </TextField>
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 select
@@ -120,7 +118,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
                 ))}
               </TextField>
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Quantity"
@@ -132,7 +130,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
                 inputProps={{ min: 0, step: 0.000001 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Purchase Price"
@@ -144,7 +142,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Current Price (Optional)"
@@ -155,7 +153,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Purchase Date"
@@ -167,7 +165,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 select
@@ -186,7 +184,7 @@ export default function InvestmentForm({ open, onClose, investment }: Investment
             </Grid>
           </Grid>
         </DialogContent>
-        
+
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained">

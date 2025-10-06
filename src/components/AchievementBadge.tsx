@@ -15,7 +15,7 @@ const badgeIcons: Record<BadgeType, React.ReactNode> = {
   big_saver: <Savings />,
   consistent_tracker: <Timeline />,
   expense_cutter: <TrendingUp />,
-  income_booster: <TrendingUp />
+  income_booster: <TrendingUp />,
 };
 
 const badgeColors: Record<BadgeType, string> = {
@@ -29,7 +29,7 @@ const badgeColors: Record<BadgeType, string> = {
   big_saver: "#228B22",
   consistent_tracker: "#4169E1",
   expense_cutter: "#FF4500",
-  income_booster: "#00CED1"
+  income_booster: "#00CED1",
 };
 
 interface AchievementBadgeProps {
@@ -42,35 +42,33 @@ export default function AchievementBadge({ achievement, size = "medium" }: Achie
   const cardSize = size === "small" ? 80 : size === "medium" ? 120 : 160;
 
   return (
-    <Card 
-      sx={{ 
-        width: cardSize, 
-        height: cardSize, 
-        display: 'flex', 
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: badgeColors[achievement.badge_type] + '20',
+    <Card
+      sx={{
+        width: cardSize,
+        height: cardSize,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: badgeColors[achievement.badge_type] + "20",
         border: `2px solid ${badgeColors[achievement.badge_type]}`,
-        cursor: 'pointer',
-        '&:hover': { transform: 'scale(1.05)' },
-        transition: 'transform 0.2s'
+        cursor: "pointer",
+        "&:hover": { transform: "scale(1.05)" },
+        transition: "transform 0.2s",
       }}
     >
-      <CardContent sx={{ textAlign: 'center', p: 1 }}>
-        <Box sx={{ color: badgeColors[achievement.badge_type], mb: 1 }}>
-          {React.cloneElement(badgeIcons[achievement.badge_type] as React.ReactElement, { 
-            sx: { fontSize: iconSize } 
-          })}
+      <CardContent sx={{ textAlign: "center", p: 1 }}>
+        <Box sx={{ color: badgeColors[achievement.badge_type], mb: 1, fontSize: iconSize }}>
+          {badgeIcons[achievement.badge_type]}
         </Box>
         <Typography variant={size === "small" ? "caption" : "body2"} fontWeight="bold">
           {achievement.title}
         </Typography>
         {size !== "small" && (
-          <Chip 
-            label={`${achievement.progress}%`} 
-            size="small" 
-            sx={{ mt: 0.5, bgcolor: badgeColors[achievement.badge_type], color: 'white' }}
+          <Chip
+            label={`${achievement.progress}%`}
+            size="small"
+            sx={{ mt: 0.5, bgcolor: badgeColors[achievement.badge_type], color: "white" }}
           />
         )}
       </CardContent>
