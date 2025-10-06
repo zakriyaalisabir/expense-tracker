@@ -305,8 +305,13 @@ export function goalProgress(g: Goal) {
   if (g.enabled === false) {
     return { months: 0, neededMonthly: 0, pct: 0 };
   }
+  const transactions = useAppStore.getState().transactions;
+  const savingsTransactions = transactions.filter(t => 
+    t.account_id === g.source_account_id && t.type === 'savings'
+  );
+  const actualProgress = savingsTransactions.reduce((sum, t) => sum + t.base_amount, 0);
   const months = Math.max(1, differenceInMonths(parseISO(g.target_date), new Date()));
-  const neededMonthly = Math.max(0, (g.target_amount - (g.progress_cached ?? 0)) / months);
-  const pct = Math.min(100, ((g.progress_cached ?? 0) / g.target_amount) * 100);
+  const neededMonthly = Math.max(0, (g.target_amount - actualProgress) / months);
+  const pct = Math.min(100, (actualProgress / g.target_amount) * 100);
   return { months, neededMonthly, pct };
 }

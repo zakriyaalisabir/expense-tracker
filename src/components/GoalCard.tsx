@@ -11,9 +11,10 @@ import GoalForm from "./GoalForm";
 
 export default function GoalCard({ goal }:{ goal: Goal }){
   const { months, neededMonthly, pct } = goalProgress(goal);
-  const { deleteGoal, toggleGoal } = useAppStore();
+  const { deleteGoal, toggleGoal, accounts } = useAppStore();
   const [editGoal, setEditGoal] = React.useState<Goal | undefined>();
   const isEnabled = goal.enabled !== false;
+  const linkedAccount = accounts.find(a => a.id === goal.source_account_id);
 
   const handleDelete = async () => {
     if (confirm(`Delete goal "${goal.name}"?`)) {
@@ -61,6 +62,14 @@ export default function GoalCard({ goal }:{ goal: Goal }){
             <Typography variant="body2">Progress: {isEnabled ? pct.toFixed(1) : '0.0'}%</Typography>
             <Typography variant="body2">Months left: {isEnabled ? months : '-'}</Typography>
             <Typography variant="body2">Needed / mo: {isEnabled ? new Intl.NumberFormat().format(neededMonthly) : '-'}</Typography>
+          </Stack>
+          <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ opacity: isEnabled ? 1 : 0.6 }}>
+              Account: {linkedAccount?.name || 'Unknown'}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ opacity: isEnabled ? 1 : 0.6 }}>
+              Target: {new Date(goal.target_date).toLocaleDateString()}
+            </Typography>
           </Stack>
         </CardContent>
       </Card>
