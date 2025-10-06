@@ -533,6 +533,8 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
       expense_consistency_score: Math.round(expenseScore),
       goal_progress_score: Math.round(goalScore),
       debt_management_score: Math.round(debtScore)
+    }, {
+      onConflict: 'user_id,month'
     }).select().single();
 
     if (error) set({ error: `Failed to calculate health score: ${error.message}` });
