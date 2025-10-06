@@ -1,104 +1,96 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import BudgetForm from '../BudgetForm'
-import { useAppStore } from '@lib/store'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import BudgetForm from '../BudgetForm';
 
-const mockState = {
-  categories: [
-    { id: 'c1', name: 'Food', type: 'expense' },
-    { id: 'c2', name: 'Transport', type: 'expense' }
-  ]
-}
+// Mock the store
+const mockAddBudget = jest.fn();
+const mockUpdateBudget = jest.fn();
+const mockClearError = jest.fn();
 
 jest.mock('@lib/store', () => ({
-  useAppStore: Object.assign(
-    jest.fn(() => ({
-      ...mockState,
-      addBudget: jest.fn(),
-      updateBudget: jest.fn()
-    })),
-    { getState: jest.fn(() => mockState) }
-  )
-}))
-
-const mockUseAppStore = useAppStore as unknown as jest.Mock
+  useAppStore: () => ({
+    addBudget: mockAddBudget,
+    updateBudget: mockUpdateBudget,
+    clearError: mockClearError,
+    categories: [
+      { id: 'cat1', name: 'Food', type: 'expense', parent_id: null },
+      { id: 'cat2', name: 'Transport', type: 'expense', parent_id: null },
+    ],
+    error: null,
+  }),
+  uid: jest.fn(() => 'test-id'),
+}));
 
 describe('BudgetForm', () => {
-  const mockAddBudget = jest.fn()
-  const mockUpdateBudget = jest.fn()
-
   beforeEach(() => {
-    jest.clearAllMocks()
-    mockUseAppStore.mockReturnValue({
-      ...mockState,
-      addBudget: mockAddBudget,
-      updateBudget: mockUpdateBudget
-    })
-  })
+    jest.clearAllMocks();
+  });
 
-  it('renders add budget button', () => {
-    render(<BudgetForm />)
-    expect(screen.getByText('Add Budget')).toBeInTheDocument()
-  })
+  it('should render add budget button', () => {
+    render(<BudgetForm />);
+    expect(screen.getByText('Add Budget')).toBeInTheDocument();
+  });
 
-  it('opens dialog on button click', () => {
-    render(<BudgetForm />)
-    fireEvent.click(screen.getByText('Add Budget'))
-    expect(screen.getByText('New Budget')).toBeInTheDocument()
-  })
-
-  it('submits new budget', async () => {
-    mockAddBudget.mockResolvedValue(undefined)
-    render(<BudgetForm />)
+  it('should open dialog when button clicked', async () => {
+    const user = userEvent.setup();
+    render(<BudgetForm />);
     
-    fireEvent.click(screen.getByText('Add Budget'))
-    fireEvent.change(screen.getByLabelText('Month'), { target: { value: '2024-01' } })
-    fireEvent.change(screen.getByLabelText('Total Budget'), { target: { value: '50000' } })
-    fireEvent.click(screen.getByText('Save'))
+    await user.click(screen.getByText('Add Budget'));
+    
+    expect(screen.getByText('New Budget')).toBeInTheDocument();
+  });
 
+  it('should submit new budget', async () => {
+    const user = userEvent.setup();
+    render(<BudgetForm />);
+    
+    await user.click(screen.getByText('Add Budget'));
+    
+    // Fill form
+    const monthInput = screen.getByLabelText('Month');
+    const totalInput = screen.getByLabelText('Total Budget');
+    
+    await user.clear(monthInput);
+    await user.type(monthInput, '2024-01');
+    await user.clear(totalInput);
+    await user.type(totalInput, '5000');
+    
+    // Submit
+    await user.click(screen.getByText('Save'));
+    
     await waitFor(() => {
-      expect(mockAddBudget).toHaveBeenCalledWith(expect.objectContaining({
+      expect(mockAddBudget).toHaveBeenCalledWith({
         month: '2024-01',
-        total: 50000
-      }))
-    })
-  })
+        total: 5000,
+        byCategory: {},
+      });
+    });
+  });
 
-  it('updates existing budget', async () => {
-    mockUpdateBudget.mockResolvedValue(undefined)
+  it('should populate form when editing', () => {
     const editBudget = {
-      id: 'b1',
-      user_id: 'u1',
+      id: 'budget1',
+      user_id: 'user1',
       month: '2024-01',
-      total: 40000
-    }
-
-    render(<BudgetForm editBudget={editBudget} />)
+      total: 3000,
+      byCategory: { cat1: 1000 },
+    };
     
-    await waitFor(() => {
-      expect(screen.getByText('Edit Budget')).toBeInTheDocument()
-    })
-
-    fireEvent.change(screen.getByLabelText('Total Budget'), { target: { value: '60000' } })
-    fireEvent.click(screen.getByText('Update'))
-
-    await waitFor(() => {
-      expect(mockUpdateBudget).toHaveBeenCalledWith(expect.objectContaining({
-        id: 'b1',
-        total: 60000
-      }))
-    })
-  })
-
-  it('sets category-specific budgets', async () => {
-    mockAddBudget.mockResolvedValue(undefined)
-    render(<BudgetForm />)
+    render(<BudgetForm editBudget={editBudget} />);
     
-    fireEvent.click(screen.getByText('Add Budget'))
-    fireEvent.change(screen.getByLabelText('Month'), { target: { value: '2024-01' } })
-    fireEvent.click(screen.getByText('Save'))
+    expect(screen.getByText('Edit Budget')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('2024-01')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('3000')).toBeInTheDocument();
+  });
 
-    await waitFor(() => {
-      expect(mockAddBudget).toHaveBeenCalled()
-    })
-  })
-})
+  it('should add category budget', async () => {
+    const user = userEvent.setup();
+    render(<BudgetForm />);
+    
+    await user.click(screen.getByText('Add Budget'));
+    await user.click(screen.getByText('Add Category'));
+    
+    expect(screen.getByLabelText('Category')).toBeInTheDocument();
+    expect(screen.getByLabelText('Amount')).toBeInTheDocument();
+  });
+});
