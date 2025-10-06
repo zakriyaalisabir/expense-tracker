@@ -200,6 +200,23 @@ export const useAppStore = create<State & Actions>()((set, get) => ({
       // Update streaks
       await get().updateStreak('daily_tracking', true);
       await get().updateStreak('expense_logging', true);
+      
+      // Auto-calculate health score for current month
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      await get().calculateHealthScore(currentMonth);
+      
+      // Update challenge progress
+      const activeChallenges = get().challenges.filter(c => !c.is_completed);
+      for (const challenge of activeChallenges) {
+        if (challenge.challenge_type === 'monthly_savings' && t.type === 'savings') {
+          const updatedProgress = challenge.current_progress + t.amount;
+          await get().updateChallenge({
+            ...challenge,
+            current_progress: updatedProgress,
+            is_completed: updatedProgress >= (challenge.target_amount || 0)
+          });
+        }
+      }
     }
   },
   updateTransaction: async (t) => {
