@@ -6,8 +6,9 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import SavingsIcon from "@mui/icons-material/Savings";
 import { TransitionProps } from "@mui/material/transitions";
-import { useAppStore } from "@lib/store";
+import { useTransactionStore, useAccountStore, useSettingsStore, useCategoryStore } from "@lib/stores";
 import { toBase, FX } from "@lib/currency";
+import { useAuth } from "@lib/hooks/useAuth";
 
 import { CURRENCIES, TRANSACTION_TYPES } from "@lib/constants";
 import { CurrencyCode } from "@lib/types";
@@ -22,7 +23,11 @@ const Transition = React.forwardRef(function Transition(
 type Props = { editTransaction?: { id: string; user_id: string; type: "income"|"expense"|"savings"; date: string; amount: number; currency: CurrencyCode; account_id: string; category_id: string; subcategory_id?: string; description?: string; tags: string[] }; onClose?: () => void };
 
 export default function TransactionForm({ editTransaction, onClose }: Props = {}){
-  const { accounts, categories, addTransaction, updateTransaction, settings } = useAppStore();
+  const { addTransaction, updateTransaction } = useTransactionStore();
+  const { accounts } = useAccountStore();
+  const { settings } = useSettingsStore();
+  const { categories } = useCategoryStore();
+  const { userId } = useAuth();
   const allCurrencies = [...CURRENCIES, ...(settings.customCurrencies || [])];
   const [open,setOpen] = React.useState(false);
   const [type,setType] = React.useState<"income"|"expense"|"savings">("expense");
@@ -37,6 +42,7 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
   },[accounts, categories]);
 
   React.useEffect(() => {
+    if (categories.length === 0) return;
     setForm((f) => ({...f, category_id: categories.find(c=>c.type===type)?.id || "", subcategory_id: ""}));
   }, [type, categories]);
 
@@ -66,12 +72,13 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
       account_id: form.account_id, category_id: form.category_id,
       subcategory_id: form.subcategory_id || undefined,
       tags: form.tags ? form.tags.split(",").map((s:string)=>s.trim()).filter(Boolean):[],
-      description: form.description, fx_rate, base_amount
+      description: form.description
     };
     if (editTransaction) {
-      await updateTransaction({ ...data, id: editTransaction.id, user_id: editTransaction.user_id });
+      await updateTransaction({ ...data, id: editTransaction.id, user_id: editTransaction.user_id, fx_rate, base_amount });
     } else {
-      await addTransaction(data);
+      if (!userId) return;
+      await addTransaction(data, userId, settings.baseCurrency, settings.exchangeRates || {});
       setForm({
         date: new Date().toISOString().slice(0,16),
         amount: 0, currency: accounts[0]?.currency || settings.baseCurrency, account_id: accounts[0]?.id ?? "",
@@ -114,12 +121,12 @@ export default function TransactionForm({ editTransaction, onClose }: Props = {}
             {allCurrencies.map(c=>(<MenuItem key={c} value={c}>{c}</MenuItem>))}
           </TextField>
           <TextField select label="Category" value={form.category_id} onChange={e=>setForm({...form, category_id:e.target.value, subcategory_id:""})} required>
-            {useAppStore.getState().categories.filter(c=>c.type===type && !c.parent_id).map(c=>(<MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>))}
+            {categories.filter(c=>c.type===type && !c.parent_id).map(c=>(<MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>))}
           </TextField>
-          {form.category_id && useAppStore.getState().categories.some(c=>c.parent_id===form.category_id) && (
+          {form.category_id && categories.some(c=>c.parent_id===form.category_id) && (
             <TextField select label="Subcategory" value={form.subcategory_id} onChange={e=>setForm({...form, subcategory_id:e.target.value})}>
               <MenuItem value="">None</MenuItem>
-              {useAppStore.getState().categories.filter(c=>c.parent_id===form.category_id).map(c=>(<MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>))}
+              {categories.filter(c=>c.parent_id===form.category_id).map(c=>(<MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>))}
             </TextField>
           )}
           <TextField label="Tags (comma separated)" value={form.tags} onChange={e=>setForm({...form, tags:e.target.value})}/>

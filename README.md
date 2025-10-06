@@ -292,6 +292,37 @@ npm run test:e2e     # Run end-to-end tests
 npm run test:watch   # Run tests in watch mode
 ```
 
+## 🏗️ Architecture Refactoring Status
+
+### ✅ Phase 1: SOLID Architecture (Complete)
+- **Repository Pattern**: `src/lib/repositories/` - Data access abstraction
+- **Service Layer**: `src/lib/services/` - Business logic separation
+- **Domain Stores**: Split monolithic store into focused domains
+  - `transactionStore` - Transaction management
+  - `accountStore` - Account management
+  - `categoryStore` - Category management
+  - `settingsStore` - User preferences
+- **Auth Integration**: `src/lib/hooks/useAuth.ts` - Authentication context
+
+### ✅ Phase 2: Configuration & Environment (Complete)
+- **Centralized Config**: `src/lib/config/index.ts` - Environment validation
+- **Feature Flags**: Multi-currency, reports, real-time sync toggles
+- **Environment Variables**: Proper separation of public/private configs
+
+### ✅ Phase 3: Security & Validation (Complete)
+- **Input Validation**: `src/lib/validation/schemas.ts` - Zod validation
+- **Security Layer**: `src/lib/security/auth.ts` - Auth & rate limiting
+- **Structured Logging**: `src/lib/logger/index.ts` - Configurable logging
+- **Error Boundaries**: React error handling with logging
+
+### 🎯 Benefits Achieved
+- **SOLID Compliance**: Single responsibility, dependency inversion
+- **12-Factor App**: Proper config management and backing services
+- **Security**: Input validation, authorization, rate limiting
+- **Observability**: Structured logging and error tracking
+- **Testability**: Each layer independently testable
+- **Maintainability**: Smaller, focused modules
+
 ## 🚀 Deployment
 
 ### Vercel Deployment
@@ -301,11 +332,20 @@ npm run test:watch   # Run tests in watch mode
 
 ### Environment Variables
 ```env
+# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-NEXT_PUBLIC_DEMO_ENABLED=true           # Enable client-side demo mode UI/logic
-PUBLIC_DEMO_ENABLED=true                # Enable server-side (middleware) demo cookie
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# Application Configuration
+NODE_ENV=development
+LOG_LEVEL=info
+
+# Feature Flags
+NEXT_PUBLIC_DEMO_ENABLED=false
+NEXT_PUBLIC_FEATURE_MULTI_CURRENCY=true
+NEXT_PUBLIC_FEATURE_ADVANCED_REPORTS=true
+NEXT_PUBLIC_FEATURE_REALTIME_SYNC=false
 ```
 
 ### Production Checklist
