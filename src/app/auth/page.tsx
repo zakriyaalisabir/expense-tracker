@@ -79,7 +79,10 @@ export default function AuthPage() {
       options: { 
         redirectTo: typeof window !== 'undefined' 
           ? `${window.location.origin}/auth/callback` 
-          : '/auth/callback'
+          : '/auth/callback',
+        queryParams: {
+          prompt: 'select_account' // Forces account selection
+        }
       }
     });
     if (error) setError(error.message);
