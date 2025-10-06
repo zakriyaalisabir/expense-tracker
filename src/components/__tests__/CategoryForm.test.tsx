@@ -6,7 +6,13 @@ const mockState = {
   categories: [
     { id: 'c1', name: 'Food', type: 'expense' },
     { id: 'c2', name: 'Salary', type: 'income' }
-  ]
+  ],
+  userId: 'test-user-id',
+  settings: {
+    baseCurrency: 'THB',
+    exchangeRates: { USD: 0.03, EUR: 0.025 },
+    customCurrencies: ['BTC']
+  }
 }
 
 jest.mock('@lib/store', () => ({
@@ -31,7 +37,8 @@ describe('CategoryForm', () => {
     mockUseAppStore.mockReturnValue({
       ...mockState,
       addCategory: mockAddCategory,
-      updateCategory: mockUpdateCategory
+      updateCategory: mockUpdateCategory,
+      userId: 'test-user-id'
     })
   })
 
@@ -73,8 +80,11 @@ describe('CategoryForm', () => {
 
     render(<CategoryForm editCategory={editCategory} />)
     
+    // Click the edit icon to open dialog
+    fireEvent.click(screen.getByRole('button'))
+    
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Edit Category' })).toBeInTheDocument()
+      expect(screen.getByText('Edit Category')).toBeInTheDocument()
     })
 
     fireEvent.change(screen.getByLabelText('Category Name'), { target: { value: 'Groceries' } })

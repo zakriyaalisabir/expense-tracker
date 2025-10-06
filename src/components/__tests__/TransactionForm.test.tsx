@@ -12,7 +12,8 @@ const mockState = {
     { id: 'c2', name: 'Food', type: 'expense' },
     { id: 'c3', name: 'Savings', type: 'savings' }
   ],
-  settings: { baseCurrency: 'THB', exchangeRates: { THB: 1, USD: 36 } }
+  settings: { baseCurrency: 'THB', exchangeRates: { THB: 1, USD: 36 } },
+  userId: 'test-user-id'
 }
 
 jest.mock('@lib/store', () => ({
@@ -26,6 +27,14 @@ jest.mock('@lib/store', () => ({
   )
 }))
 
+jest.mock('@lib/hooks/useAuth', () => ({
+  useAuth: () => ({ userId: 'test-user-id', loading: false })
+}))
+
+jest.mock('@lib/utils/currency', () => ({
+  getAllCurrencies: () => ['THB', 'USD']
+}))
+
 const mockUseAppStore = useAppStore as unknown as jest.Mock
 
 describe('TransactionForm', () => {
@@ -37,7 +46,8 @@ describe('TransactionForm', () => {
     mockUseAppStore.mockReturnValue({
       ...mockState,
       addTransaction: mockAddTransaction,
-      updateTransaction: mockUpdateTransaction
+      updateTransaction: mockUpdateTransaction,
+      userId: 'test-user-id'
     })
   })
 

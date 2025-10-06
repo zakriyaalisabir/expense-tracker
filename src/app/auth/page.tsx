@@ -59,6 +59,7 @@ export default function AuthPage() {
     try {
       if (isSignUp) {
         await signUp(email, password);
+        alert('Check your email for confirmation link');
         setError("");
         resetForm();
       } else {

@@ -50,6 +50,6 @@
   "overrides": {
     "glob": "^10.3.10",
     "rimraf": "^5.0.5",
-    "inflight": "npm:@isaacs/inflight@^1.0.6"
+    "inflight": "^1.0.6"
   }
 }

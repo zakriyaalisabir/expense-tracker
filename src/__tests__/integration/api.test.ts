@@ -1,31 +1,14 @@
-import { createClient } from '@supabase/supabase-js';
-import { transactionService } from '../../lib/services';
+import { TransactionService } from '../../lib/services/TransactionService';
+import { ITransactionRepository } from '../../lib/repositories/interfaces';
 
-// Mock Supabase client for integration tests
-jest.mock('../../lib/supabase/client', () => ({
-  createClient: jest.fn(),
-}));
-
-const mockSupabase = {
-  from: jest.fn(() => ({
-    insert: jest.fn(() => ({
-      select: jest.fn(() => ({
-        single: jest.fn(),
-      })),
-    })),
-    select: jest.fn(() => ({
-      eq: jest.fn(),
-    })),
-    update: jest.fn(() => ({
-      eq: jest.fn(),
-    })),
-    delete: jest.fn(() => ({
-      eq: jest.fn(),
-    })),
-  })),
+const mockRepository: jest.Mocked<ITransactionRepository> = {
+  create: jest.fn(),
+  findByUserId: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
 };
 
-(createClient as jest.Mock).mockReturnValue(mockSupabase);
+const transactionService = new TransactionService(mockRepository);
 
 describe('API Integration Tests', () => {
   beforeEach(() => {
@@ -48,10 +31,16 @@ describe('API Integration Tests', () => {
         base_amount: 3600,
       };
 
-      mockSupabase.from().insert().select().single.mockResolvedValue({
-        data: mockTransaction,
-        error: null,
-      });
+      const mockChain = {
+        insert: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: mockTransaction,
+          error: null,
+        }),
+      };
+
+      mockRepository.create.mockResolvedValue(mockTransaction);
 
       const result = await transactionService.createTransaction(
         {
@@ -68,15 +57,12 @@ describe('API Integration Tests', () => {
         { USD: 36, THB: 1 }
       );
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('transactions');
+      expect(mockRepository.create).toHaveBeenCalled();
       expect(result).toEqual(mockTransaction);
     });
 
     it('should handle database errors', async () => {
-      mockSupabase.from().insert().select().single.mockResolvedValue({
-        data: null,
-        error: { message: 'Database error' },
-      });
+      mockRepository.create.mockRejectedValue(new Error('Database error'));
 
       await expect(
         transactionService.createTransaction(
@@ -93,7 +79,7 @@ describe('API Integration Tests', () => {
           'THB',
           { USD: 36 }
         )
-      ).rejects.toThrow('Failed to create transaction: Database error');
+      ).rejects.toThrow('Database error');
     });
   });
 });

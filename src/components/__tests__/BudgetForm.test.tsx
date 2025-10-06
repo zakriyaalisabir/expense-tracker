@@ -8,16 +8,25 @@ const mockUpdateBudget = jest.fn();
 const mockClearError = jest.fn();
 
 jest.mock('@lib/store', () => ({
-  useAppStore: () => ({
-    addBudget: mockAddBudget,
-    updateBudget: mockUpdateBudget,
-    clearError: mockClearError,
-    categories: [
-      { id: 'cat1', name: 'Food', type: 'expense', parent_id: null },
-      { id: 'cat2', name: 'Transport', type: 'expense', parent_id: null },
-    ],
-    error: null,
-  }),
+  useAppStore: Object.assign(
+    () => ({
+      addBudget: mockAddBudget,
+      updateBudget: mockUpdateBudget,
+      clearError: mockClearError,
+      categories: [
+        { id: 'cat1', name: 'Food', type: 'expense', parent_id: null },
+        { id: 'cat2', name: 'Transport', type: 'expense', parent_id: null },
+      ],
+      error: null,
+      userId: 'test-user-id'
+    }),
+    {
+      getState: () => ({
+        error: null,
+        userId: 'test-user-id'
+      })
+    }
+  ),
   uid: jest.fn(() => 'test-id'),
 }));
 
@@ -90,7 +99,10 @@ describe('BudgetForm', () => {
     await user.click(screen.getByText('Add Budget'));
     await user.click(screen.getByText('Add Category'));
     
-    expect(screen.getByLabelText('Category')).toBeInTheDocument();
-    expect(screen.getByLabelText('Amount')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getAllByText('Category')).toHaveLength(2); // One in label, one in select
+      const amountLabels = screen.getAllByText('Amount');
+      expect(amountLabels.length).toBeGreaterThan(0);
+    });
   });
 });

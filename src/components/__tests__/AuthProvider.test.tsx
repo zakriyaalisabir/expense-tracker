@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
 import { AuthProvider, useAuth } from '../AuthProvider'
 import { createClient } from '@lib/supabase/client'
 
@@ -40,18 +40,32 @@ describe('AuthProvider', () => {
   })
 
   it('loads demo user when demo mode enabled', async () => {
+    const originalEnv = process.env.NEXT_PUBLIC_DEMO_ENABLED
+    process.env.NEXT_PUBLIC_DEMO_ENABLED = 'true'
     localStorage.setItem('demo-mode', 'true')
+    
+    const mockSupabase = {
+      auth: {
+        getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
+        onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } }))
+      }
+    }
+    mockCreateClient.mockReturnValue(mockSupabase as any)
 
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    )
+    await act(async () => {
+      render(
+        <AuthProvider>
+          <TestComponent />
+        </AuthProvider>
+      )
+    })
 
     await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('loaded')
       expect(screen.getByTestId('user')).toHaveTextContent('demo@example.com')
     })
+    
+    process.env.NEXT_PUBLIC_DEMO_ENABLED = originalEnv
   })
 
   it('loads authenticated user from session', async () => {
@@ -66,11 +80,13 @@ describe('AuthProvider', () => {
     }
     mockCreateClient.mockReturnValue(mockSupabase as any)
 
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    )
+    await act(async () => {
+      render(
+        <AuthProvider>
+          <TestComponent />
+        </AuthProvider>
+      )
+    })
 
     await waitFor(() => {
       expect(screen.getByTestId('user')).toHaveTextContent('test@example.com')
@@ -86,11 +102,13 @@ describe('AuthProvider', () => {
     }
     mockCreateClient.mockReturnValue(mockSupabase as any)
 
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    )
+    await act(async () => {
+      render(
+        <AuthProvider>
+          <TestComponent />
+        </AuthProvider>
+      )
+    })
 
     await waitFor(() => {
       expect(screen.getByTestId('user')).toHaveTextContent('no user')

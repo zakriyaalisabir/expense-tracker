@@ -1,29 +1,6 @@
 import { Goal } from '../types'
 import { parseISO, addMonths } from 'date-fns'
 
-jest.mock('../supabase/client', () => ({
-  createClient: jest.fn(() => ({
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          single: jest.fn(() => Promise.resolve({ data: null, error: null }))
-        }))
-      })),
-      insert: jest.fn(() => ({
-        select: jest.fn(() => ({
-          single: jest.fn(() => Promise.resolve({ data: {}, error: null }))
-        }))
-      })),
-      update: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ error: null }))
-      })),
-      delete: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ error: null }))
-      }))
-    }))
-  }))
-}))
-
 const mockTransactions = [
   { id: '1', user_id: 'u1', date: '2024-01-15T10:00:00Z', type: 'income', amount: 1000, currency: 'USD', account_id: 'a1', category_id: 'c1', tags: [], fx_rate: 36, base_amount: 36000 },
   { id: '2', user_id: 'u1', date: '2024-01-20T10:00:00Z', type: 'expense', amount: 500, currency: 'USD', account_id: 'a1', category_id: 'c2', tags: [], fx_rate: 36, base_amount: 18000 },

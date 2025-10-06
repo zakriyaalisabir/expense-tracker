@@ -20,6 +20,7 @@ describe('AuthPage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    process.env.NEXT_PUBLIC_DEMO_ENABLED = 'true'
     mockUseRouter.mockReturnValue({ push: mockPush, replace: mockReplace } as any)
     mockUseAuth.mockReturnValue({
       user: null,
@@ -90,7 +91,9 @@ describe('AuthPage', () => {
     })
     
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'new@example.com' } })
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } })
+    const passwordFields = screen.getAllByLabelText(/password/i)
+    fireEvent.change(passwordFields[0], { target: { value: 'password123' } })
+    fireEvent.change(passwordFields[1], { target: { value: 'password123' } })
     fireEvent.click(screen.getByRole('button', { name: 'Sign Up' }))
 
     await waitFor(() => {
@@ -110,10 +113,17 @@ describe('AuthPage', () => {
     })
     
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } })
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'wrong' } })
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'wrongpassword' } })
+    
+    // Wait for button to be enabled
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Sign In' })).not.toBeDisabled()
+    })
+    
     fireEvent.click(screen.getByRole('button', { name: 'Sign In' }))
 
     await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument()
       expect(screen.getByText('Invalid credentials')).toBeInTheDocument()
     })
   })

@@ -5,7 +5,8 @@ import { useAppStore } from '@lib/store'
 const mockState = {
   accounts: [
     { id: 'a1', name: 'Savings', type: 'savings', currency: 'USD', opening_balance: 5000 }
-  ]
+  ],
+  userId: 'test-user-id'
 }
 
 jest.mock('@lib/store', () => ({
@@ -30,7 +31,8 @@ describe('GoalForm', () => {
     mockUseAppStore.mockReturnValue({
       ...mockState,
       addGoal: mockAddGoal,
-      updateGoal: mockUpdateGoal
+      updateGoal: mockUpdateGoal,
+      userId: 'test-user-id'
     })
   })
 

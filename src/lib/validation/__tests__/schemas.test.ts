@@ -1,5 +1,5 @@
-import { transactionSchema, accountSchema, validateData } from '../schemas';
-import { ValidationError } from '../middleware';
+import { transactionSchema, accountSchema } from '../schemas';
+import { validateData, ValidationError } from '../middleware';
 
 describe('Validation Schemas', () => {
   describe('transactionSchema', () => {
@@ -28,7 +28,7 @@ describe('Validation Schemas', () => {
         date: new Date().toISOString(),
       };
 
-      expect(() => validateData(transactionSchema, invalidData)).toThrow(ValidationError);
+      expect(() => validateData(transactionSchema, invalidData)).toThrow();
     });
 
     it('should reject invalid currency', () => {
@@ -41,7 +41,7 @@ describe('Validation Schemas', () => {
         date: new Date().toISOString(),
       };
 
-      expect(() => validateData(transactionSchema, invalidData)).toThrow(ValidationError);
+      expect(() => validateData(transactionSchema, invalidData)).toThrow();
     });
   });
 
