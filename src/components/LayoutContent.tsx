@@ -21,6 +21,9 @@ export default function LayoutContent({ children, mode, setMode }: any) {
   const demoEnabled = process.env.NEXT_PUBLIC_DEMO_ENABLED === 'true';
   const [demoMode, setDemoMode] = React.useState(false);
   const [showDemoBanner, setShowDemoBanner] = React.useState(true);
+  
+  // Show navigation links only when authenticated or in demo mode
+  const shouldShowNavLinks = user || demoMode;
 
   React.useEffect(() => {
     setLoading(true);
@@ -50,7 +53,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
     <>
       <AppBar position="sticky" color="default" elevation={1}>
         <Toolbar>
-          {isMobile && (
+          {isMobile && shouldShowNavLinks && (
             <IconButton edge="start" onClick={() => setDrawerOpen(true)} sx={{ mr: 2 }}>
               <MenuIcon />
             </IconButton>
@@ -59,13 +62,15 @@ export default function LayoutContent({ children, mode, setMode }: any) {
             <AccountBalanceWalletIcon sx={{ fontSize: 22, color: "inherit" }} />
           </Avatar>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: '-0.02em' }}>Expense Tracker</Typography>
-          <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
-            <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
-              {TABS.map((t) => (
-                <Tab key={t.href} label={t.label} component={Link} href={t.href} />
-              ))}
-            </Tabs>
-          </Box>
+          {shouldShowNavLinks && (
+            <Box sx={{ display: { xs: "none", md: "block" }, mr: 2 }}>
+              <Tabs value={current !== -1 ? current : false} variant="scrollable" scrollButtons="auto">
+                {TABS.map((t) => (
+                  <Tab key={t.href} label={t.label} component={Link} href={t.href} />
+                ))}
+              </Tabs>
+            </Box>
+          )}
           <IconButton onClick={() => {
             const next = mode === THEME_MODE.LIGHT ? THEME_MODE.DARK : THEME_MODE.LIGHT;
             setMode(next);
@@ -91,7 +96,7 @@ export default function LayoutContent({ children, mode, setMode }: any) {
         </Toolbar>
         {loading && <LinearProgress />}
       </AppBar>
-      {demoEnabled && demoMode && showDemoBanner && (
+      {shouldShowNavLinks && demoEnabled && demoMode && showDemoBanner && (
         <Box sx={{ maxWidth: 'lg', mx: 'auto', px: { xs: 2, md: 3 }, pt: 2 }}>
           <Alert
             severity="info"
@@ -106,7 +111,8 @@ export default function LayoutContent({ children, mode, setMode }: any) {
           </Alert>
         </Box>
       )}
-      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+      {shouldShowNavLinks && (
+        <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <Box sx={{ width: DRAWER_WIDTH }} role="presentation">
           <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1.5 }}>
             <Avatar sx={{ bgcolor: "primary.main", color: "#fff" }}>
@@ -136,6 +142,8 @@ export default function LayoutContent({ children, mode, setMode }: any) {
           </List>
         </Box>
       </Drawer>
+      )}
+
       <Container
         maxWidth="lg"
         sx={{
